@@ -1,0 +1,15 @@
+plugins {
+  id 'com.avast.gradle.docker-compose' version '0.17.8'
+}
+
+dockerCompose {
+  useComposeFiles = ['docker-compose.yml']
+  waitForTcpPorts = false
+  removeContainers = false
+  removeVolumes = false
+  projectName = 'ogm'
+}
+
+composeBuild {
+  dependsOn ':backend:assemble'
+}

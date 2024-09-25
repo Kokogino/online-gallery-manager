@@ -1,2 +1,8 @@
+# Java
+build/
+
 # IDEs and editors
 .idea/
+
+# Gradle
+.gradle/
