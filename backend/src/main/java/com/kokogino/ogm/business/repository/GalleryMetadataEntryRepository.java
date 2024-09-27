@@ -1,6 +1,16 @@
 package com.kokogino.ogm.business.repository;
 
-import com.kokogino.ogm.datamodel.entity.GalleryMetadataEntry;
+import java.util.Collection;
+import java.util.Optional;
 
+import com.kokogino.ogm.datamodel.entity.Gallery;
+import com.kokogino.ogm.datamodel.entity.GalleryMetadata;
+import com.kokogino.ogm.datamodel.entity.GalleryMetadataEntry;
+import jakarta.transaction.Transactional;
+
+@Transactional
 public interface GalleryMetadataEntryRepository extends BaseEntityRepository<GalleryMetadataEntry> {
+  void deleteByGalleryAndGalleryMetadataIdNotIn(Gallery gallery, Collection<Long> galleryMetadataIds);
+
+  Optional<GalleryMetadataEntry> findByGalleryAndGalleryMetadata(Gallery gallery, GalleryMetadata galleryMetadata);
 }

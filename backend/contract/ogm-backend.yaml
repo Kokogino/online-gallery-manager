@@ -719,7 +719,9 @@ components:
           $ref: "#/components/schemas/FilterExpressionDto"
         randomnessSeed:
           type: number
-          description: The order of results is randomized with this seed. If no seed is given, the results will be ordered.
+          minimum: -1
+          maximum: 1
+          description: The order of results is randomized with this seed. If no seed is given, the results will be ordered. Seed must be in range [-1,1].
         skip:
           type: integer
         limit:
