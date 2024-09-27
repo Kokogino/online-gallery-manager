@@ -10,6 +10,7 @@ services:
     depends_on:
       - db
     environment:
+      - SERVER_PORT=36458
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ogm
       - SPRING_DATASOURCE_USERNAME=${OGM_DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${OGM_DB_PASSWORD}

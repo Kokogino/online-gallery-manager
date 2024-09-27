@@ -8,6 +8,7 @@ public enum BusinessReason implements Reason {
 	// use this reason if you got into troubles because of bad input from anywhere
 	ERROR_INPUT_VALIDATION_FAILED("res.error.input.validation.failed", 6000),
 	ERROR_INPUT_REQUIRED("res.error.input.required", 6001),
+	ERROR_TAG_NAME_NOT_UNIQUE("res.error.tag.name.not.unique", 6002),
 
 	// these reasons are special cases where the bad input is an identifier for a resource which can not be found by the system
 	ERROR_TAG_NOT_EXISTENT("res.error.tag.not.existent", 6500);
