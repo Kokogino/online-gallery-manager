@@ -2,6 +2,8 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version '3.3.4'
   id 'io.spring.dependency-management' version '1.1.6'
+  id 'org.openapi.generator' version '7.8.0'
+  id 'idea'
 }
 
 group = 'com.kokogino'
@@ -38,8 +40,51 @@ dependencies {
   annotationProcessor 'org.projectlombok:lombok'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 }
 
 tasks.named('test') {
   useJUnitPlatform()
+}
+
+// api
+openApiGenerate {
+  generatorName = "spring"
+  inputSpec = "${projectDir}/contract/ogm-backend.yaml".toString()
+  outputDir = "${layout.buildDirectory.get()}/generated/openapi".toString()
+  library = "spring-boot"
+  configOptions = [
+    oas3: "true",
+    useSpringController: "true",
+    useSpringfox: "false",
+    useJakartaEe: "true",
+    openApiNullable: "false"
+  ]
+  generateModelTests = false
+  generateModelDocumentation = false
+  generateApiTests = false
+  generateApiDocumentation = false
+  additionalProperties = [
+    "modelPackage" : "com.kokogino.ogm.backend.genapi.business.dto",
+    "apiPackage"   : "com.kokogino.ogm.backend.genapi.business.controller",
+    "interfaceOnly": "true",
+    "useTags"      : "true"
+  ]
+}
+
+compileJava.dependsOn tasks.openApiGenerate
+
+sourceSets {
+  main {
+    java {
+      srcDirs += ["${projectDir}/build/generated/openapi/src/main/java"]
+    }
+  }
+}
+
+idea {
+  module {
+    // Marks the already(!) added srcDir as "generated"
+    generatedSourceDirs += file("${projectDir}/build/generated/openapi/src/main/java")
+  }
 }

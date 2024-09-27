@@ -1,0 +1,863 @@
+openapi: 3.0.3
+
+info:
+  title: OGM Backend API
+  description: API exposed by the backend service
+  version: "1.0"
+
+servers:
+  - url: http://localhost:36458
+    description: local dev deployment
+
+tags:
+  - name: Image
+    description: Operations on images.
+  - name: Gallery
+    description: Operations on galleries.
+  - name: Gallery Metadata
+    description: Operations on gallery metadata.
+  - name: Tag
+    description: Operations on tags.
+
+paths:
+  #######################################
+  # Image Resource                      #
+  #######################################
+  /images:
+    post:
+      tags:
+        - Image
+      summary: Create images
+      description: Returns the created images
+      operationId: createImage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateImagesDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageResponse'
+  /images/{id}:
+    get:
+      tags:
+        - Image
+      summary: Get the image by its Id
+      description: Returns the requested image
+      operationId: getImageById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageResponse'
+    put:
+      tags:
+        - Image
+      summary: Update an image
+      description: Returns the updated image
+      operationId: updateImage
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateImageDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageResponse'
+    delete:
+      tags:
+        - Image
+      summary: Delete an image
+      description: Deletes an image by the given Id
+      operationId: deleteImageById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "204":
+          description: Successful Operation
+  /images/find:
+    post:
+      tags:
+        - Image
+      summary: Find images with filters
+      description: Returns a page of images according to the filters
+      operationId: findImages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindImagesDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindImagesResponse'
+  #######################################
+  # Gallery Resource                    #
+  #######################################
+  /galleries:
+    get:
+      tags:
+        - Gallery
+      summary: Get all galleries
+      description: Returns all galleries
+      operationId: getAllGalleries
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GalleryResponse'
+  /galleries/{id}:
+    get:
+      tags:
+        - Gallery
+      summary: Get the gallery by its Id
+      description: Returns the requested gallery
+      operationId: getGalleryById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryResponse'
+    put:
+      tags:
+        - Gallery
+      summary: Update a gallery
+      description: Returns the updated gallery
+      operationId: updateGallery
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGalleryDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryResponse'
+    delete:
+      tags:
+        - Gallery
+      summary: Delete a gallery
+      description: Deletes a gallery by the given Id
+      operationId: deleteGalleryById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "204":
+          description: Successful Operation
+  /galleries/{id}/images:
+    post:
+      tags:
+        - Gallery
+      summary: Find images of a gallery with filters
+      description: Returns a page of images of a gallery according to the filters
+      operationId: findImagesOfGallery
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindImagesDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindImagesResponse'
+  #######################################
+  # Gallery Metadata Resource           #
+  #######################################
+  /galleryMetadata:
+    get:
+      tags:
+        - Gallery Metadata
+      summary: Get all gallery metadata
+      description: Returns all gallery metadata
+      operationId: getAllGalleryMetadata
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GalleryMetadataResponse'
+    post:
+      tags:
+        - Gallery Metadata
+      summary: Create gallery metadata
+      description: Returns the created gallery metadata
+      operationId: createGalleryMetadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGalleryMetadataDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryMetadataResponse'
+  /galleryMetadata/{id}:
+    put:
+      tags:
+        - Gallery Metadata
+      summary: Update a gallery metadata
+      description: Returns the updated gallery metadata
+      operationId: updateGalleryMetadata
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGalleryMetadataDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GalleryMetadataResponse'
+    delete:
+      tags:
+        - Gallery Metadata
+      summary: Delete a gallery metadata
+      description: Deletes a gallery metadata by the given Id
+      operationId: deleteGalleryMetadataById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "204":
+          description: Successful Operation
+  #######################################
+  # Tag Resource                        #
+  #######################################
+  /tags:
+    get:
+      tags:
+        - Tag
+      summary: Get all tags
+      description: Returns all tags
+      operationId: getAllTags
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TagResponse'
+    post:
+      tags:
+        - Tag
+      summary: Create tag
+      description: Returns the created tag
+      operationId: createTag
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponse'
+  /tags/{id}:
+    put:
+      tags:
+        - Tag
+      summary: Update a tag
+      description: Returns the updated tag
+      operationId: updateTag
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponse'
+    delete:
+      tags:
+        - Tag
+      summary: Delete a tag
+      description: Deletes a tag by the given Id
+      operationId: deleteTagById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "204":
+          description: Successful Operation
+
+components:
+  parameters:
+    pathId:
+      name: id
+      in: path
+      required: true
+      description: The ID of the corresponding object.
+      schema:
+        $ref: '#/components/schemas/Id'
+  responses:
+    400:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    500:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    404:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    403:
+      description: Request refused
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+    501:
+      description: Implementation Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReasonBasedExceptionDto'
+  schemas:
+    ReasonBasedExceptionDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The code of the error.
+          format: int32
+        reason:
+          type: string
+          description: The reason for the error.
+        message:
+          type: string
+          description: The message containing why the error was returned by the application.
+      description: Response for a specific error when an operation can not be completed successfully.
+    Id:
+      type: integer
+      format: int64
+    CreateImagesDto:
+      required:
+        - galleryChoice
+        - host
+        - bbCode
+      type: object
+      properties:
+        galleryChoice:
+          $ref: '#/components/schemas/GalleryChoice'
+        newGalleryName:
+          type: string
+          description: Only set if galleryChoice is NEW_GALLERY
+        galleryId:
+          $ref: '#/components/schemas/Id'
+        host:
+          $ref: '#/components/schemas/ImageHost'
+        bbCode:
+          type: string
+        editUrl:
+          type: string
+    ImageResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        galleryId:
+          $ref: '#/components/schemas/Id'
+        thumbnailUrl:
+          type: string
+        pureImageUrl:
+          type: string
+        imageUrl:
+          type: string
+        host:
+          $ref: '#/components/schemas/ImageHost'
+        editUrl:
+          type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageTagResponse'
+    ImageTagResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        tagId:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        showTag:
+          type: boolean
+    UpdateImageDto:
+      type: object
+      properties:
+        galleryId:
+          $ref: '#/components/schemas/Id'
+        tagIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+    GalleryResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        editUrl:
+          type: string
+        host:
+          $ref: '#/components/schemas/ImageHost'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryTagResponse'
+        metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/GalleryMetadataEntryResponse'
+    GalleryTagResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        tagId:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        showTag:
+          type: boolean
+    GalleryMetadataEntryResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        galleryMetadataId:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/GalleryMetadataType'
+        value:
+          type: string
+    UpdateGalleryDto:
+      type: object
+      properties:
+        name:
+          type: string
+        tagIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        galleryMetadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpdateGalleryMetadataEntryDto'
+    UpdateGalleryMetadataEntryDto:
+      required:
+        - galleryMetadataId
+      type: object
+      properties:
+        galleryMetadataId:
+          $ref: '#/components/schemas/Id'
+        value:
+          type: string
+    FindImagesDto:
+      required:
+        - skip
+        - limit
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/FilterExpressionDto"
+        randomnessSeed:
+          type: number
+          description: The order of results is randomized with this seed. If no seed is given, the results will be ordered.
+        skip:
+          type: integer
+        limit:
+          type: integer
+    FilterExpressionDto:
+      oneOf:
+        - $ref: '#/components/schemas/TagFilterExpressionDto'
+        - $ref: '#/components/schemas/NotFilterExpressionDto'
+        - $ref: '#/components/schemas/AndFilterExpressionDto'
+        - $ref: '#/components/schemas/OrFilterExpressionDto'
+      discriminator:
+        propertyName: objectType
+        mapping:
+          tag: '#/components/schemas/TagFilterExpressionDto'
+          not: '#/components/schemas/NotFilterExpressionDto'
+          and: '#/components/schemas/AndFilterExpressionDto'
+          or: '#/components/schemas/OrFilterExpressionDto'
+    TagFilterExpressionDto:
+      required:
+        - objectType
+      type: object
+      properties:
+        objectType:
+          type: string
+        tagId:
+          $ref: "#/components/schemas/Id"
+    NotFilterExpressionDto:
+      required:
+        - objectType
+      type: object
+      properties:
+        objectType:
+          type: string
+        expression:
+          $ref: '#/components/schemas/FilterExpressionDto'
+    AndFilterExpressionDto:
+      required:
+        - objectType
+      type: object
+      properties:
+        objectType:
+          type: string
+        first:
+          $ref: '#/components/schemas/FilterExpressionDto'
+        second:
+          $ref: '#/components/schemas/FilterExpressionDto'
+    OrFilterExpressionDto:
+      required:
+        - objectType
+      type: object
+      properties:
+        objectType:
+          type: string
+        first:
+          $ref: '#/components/schemas/FilterExpressionDto'
+        second:
+          $ref: '#/components/schemas/FilterExpressionDto'
+    FindImagesResponse:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int64
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageResponse'
+    GalleryMetadataResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/GalleryMetadataType'
+    CreateGalleryMetadataDto:
+      required:
+        - name
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/GalleryMetadataType'
+    UpdateGalleryMetadataDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+    TagResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+        showTag:
+          type: boolean
+    CreateTagDto:
+      required:
+        - name
+        - showTag
+      type: object
+      properties:
+        name:
+          type: string
+        showTag:
+          type: boolean
+    UpdateTagDto:
+      required:
+        - name
+        - showTag
+      type: object
+      properties:
+        name:
+          type: string
+        showTag:
+          type: boolean
+
+
+    GalleryChoice:
+      type: string
+      enum:
+        - "NO_GALLERY"
+        - "ADD_TO_GALLERY"
+        - "NEW_GALLERY"
+    ImageHost:
+      type: string
+      enum:
+        - "IMGBOX"
+    GalleryMetadataType:
+      type: string
+      enum:
+        - "STRING"
+        - "DATE"
+        - "INTEGER"
+        - "DOUBLE"
