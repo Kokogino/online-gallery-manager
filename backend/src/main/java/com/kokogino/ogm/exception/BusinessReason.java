@@ -9,9 +9,11 @@ public enum BusinessReason implements Reason {
 	ERROR_INPUT_VALIDATION_FAILED("res.error.input.validation.failed", 6000),
 	ERROR_INPUT_REQUIRED("res.error.input.required", 6001),
 	ERROR_TAG_NAME_NOT_UNIQUE("res.error.tag.name.not.unique", 6002),
+	ERROR_GALLERY_METADATA_NAME_NOT_UNIQUE("res.error.gallery.metadata.name.not.unique", 6003),
 
 	// these reasons are special cases where the bad input is an identifier for a resource which can not be found by the system
-	ERROR_TAG_NOT_EXISTENT("res.error.tag.not.existent", 6500);
+	ERROR_TAG_NOT_EXISTENT("res.error.tag.not.existent", 6500),
+	ERROR_GALLERY_METADATA_NOT_EXISTENT("res.error.gallery.metadata.not.existent", 6501);
 
 	private final String reason;
 
