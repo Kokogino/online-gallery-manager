@@ -14,7 +14,8 @@ public enum BusinessReason implements Reason {
 	// these reasons are special cases where the bad input is an identifier for a resource which can not be found by the system
 	ERROR_TAG_NOT_EXISTENT("res.error.tag.not.existent", 6500),
 	ERROR_GALLERY_METADATA_NOT_EXISTENT("res.error.gallery.metadata.not.existent", 6501),
-	ERROR_GALLERY_NOT_EXISTENT("res.error.gallery.not.existent", 6502);
+	ERROR_GALLERY_NOT_EXISTENT("res.error.gallery.not.existent", 6502),
+	ERROR_IMAGE_NOT_EXISTENT("res.error.image.not.existent", 6503);
 
 	private final String reason;
 

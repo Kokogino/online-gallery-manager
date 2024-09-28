@@ -2,7 +2,6 @@ package com.kokogino.ogm.business.repository;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.datamodel.entity.*;
@@ -42,7 +41,24 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
 
   @Override
   public Collection<Image> findImagesByFilter(FindImagesDto findImagesDto) {
-    return List.of();
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Image> cq = cb.createQuery(Image.class);
+    Root<Image> image = cq.from(Image.class);
+    cq.select(image);
+
+    Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
+
+    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
+    cq.where(filterPredicate);
+
+    setSeed(findImagesDto.getRandomnessSeed());
+
+    cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
+
+    return entityManager.createQuery(cq)
+      .setFirstResult(findImagesDto.getSkip())
+      .setMaxResults(findImagesDto.getLimit())
+      .getResultList();
   }
 
   @Override
@@ -50,7 +66,7 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Image> image = cq.from(Image.class);
-    cq.select(cb.count(image));
+    cq.select(cb.countDistinct(image));
 
     Join<Image, Gallery> gallery = image.join("gallery");
     Predicate galleryPredicate = cb.equal(gallery.get("id"), galleryId);
@@ -63,7 +79,17 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
 
   @Override
   public Long countImagesByFilter(FilterExpressionDto filter) {
-    return 0L;
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Image> image = cq.from(Image.class);
+    cq.select(cb.countDistinct(image));
+
+    Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
+
+    Predicate filterPredicate = createPredicateWithFilter(filter, image, gallery, cb, cq);
+    cq.where(filterPredicate);
+
+    return entityManager.createQuery(cq).getSingleResult();
   }
 
   private Predicate createPredicateWithFilter(FilterExpressionDto filter, Root<Image> image, Join<Image, Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

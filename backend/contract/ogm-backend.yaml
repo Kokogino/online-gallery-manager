@@ -29,7 +29,7 @@ paths:
         - Image
       summary: Create images
       description: Returns the created images
-      operationId: createImage
+      operationId: createImages
       requestBody:
         content:
           application/json:

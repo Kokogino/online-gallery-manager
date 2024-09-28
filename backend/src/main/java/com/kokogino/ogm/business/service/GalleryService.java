@@ -22,14 +22,14 @@ public class GalleryService {
 
   public void deleteGalleryById(Long id) {
     Gallery gallery = galleryRepository.findById(id)
-      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_TAG_NOT_EXISTENT));
+      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
     imageRepository.deleteAll(gallery.getImages());
     galleryRepository.deleteById(id);
   }
 
   public FindImagesResponse findImages(Long galleryId, FindImagesDto findImagesDto) {
     if (!galleryRepository.existsById(galleryId)) {
-      throw new BusinessException(String.format("Gallery with id '%s' does not exist", galleryId), BusinessReason.ERROR_TAG_NOT_EXISTENT);
+      throw new BusinessException(String.format("Gallery with id '%s' does not exist", galleryId), BusinessReason.ERROR_GALLERY_NOT_EXISTENT);
     }
     Collection<Image> images = imageRepository.findImagesOfGalleryByFilter(galleryId, findImagesDto);
     Long totalCount = imageRepository.countImagesOfGalleryByFilter(galleryId, findImagesDto.getFilter());
@@ -47,12 +47,12 @@ public class GalleryService {
   public GalleryResponse getGalleryById(Long id) {
     return galleryRepository.findById(id)
       .map(GalleryService::galleryToResponse)
-      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_TAG_NOT_EXISTENT));
+      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
   }
 
   public GalleryResponse updateGallery(Long id, UpdateGalleryDto updateGalleryDto) {
     Gallery gallery = galleryRepository.findById(id)
-      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_TAG_NOT_EXISTENT));
+      .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
     gallery.setName(updateGalleryDto.getName());
     gallery.setGalleryTags(upsertGalleryTags(gallery, updateGalleryDto.getTagIds()));
     gallery.setGalleryMetadataEntries(upsertGalleryMetadataEntries(gallery, updateGalleryDto.getGalleryMetadata()));
