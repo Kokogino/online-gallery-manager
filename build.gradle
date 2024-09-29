@@ -12,4 +12,5 @@ dockerCompose {
 
 composeBuild {
   dependsOn ':backend:assemble'
+  dependsOn ':ui:generateClients'
 }

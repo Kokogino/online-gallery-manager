@@ -1,0 +1,29 @@
+import com.github.gradle.node.npm.task.NpmTask
+
+plugins {
+  id 'java'
+  id 'com.github.node-gradle.node' version '7.1.0'
+}
+
+node {
+  version = '20.17.0'
+  download = System.getenv("NODE_SKIP_DOWNLOAD") ? false : true
+  npmInstallCommand = System.getenv("NPM_CI") ? 'ci' : 'install'
+}
+
+// api
+task generateClients(type: NpmTask){
+  dependsOn tasks.npmInstall
+  args = ['run', 'openapi-generate']
+  inputs.files(
+    "${rootProject.rootDir}/backend/contract/ogm-backend.yaml",
+    "openapitools.json"
+  )
+  outputs.dir("${project.projectDir}/src/app/gen")
+  outputs.cacheIf { true }
+}
+
+clean {
+  delete 'dist'
+  delete 'src/app/gen'
+}
