@@ -1,0 +1,47 @@
+@use '@angular/material' as mat;
+@import 'variables';
+
+@include mat.core();
+
+:root {
+  @include setCSSProperties($ui-dark-theme);
+
+  @include setCSSProperty(--side-space-width, 32px);
+
+  @media screen and (max-width: $screen-size-tablet - 1) {
+    @include setCSSProperty(--side-space-width, 8px);
+  }
+
+  @media screen and (max-width: $screen-size-desktop - 1) {
+    @include setCSSProperty(--side-space-width, 16px);
+  }
+
+  @media screen and (min-width: $screen-size-desktop) {
+    @include setCSSProperty(--side-space-width, 32px);
+  }
+
+  @include mat.all-component-themes($ui-dark-theme);
+}
+
+.light-theme {
+  @include setCSSProperties($ui-light-theme);
+  @include mat.all-component-colors($ui-light-theme);
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: $background-color;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba($color-on-background-rgb, 0.3);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba($color-on-background-rgb, 0.5);
+}

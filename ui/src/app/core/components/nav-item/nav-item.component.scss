@@ -1,0 +1,21 @@
+.nav-button {
+  text-transform: uppercase;
+  height: 40px;
+
+  &.active {
+    display: none;
+
+    &.show {
+      display: inline-flex;
+    }
+  }
+
+  &.inactive.hide {
+    display: none;
+  }
+
+  .nav-item-text {
+    padding-left: 4px;
+    line-height: normal;
+  }
+}

@@ -1,0 +1,10 @@
+<mat-nav-list>
+  @for (page of pages; track page.text) {
+    <a mat-list-item [routerLink]="page.route" routerLinkActive="active" class="item">
+      <div class="vertical-center">
+        <mat-icon class="material-symbols-outlined">{{ page.icon }}</mat-icon>
+        {{ page.text }}
+      </div>
+    </a>
+  }
+</mat-nav-list>

@@ -1,0 +1,27 @@
+@import 'variables';
+
+header {
+  margin: 0 $side-space-width;
+  height: 64px;
+
+  .title {
+    margin: 0;
+  }
+
+  .divider {
+    margin: 0 16px;
+    height: 80%;
+  }
+
+  ogm-nav-item {
+    margin-right: 8px;
+  }
+
+  .theme-button {
+    margin-left: 8px;
+  }
+
+  .menu-button {
+    margin-right: 8px;
+  }
+}

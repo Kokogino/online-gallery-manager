@@ -1,0 +1,34 @@
+@import 'ogm-app-theme';
+@import 'variables';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+}
+
+a {
+  color: $link-color;
+}
+
+.vertical-center {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.flex-spacer {
+  flex-grow: 1;
+}

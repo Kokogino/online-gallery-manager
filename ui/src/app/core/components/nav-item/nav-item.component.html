@@ -1,0 +1,20 @@
+<button
+  class="nav-button active"
+  color="primary"
+  mat-flat-button
+  [routerLink]="path"
+  routerLinkActive="show"
+  [routerLinkActiveOptions]="{ exact: exactMatch }">
+  <mat-icon class="material-symbols-outlined">{{ icon }}</mat-icon>
+  {{ text }}
+</button>
+<button
+  class="nav-button inactive"
+  color="primary"
+  mat-stroked-button
+  [routerLink]="path"
+  routerLinkActive="hide"
+  [routerLinkActiveOptions]="{ exact: exactMatch }">
+  <mat-icon class="material-symbols-outlined">{{ icon }}</mat-icon>
+  {{ text }}
+</button>

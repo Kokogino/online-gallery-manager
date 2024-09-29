@@ -1,0 +1,21 @@
+.core-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .sidenav {
+    width: 320px;
+    max-width: 80%;
+  }
+
+  .sidenav-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .core-content {
+      flex-grow: 1;
+      overflow: auto;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+
+$screen-size-mobile: 425px;
+$screen-size-tablet: 768px;
+$screen-size-desktop: 1024px;
+
+$ui-dark-theme: mat.m2-define-dark-theme(
+  (
+    link-color: #8ab4f8,
+    color: (
+      primary: mat.m2-define-palette(mat.$m2-blue-palette, 600, 100, 800),
+      accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400),
+      warn: mat.m2-define-palette(mat.$m2-red-palette),
+    ),
+  )
+);
+
+$ui-light-theme: mat.m2-define-light-theme(
+  (
+    link-color: #1a0dab,
+    color: (
+      primary: mat.m2-define-palette(mat.$m2-indigo-palette),
+      accent: mat.m2-define-palette(mat.$m2-pink-palette, 700, 500, 900),
+      warn: mat.m2-define-palette(mat.$m2-red-palette),
+    ),
+  )
+);
+
+@mixin setCSSProperty($var-name, $value) {
+  #{$var-name}: #{$value};
+}
+
+@mixin setColorCSSProperty($var-name, $color) {
+  @include setCSSProperty($var-name, #{red($color), green($color), blue($color)});
+}
+
+@mixin setCSSProperties($theme) {
+  @include setColorCSSProperty(--background-color, map.get(map.get($theme, background), background));
+  @include setColorCSSProperty(--color-on-background, map.get(map.get($theme, foreground), text));
+
+  @include setColorCSSProperty(--color-primary, mat.m2-get-color-from-palette(map.get(map.get($theme, color), primary)));
+  @include setColorCSSProperty(--color-accent, mat.m2-get-color-from-palette(map.get(map.get($theme, color), accent)));
+  @include setColorCSSProperty(--color-warn, mat.m2-get-color-from-palette(map.get(map.get($theme, color), warn)));
+
+  @include setColorCSSProperty(--link-color, map.get($theme, link-color));
+}
+
+$background-color: rgba(var(--background-color));
+$color-on-background-rgb: var(--color-on-background);
+$color-on-background: rgba(var(--color-on-background));
+
+$color-primary: rgba(var(--color-primary));
+$color-primary-rgb: var(--color-primary);
+$color-accent: rgba(var(--color-accent));
+$color-warn: rgba(var(--color-warn));
+
+$link-color: rgba(var(--link-color));
+
+$side-space-width: var(--side-space-width);

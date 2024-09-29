@@ -1,0 +1,31 @@
+<header class="vertical-center">
+  @if (mediaQueryService.isMaximumDesktopQuery.matches) {
+    <button mat-icon-button (click)="sidenav.toggle()" class="menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+
+  <h3 class="title">Online Gallery Manager</h3>
+
+  @if (mediaQueryService.isMinimumDesktopQuery.matches) {
+    <mat-divider class="divider" [vertical]="true" />
+
+    <nav>
+      @for (page of pages; track page.text) {
+        <ogm-nav-item [path]="page.route" [text]="page.text" [icon]="page.icon" />
+      }
+    </nav>
+  }
+
+  <div class="flex-spacer"></div>
+
+  <button mat-icon-button class="theme-button" (click)="toggleTheme()" matTooltip="Change theme">
+    @if (isLightTheme | async) {
+      <mat-icon>dark_mode</mat-icon>
+    } @else {
+      <mat-icon>light_mode</mat-icon>
+    }
+  </button>
+</header>
+
+<mat-divider />

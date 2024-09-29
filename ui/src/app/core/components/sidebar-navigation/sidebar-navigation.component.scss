@@ -1,0 +1,9 @@
+@import 'variables';
+
+.item mat-icon {
+  margin-right: 16px;
+}
+
+.active {
+  background-color: rgba($color-primary-rgb, 0.3);
+}
