@@ -1,0 +1,48 @@
+<h1>Upload Images</h1>
+
+<form [formGroup]="uploadForm" (submit)="upload()" class="upload-form" #form="ngForm">
+  <div class="first-form-col">
+    <ogm-image-host-input formControlName="host" />
+
+    <ogm-gallery-choice-input formControlName="galleryChoice" />
+
+    @switch (uploadForm.controls.galleryChoice.value) {
+      @case (GalleryChoice.NewGallery) {
+        <mat-form-field>
+          <mat-label>New Gallery Name*</mat-label>
+          <input matInput formControlName="newGalleryName" type="text" autocomplete="off" />
+          @if (uploadForm.controls.newGalleryName.errors?.trimmedRequired) {
+            <mat-error>Select a name for the new gallery</mat-error>
+          }
+        </mat-form-field>
+      }
+      @case (GalleryChoice.AddToGallery) {
+        <ogm-autocomplete-input
+          formControlName="gallery"
+          [options]="galleries | async"
+          labelText="Gallery"
+          [optionValue]="getGalleryName"
+          [optionDisplayValue]="getGalleryName">
+          <ng-container validationErrors>
+            @if (uploadForm.controls.gallery.errors?.required) {
+              Select a gallery for the images
+            }
+          </ng-container>
+        </ogm-autocomplete-input>
+      }
+    }
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!isValid()">Upload</button>
+  </div>
+  <div class="second-form-col">
+    <mat-form-field>
+      <mat-label>Edit URL</mat-label>
+      <input matInput formControlName="editUrl" type="text" autocomplete="off" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>BB-Code</mat-label>
+      <textarea matInput formControlName="bbCode" rows="10"></textarea>
+    </mat-form-field>
+  </div>
+</form>
