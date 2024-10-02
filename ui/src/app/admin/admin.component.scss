@@ -7,26 +7,21 @@
   padding: 0 $side-space-width $side-space-width $side-space-width;
   overflow: auto;
 
-  .upload-form {
+  .admin-content {
     display: flex;
+    flex-grow: 1;
     flex-wrap: wrap;
-    column-gap: 16px;
     row-gap: 16px;
+    column-gap: 16px;
+    overflow: auto;
 
-    .first-form-col {
-      display: flex;
+    .tags,
+    .gallery-metadata {
       flex-grow: 1;
-      flex-direction: column;
-      row-gap: 16px;
       min-width: 320px;
-    }
-
-    .second-form-col {
       display: flex;
-      flex-grow: 10;
-      flex-direction: column;
-      row-gap: 16px;
-      min-width: 320px;
+      overflow: auto;
+      max-height: 100%;
     }
   }
 }

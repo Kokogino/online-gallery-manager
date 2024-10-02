@@ -19,9 +19,9 @@
   @media screen and (min-width: $screen-size-desktop) {
     @include setCSSProperty(--side-space-width, 32px);
   }
-
-  @include mat.all-component-themes($ui-dark-theme);
 }
+
+@include mat.all-component-themes($ui-dark-theme);
 
 .light-theme {
   @include setCSSProperties($ui-light-theme);

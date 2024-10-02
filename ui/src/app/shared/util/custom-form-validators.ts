@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'lodash-es';
 import { first, map } from 'rxjs/operators';
 import { MatInput } from '@angular/material/input';
+import { compareStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 
 export class CustomFormValidators {
   private static _initialize = ((): boolean => {
@@ -34,7 +35,7 @@ export class CustomFormValidators {
     return (control: AbstractControl): Observable<ValidationErrors | null> =>
       array$.pipe(
         map((array) => {
-          const count = filter(array, (arrayValue) => control.value.trim().toLowerCase() === arrayValue?.toLowerCase()).length;
+          const count = filter(array, (arrayValue) => compareStringsIgnoringAccentsAndCase(control.value.trim(), arrayValue) === 0).length;
           return count > n ? { asyncMaxNTimesIn: count } : null;
         }),
         first(),
@@ -43,7 +44,7 @@ export class CustomFormValidators {
 
   public static maxNTimesIn(n: number, array: Array<string>): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const count = filter(array, (arrayValue) => control.value.trim().toLowerCase() === arrayValue?.toLowerCase()).length;
+      const count = filter(array, (arrayValue) => compareStringsIgnoringAccentsAndCase(control.value.trim(), arrayValue) === 0).length;
       return count > n ? { maxNTimesIn: count } : null;
     };
   }

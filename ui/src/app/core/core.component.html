@@ -1,12 +1,10 @@
 <mat-sidenav-container class="core-container">
   <mat-sidenav #sidenavMobile class="sidenav" mode="over" opened="false" fixedInViewport="true">
-    <ogm-sidebar-navigation />
+    <ogm-sidebar-navigation [sidenav]="sidenavMobile" />
   </mat-sidenav>
   <mat-sidenav-content class="sidenav-content">
     <ogm-header [sidenav]="sidenavMobile" />
 
-    <div class="core-content">
-      <ng-content />
-    </div>
+    <ng-content />
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,8 +1,8 @@
 <mat-nav-list>
   @for (page of pages; track page.text) {
-    <a mat-list-item [routerLink]="page.route" routerLinkActive="active" class="item">
+    <a mat-list-item [routerLink]="page.route" routerLinkActive="active" class="item" (click)="sidenav.close()">
       <div class="vertical-center">
-        <mat-icon class="material-symbols-outlined">{{ page.icon }}</mat-icon>
+        <mat-icon>{{ page.icon }}</mat-icon>
         {{ page.text }}
       </div>
     </a>

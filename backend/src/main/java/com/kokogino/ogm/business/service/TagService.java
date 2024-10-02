@@ -11,6 +11,7 @@ import com.kokogino.ogm.datamodel.entity.Tag;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,7 @@ public class TagService {
   }
 
   public List<TagResponse> getAllTags() {
-    return tagRepository.findAll().stream().map(TagService::entityToResponse).toList();
+    return tagRepository.findAll(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).stream().map(TagService::entityToResponse).toList();
   }
 
   public TagResponse updateTag(Long id, UpdateTagDto updateTagDto) {

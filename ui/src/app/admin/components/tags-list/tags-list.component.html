@@ -1,0 +1,79 @@
+<div class="vertical-center title">
+  <h2>Tags</h2>
+  @if (!isEditingOrCreating()) {
+    <button mat-icon-button matTooltip="Add tag" class="small-icon-button" (click)="createNewTag()">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
+</div>
+
+@if (!loading) {
+  @if (newTagForm) {
+    <form [formGroup]="newTagForm" (submit)="saveNewTag()" class="tag vertical-center">
+      <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button tag-icon" (click)="cancelNewTag()">
+        <mat-icon>cancel</mat-icon>
+      </button>
+      <div class="tag-detail">
+        <div class="vertical-center">
+          <mat-form-field>
+            <mat-label>Tag Name</mat-label>
+            <input matInput formControlName="tagName" type="text" autocomplete="off" />
+            @if (newTagForm.controls.tagName.errors?.maxNTimesIn > 0) {
+              <mat-error>Tag name already used</mat-error>
+            }
+          </mat-form-field>
+          <button mat-icon-button matTooltip="Save new tag" type="submit" class="tag-form-button" [disabled]="!newTagForm.valid">
+            <mat-icon>save</mat-icon>
+          </button>
+        </div>
+        <mat-checkbox formControlName="showTag">Show tag</mat-checkbox>
+      </div>
+    </form>
+    <mat-divider />
+  }
+
+  <div class="tag-list">
+    @for (tag of tags; track tag.id) {
+      @if (tag.id !== editingTagId) {
+        <div class="tag vertical-center">
+          <button mat-icon-button matTooltip="Edit tag" class="tag-icon" (click)="editTag(tag)" [disabled]="isEditingOrCreating()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <div class="tag-detail">
+            <div class="tag-name">
+              {{ tag.name }}
+            </div>
+            <div class="show-tag">{{ tag.showTag ? 'Show tag' : 'Hide tag' }}</div>
+          </div>
+        </div>
+      } @else {
+        <mat-divider />
+        <form [formGroup]="editTagForm" (submit)="saveEditingTag()" class="tag vertical-center">
+          <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button tag-icon" (click)="cancelEditingTag()">
+            <mat-icon>cancel</mat-icon>
+          </button>
+          <div class="tag-detail">
+            <div class="vertical-center">
+              <mat-form-field>
+                <mat-label>Tag Name</mat-label>
+                <input matInput formControlName="tagName" type="text" autocomplete="off" />
+                @if (editTagForm.controls.tagName.errors?.maxNTimesIn > 0) {
+                  <mat-error>Tag name already used</mat-error>
+                }
+              </mat-form-field>
+              <button mat-icon-button matTooltip="Save tag" type="submit" class="tag-form-button" [disabled]="!editTagForm.valid">
+                <mat-icon>save</mat-icon>
+              </button>
+            </div>
+            <mat-checkbox formControlName="showTag">Show tag</mat-checkbox>
+          </div>
+        </form>
+        <mat-divider />
+      }
+    } @empty {
+      <ogm-no-data-message>No Tags created</ogm-no-data-message>
+    }
+  </div>
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

@@ -32,3 +32,20 @@ a {
 .flex-spacer {
   flex-grow: 1;
 }
+
+.mat-mdc-icon-button.small-icon-button {
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+
+  .mat-mdc-button-touch-target {
+    width: 32px;
+    height: 32px;
+  }
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+}
