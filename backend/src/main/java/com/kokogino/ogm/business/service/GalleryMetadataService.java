@@ -11,6 +11,7 @@ import com.kokogino.ogm.datamodel.entity.GalleryMetadata;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,10 @@ public class GalleryMetadataService {
   }
 
   public List<GalleryMetadataResponse> getAllGalleryMetadata() {
-    return galleryMetadataRepository.findAll().stream().map(GalleryMetadataService::entityToResponse).toList();
+    return galleryMetadataRepository.findAll(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+      .stream()
+      .map(GalleryMetadataService::entityToResponse)
+      .toList();
   }
 
   public GalleryMetadataResponse updateGalleryMetadata(Long id, UpdateGalleryMetadataDto updateGalleryMetadataDto) {

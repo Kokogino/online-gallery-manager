@@ -1,0 +1,64 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  overflow: auto;
+  flex-direction: column;
+
+  .title {
+    margin-bottom: 16px;
+
+    h2 {
+      margin: 0;
+    }
+
+    button {
+      margin-left: 8px;
+    }
+  }
+
+  .metadata-search-field {
+    margin: 8px 0;
+  }
+
+  mat-form-field,
+  .metadata-search-field {
+    width: 320px;
+    max-width: 100%;
+  }
+
+  .metadata-form-button {
+    margin-left: 8px;
+  }
+
+  .metadata-list {
+    flex-grow: 1;
+    overflow: auto;
+  }
+
+  .type-input {
+    margin-top: 8px;
+  }
+
+  .cancel-button {
+    color: $color-warn;
+  }
+
+  .metadata {
+    padding: 8px 0;
+
+    .metadata-detail {
+      flex-grow: 1;
+      width: 1px;
+
+      .metadata-type {
+        opacity: 0.5;
+      }
+    }
+
+    .metadata-icon {
+      margin-right: 8px;
+    }
+  }
+}

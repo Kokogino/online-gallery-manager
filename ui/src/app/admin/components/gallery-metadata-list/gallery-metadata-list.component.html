@@ -1,0 +1,112 @@
+<div class="vertical-center title">
+  <h2>Gallery Metadata</h2>
+  @if (!isEditingOrCreating()) {
+    <button mat-icon-button matTooltip="Add gallery metadata" class="small-icon-button" (click)="createNewMetadata()">
+      <mat-icon>add</mat-icon>
+    </button>
+  }
+</div>
+
+@if (!loading && newMetadataForm) {
+  <form [formGroup]="newMetadataForm" (submit)="saveNewMetadata()" class="metadata vertical-center">
+    <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button metadata-icon" (click)="cancelNewMetadata()">
+      <mat-icon>cancel</mat-icon>
+    </button>
+    <div class="metadata-detail">
+      <div class="vertical-center">
+        <mat-form-field>
+          <mat-label>Gallery Metadata Name</mat-label>
+          <input matInput formControlName="metadataName" type="text" autocomplete="off" />
+          @if (newMetadataForm.controls.metadataName.errors?.maxNTimesIn > 0) {
+            <mat-error>Metadata name already used</mat-error>
+          }
+        </mat-form-field>
+        <button
+          mat-icon-button
+          matTooltip="Save new gallery metadata"
+          type="submit"
+          class="metadata-form-button"
+          [disabled]="!newMetadataForm.valid">
+          <mat-icon>save</mat-icon>
+        </button>
+      </div>
+      <mat-form-field class="type-input">
+        <mat-select formControlName="metadataType">
+          @for (metadataType of types; track metadataType) {
+            <mat-option [value]="metadataType">
+              {{ typeToString(metadataType) }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </form>
+  <mat-divider />
+}
+
+<ogm-autocomplete-input
+  class="metadata-search-field"
+  isSearchInput
+  [options]="galleryMetadata"
+  [formControl]="searchGalleryMetadata"
+  [optionDisplayValue]="getMetadataName"
+  [optionValue]="getMetadataName" />
+
+@if (!loading) {
+  <div class="metadata-list">
+    @for (metadata of galleryMetadata; track metadata.id) {
+      @if (metadata.id !== editingMetadataId) {
+        <div class="metadata vertical-center" [ngClass]="{ hide: isMetadataFiltered(metadata) }">
+          <button
+            mat-icon-button
+            matTooltip="Edit gallery metadata"
+            class="metadata-icon"
+            (click)="editMetadata(metadata)"
+            [disabled]="isEditingOrCreating()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <div class="metadata-detail">
+            <div class="metadata-name">
+              {{ metadata.name }}
+            </div>
+            <div class="metadata-type">{{ typeToString(metadata.type) }}</div>
+          </div>
+        </div>
+      } @else {
+        <mat-divider />
+        <form [formGroup]="editMetadataForm" (submit)="saveEditingMetadata()" class="metadata vertical-center">
+          <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button metadata-icon" (click)="cancelEditingMetadata()">
+            <mat-icon>cancel</mat-icon>
+          </button>
+          <div class="metadata-detail">
+            <div class="vertical-center">
+              <mat-form-field>
+                <mat-label>Gallery Metadata Name</mat-label>
+                <input matInput formControlName="metadataName" type="text" autocomplete="off" />
+                @if (editMetadataForm.controls.metadataName.errors?.maxNTimesIn > 0) {
+                  <mat-error>Metadata name already used</mat-error>
+                }
+              </mat-form-field>
+              <button
+                mat-icon-button
+                matTooltip="Save gallery metadata"
+                type="submit"
+                class="metadata-form-button"
+                [disabled]="!editMetadataForm.valid">
+                <mat-icon>save</mat-icon>
+              </button>
+            </div>
+            <div class="metadata-type">
+              <span matTooltip="Type is not modifieable">Type: {{ typeToString(metadata.type) }}</span>
+            </div>
+          </div>
+        </form>
+        <mat-divider />
+      }
+    } @empty {
+      <ogm-no-data-message>No gallery metadata created</ogm-no-data-message>
+    }
+  </div>
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

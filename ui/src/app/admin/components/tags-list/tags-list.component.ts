@@ -72,16 +72,16 @@ export class TagsListComponent implements OnInit {
     return Boolean(this.newTagForm || this.editTagForm);
   }
 
-  cancelEditingTag() {
+  cancelEditingTag(): void {
     this.editingTagId = undefined;
     this.editTagForm = undefined;
   }
 
-  cancelNewTag() {
+  cancelNewTag(): void {
     this.newTagForm = undefined;
   }
 
-  editTag(tag: TagResponse) {
+  editTag(tag: TagResponse): void {
     if (!this.isEditingOrCreating()) {
       const tagNames = this.tags.filter((t) => t.id !== tag.id).map((tag) => tag.name);
       this.editTagForm = this.formBuilder.group({
@@ -92,7 +92,7 @@ export class TagsListComponent implements OnInit {
     }
   }
 
-  createNewTag() {
+  createNewTag(): void {
     const tagNames = this.tags.map((tag) => tag.name);
     this.newTagForm = this.formBuilder.group({
       tagName: ['', [CustomFormValidators.trimmedRequired, CustomFormValidators.maxNTimesIn(0, tagNames)]],
@@ -100,7 +100,7 @@ export class TagsListComponent implements OnInit {
     });
   }
 
-  saveEditingTag() {
+  saveEditingTag(): void {
     if (this.editTagForm.valid) {
       this.tagService
         .updateTag(this.editingTagId, {
@@ -116,7 +116,7 @@ export class TagsListComponent implements OnInit {
     }
   }
 
-  saveNewTag() {
+  saveNewTag(): void {
     if (this.newTagForm.valid) {
       this.tagService
         .createTag({
