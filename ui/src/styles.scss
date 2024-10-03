@@ -25,12 +25,20 @@ a {
 }
 
 .vertical-center {
-  display: flex !important;
+  display: flex;
   align-items: center !important;
 }
 
 .flex-spacer {
   flex-grow: 1;
+}
+
+.hide {
+  display: none;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  visibility: hidden;
 }
 
 .mat-mdc-icon-button.small-icon-button {

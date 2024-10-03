@@ -1,5 +1,5 @@
 import { booleanAttribute, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatFormField, MatInput } from '@angular/material/input';
+import { MatFormField, MatInput, MatPrefix, MatSuffix } from '@angular/material/input';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { map, Observable, startWith, tap } from 'rxjs';
@@ -24,6 +24,8 @@ import { MatError, MatLabel } from '@angular/material/form-field';
     MatIconButton,
     MatLabel,
     MatError,
+    MatPrefix,
+    MatSuffix,
   ],
   templateUrl: './autocomplete-input.component.html',
   styleUrl: './autocomplete-input.component.scss',

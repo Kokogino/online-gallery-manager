@@ -7,12 +7,15 @@ import { NoDataMessageComponent } from '@app/shared/components/no-data-message/n
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatError, MatFormField, MatInput } from '@angular/material/input';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TagForm } from '@app/admin/model/tag-form';
 import { CustomFormValidators } from '@app/shared/util/custom-form-validators';
 import { MatLabel } from '@angular/material/form-field';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
+import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
+import { NgClass } from '@angular/common';
+import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
 
 @Component({
   selector: 'ogm-tags-list',
@@ -30,12 +33,16 @@ import { MatDivider } from '@angular/material/divider';
     MatError,
     MatCheckbox,
     MatDivider,
+    NgClass,
+    AutocompleteInputComponent,
   ],
   templateUrl: './tags-list.component.html',
   styleUrl: './tags-list.component.scss',
 })
 export class TagsListComponent implements OnInit {
   tags: TagResponse[];
+
+  searchTags = new FormControl('');
 
   loading = true;
 
@@ -55,6 +62,10 @@ export class TagsListComponent implements OnInit {
       .getAllTags()
       .pipe(finalize(() => (this.loading = false)))
       .subscribe((tags) => (this.tags = tags));
+  }
+
+  isTagFiltered(tag: TagResponse): boolean {
+    return !containsStringsIgnoringAccentsAndCase(tag.name, this.searchTags.value);
   }
 
   isEditingOrCreating(): boolean {
@@ -118,4 +129,6 @@ export class TagsListComponent implements OnInit {
         });
     }
   }
+
+  getTagName = (tag: TagResponse): string => tag.name;
 }

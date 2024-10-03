@@ -7,35 +7,43 @@
   }
 </div>
 
-@if (!loading) {
-  @if (newTagForm) {
-    <form [formGroup]="newTagForm" (submit)="saveNewTag()" class="tag vertical-center">
-      <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button tag-icon" (click)="cancelNewTag()">
-        <mat-icon>cancel</mat-icon>
-      </button>
-      <div class="tag-detail">
-        <div class="vertical-center">
-          <mat-form-field>
-            <mat-label>Tag Name</mat-label>
-            <input matInput formControlName="tagName" type="text" autocomplete="off" />
-            @if (newTagForm.controls.tagName.errors?.maxNTimesIn > 0) {
-              <mat-error>Tag name already used</mat-error>
-            }
-          </mat-form-field>
-          <button mat-icon-button matTooltip="Save new tag" type="submit" class="tag-form-button" [disabled]="!newTagForm.valid">
-            <mat-icon>save</mat-icon>
-          </button>
-        </div>
-        <mat-checkbox formControlName="showTag">Show tag</mat-checkbox>
+@if (!loading && newTagForm) {
+  <form [formGroup]="newTagForm" (submit)="saveNewTag()" class="tag vertical-center">
+    <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button tag-icon" (click)="cancelNewTag()">
+      <mat-icon>cancel</mat-icon>
+    </button>
+    <div class="tag-detail">
+      <div class="vertical-center">
+        <mat-form-field>
+          <mat-label>Tag Name</mat-label>
+          <input matInput formControlName="tagName" type="text" autocomplete="off" />
+          @if (newTagForm.controls.tagName.errors?.maxNTimesIn > 0) {
+            <mat-error>Tag name already used</mat-error>
+          }
+        </mat-form-field>
+        <button mat-icon-button matTooltip="Save new tag" type="submit" class="tag-form-button" [disabled]="!newTagForm.valid">
+          <mat-icon>save</mat-icon>
+        </button>
       </div>
-    </form>
-    <mat-divider />
-  }
+      <mat-checkbox formControlName="showTag">Show tag</mat-checkbox>
+    </div>
+  </form>
+  <mat-divider />
+}
 
+<ogm-autocomplete-input
+  class="tag-search-field"
+  isSearchInput
+  [options]="tags"
+  [formControl]="searchTags"
+  [optionDisplayValue]="getTagName"
+  [optionValue]="getTagName" />
+
+@if (!loading) {
   <div class="tag-list">
     @for (tag of tags; track tag.id) {
       @if (tag.id !== editingTagId) {
-        <div class="tag vertical-center">
+        <div class="tag vertical-center" [ngClass]="{ hide: isTagFiltered(tag) }">
           <button mat-icon-button matTooltip="Edit tag" class="tag-icon" (click)="editTag(tag)" [disabled]="isEditingOrCreating()">
             <mat-icon>edit</mat-icon>
           </button>
