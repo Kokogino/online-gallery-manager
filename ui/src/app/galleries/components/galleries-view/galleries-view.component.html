@@ -1,0 +1,35 @@
+@if (mediaQueryService.isMinimumDesktopQuery.matches) {
+  <ogm-tags class="tags" (tagClicked)="addTagToQuery($event)" />
+
+  <mat-divider [vertical]="true" class="divider" />
+}
+
+<div class="galleries">
+  <form [formGroup]="filterForm" (submit)="findGalleries()" class="filter-form">
+    <ogm-filter-query-input #queryInput formControlName="filter" class="filter-query" />
+    <div class="rest-form">
+      <button mat-raised-button color="primary" type="submit">Apply filter</button>
+      <mat-checkbox formControlName="randomizeOrder">Randomize order</mat-checkbox>
+    </div>
+  </form>
+
+  @if (!(loading | async)) {
+    <div class="gallery-list">
+      @for (gallery of galleries | async; track gallery.id; let isFirst = $first) {
+        @if (isFirst) {
+          <mat-divider></mat-divider>
+        }
+        <a [routerLink]="'/galleries/' + gallery.id" class="gallery-link">
+          <div class="gallery" matRipple>
+            <h3 class="gallery-name">{{ gallery.name }}</h3>
+          </div>
+        </a>
+        <mat-divider></mat-divider>
+      } @empty {
+        <ogm-no-data-message>No galleries</ogm-no-data-message>
+      }
+    </div>
+  } @else {
+    <mat-progress-bar mode="indeterminate" />
+  }
+</div>

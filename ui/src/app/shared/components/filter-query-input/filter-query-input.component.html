@@ -1,0 +1,29 @@
+<mat-form-field>
+  <mat-label>Tag Filter Query</mat-label>
+  <input
+    #queryInput
+    #autoTrigger="matAutocompleteTrigger"
+    [matAutocomplete]="auto"
+    [formControl]="queryControl"
+    matInput
+    type="text"
+    autocomplete="off" />
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectToken()">
+    @for (token of filteredTokens$ | async; track token) {
+      <mat-option [value]="tokensExceptLast() + token + ' '">
+        {{ token }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+  @if (queryControl.value) {
+    <button (click)="clearFilter()" aria-label="Clear" mat-icon-button matSuffix type="button">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+
+  @if (queryControl.errors?.validFilterQuery) {
+    <mat-error>{{ queryControl.errors.validFilterQuery }}</mat-error>
+  }
+</mat-form-field>
+
+<input class="hide" matInput #hiddenInput="matInput" />

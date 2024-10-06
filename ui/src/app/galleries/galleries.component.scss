@@ -1,0 +1,9 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 0 $side-space-width $side-space-width $side-space-width;
+  overflow: auto;
+}

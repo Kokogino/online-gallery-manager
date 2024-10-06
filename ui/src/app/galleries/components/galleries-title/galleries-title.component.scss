@@ -1,0 +1,19 @@
+.title {
+  flex-wrap: wrap;
+
+  .hide.active {
+    display: block;
+    opacity: 1;
+    width: initial;
+    height: initial;
+    visibility: visible;
+  }
+
+  .updating-spinner {
+    margin-left: 16px;
+  }
+
+  .chevron {
+    margin: 0 8px;
+  }
+}

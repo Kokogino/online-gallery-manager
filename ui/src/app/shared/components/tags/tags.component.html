@@ -1,0 +1,20 @@
+<h3 class="title">Tags</h3>
+
+@if (!loading) {
+  <mat-chip-set class="tags" aria-label="Tags selection">
+    @for (tag of allTags; track tag.id) {
+      <mat-chip (click)="tagOnClick(tag)" class="tag">
+        <div class="vertical-center">
+          @if (tag.showTag) {
+            <mat-icon class="tag-icon">visibility</mat-icon>
+          }
+          {{ tag.name }}
+        </div>
+      </mat-chip>
+    } @empty {
+      <ogm-no-data-message class="no-tags">No Tags</ogm-no-data-message>
+    }
+  </mat-chip-set>
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

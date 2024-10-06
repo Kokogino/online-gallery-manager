@@ -1,0 +1,62 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  overflow: auto;
+
+  .tags {
+    width: 320px;
+  }
+
+  .divider {
+    margin: 0 16px;
+  }
+
+  .galleries {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 16px;
+      margin: 16px 0;
+
+      .filter-query {
+        flex-grow: 1;
+        min-width: 320px;
+      }
+
+      .rest-form {
+        display: flex;
+        margin-top: 8px;
+        column-gap: 8px;
+      }
+    }
+
+    .gallery-list {
+      flex-grow: 1;
+      overflow: auto;
+
+      .gallery-link {
+        text-decoration: inherit;
+        color: inherit;
+
+        .gallery {
+          padding: 16px 0;
+          cursor: pointer;
+
+          &:hover {
+            background-color: rgba($color-on-background-rgb, 0.1);
+          }
+
+          .gallery-name {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<h1 class="title vertical-center">
+  <a routerLink="/galleries" [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="hide">Galleries</a>
+  <span routerLink="/galleries" [routerLinkActiveOptions]="{ exact: true }" class="hide" routerLinkActive="active">Galleries</span>
+
+  @if (gallery$ | async; as gallery) {
+    <mat-icon class="chevron">chevron_right</mat-icon>
+    <a [routerLink]="'/galleries/' + gallery.id" routerLinkActive="hide">
+      {{ gallery.name }}
+    </a>
+    <span [routerLink]="'/galleries/' + gallery.id" class="hide" routerLinkActive="active">
+      {{ gallery.name }}
+    </span>
+  }
+
+  @if (loadingGallery$ | async) {
+    <mat-spinner [diameter]="24" class="updating-spinner" />
+  }
+</h1>
