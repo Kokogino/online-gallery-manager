@@ -166,32 +166,6 @@ paths:
   #######################################
   # Gallery Resource                    #
   #######################################
-  /galleries:
-    get:
-      tags:
-        - Gallery
-      summary: Get all galleries
-      description: Returns all galleries
-      operationId: getAllGalleries
-      responses:
-        "400":
-          $ref: '#/components/responses/400'
-        "403":
-          $ref: '#/components/responses/403'
-        "404":
-          $ref: '#/components/responses/404'
-        "500":
-          $ref: '#/components/responses/500'
-        "501":
-          $ref: '#/components/responses/501'
-        "200":
-          description: Successful Operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GalleryResponse'
   /galleries/{id}:
     get:
       tags:
@@ -302,6 +276,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FindImagesResponse'
+  /galleries/find:
+    post:
+      tags:
+        - Gallery
+      summary: Find galleries with filters
+      description: Returns all galleries according to the filters
+      operationId: findGalleries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindGalleriesDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GalleryResponse'
   #######################################
   # Gallery Metadata Resource           #
   #######################################
@@ -726,6 +732,14 @@ components:
           type: integer
         limit:
           type: integer
+    FindGalleriesDto:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/FilterExpressionDto"
+        randomizeOrder:
+          type: boolean
+          description: If false, the galleries will be sorted by modification date descending
     FilterExpressionDto:
       oneOf:
         - $ref: '#/components/schemas/TagFilterExpressionDto'

@@ -40,8 +40,8 @@ public class GalleryService {
     return response;
   }
 
-  public List<GalleryResponse> getAllGalleries() {
-    return galleryRepository.findAll().stream().map(GalleryService::galleryToResponse).toList();
+  public List<GalleryResponse> findGalleries(FindGalleriesDto findGalleriesDto) {
+    return galleryRepository.findGalleriesByFilter(findGalleriesDto).stream().map(GalleryService::galleryToResponse).toList();
   }
 
   public GalleryResponse getGalleryById(Long id) {

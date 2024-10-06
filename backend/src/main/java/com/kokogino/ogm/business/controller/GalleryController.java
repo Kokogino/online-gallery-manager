@@ -3,10 +3,7 @@ package com.kokogino.ogm.business.controller;
 import java.util.List;
 
 import com.kokogino.ogm.backend.genapi.business.controller.GalleryApi;
-import com.kokogino.ogm.backend.genapi.business.dto.FindImagesDto;
-import com.kokogino.ogm.backend.genapi.business.dto.FindImagesResponse;
-import com.kokogino.ogm.backend.genapi.business.dto.GalleryResponse;
-import com.kokogino.ogm.backend.genapi.business.dto.UpdateGalleryDto;
+import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.business.service.GalleryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +26,6 @@ public class GalleryController implements GalleryApi {
   }
 
   @Override
-  public ResponseEntity<List<GalleryResponse>> getAllGalleries() {
-    return ResponseEntity.ok(galleryService.getAllGalleries());
-  }
-
-  @Override
   public ResponseEntity<GalleryResponse> getGalleryById(Long id) {
     return ResponseEntity.ok(galleryService.getGalleryById(id));
   }
@@ -41,5 +33,10 @@ public class GalleryController implements GalleryApi {
   @Override
   public ResponseEntity<GalleryResponse> updateGallery(Long id, UpdateGalleryDto updateGalleryDto) {
     return ResponseEntity.ok(galleryService.updateGallery(id, updateGalleryDto));
+  }
+
+  @Override
+  public ResponseEntity<List<GalleryResponse>> findGalleries(FindGalleriesDto findGalleriesDto) {
+    return ResponseEntity.ok(galleryService.findGalleries(findGalleriesDto));
   }
 }
