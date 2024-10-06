@@ -7,5 +7,6 @@ COPY . .
 RUN ng build --configuration=production
 
 FROM nginx:latest
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build app/dist/ui/browser /usr/share/nginx/html
 EXPOSE 80
