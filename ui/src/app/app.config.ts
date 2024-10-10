@@ -9,6 +9,9 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ThemeService } from '@app/core/services/theme.service';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import 'moment/locale/de-ch';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(),
     provideAnimations(),
+    provideMomentDateAdapter(),
     {
       provide: Configuration,
       useFactory: () => new Configuration({ basePath: environment.backendBaseUrl }),
@@ -26,6 +30,7 @@ export const appConfig: ApplicationConfig = {
       deps: [ThemeService],
       multi: true,
     },
+    { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
     { provide: MAT_ICON_DEFAULT_OPTIONS, useValue: { fontSet: 'material-symbols-outlined' } },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline', subscriptSizing: 'dynamic' } },
   ],

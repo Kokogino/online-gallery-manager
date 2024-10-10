@@ -1,9 +1,6 @@
-@import 'variables';
+@import 'extends';
 
 :host {
-  display: flex;
-  flex-grow: 1;
+  @extend %basic-container;
   flex-direction: column;
-  padding: 0 $side-space-width $side-space-width $side-space-width;
-  overflow: auto;
 }

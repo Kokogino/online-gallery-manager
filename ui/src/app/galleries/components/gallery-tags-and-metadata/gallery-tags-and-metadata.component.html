@@ -1,0 +1,72 @@
+@if (!(loadingGallery$ | async) && galleryDetailsForm) {
+  <form [formGroup]="galleryDetailsForm">
+    <mat-form-field class="name-form-field">
+      <mat-label>Gallery Name</mat-label>
+      <input matInput formControlName="name" type="text" autocomplete="off" />
+    </mat-form-field>
+
+    <h3>Metadata</h3>
+
+    @if (!loadingAllGalleryMetadata) {
+      <div formArrayName="metadata">
+        @for (metadata of galleryDetailsForm.controls.metadata.controls; track metadata.value.galleryMetadataId) {
+          @switch (metadata.value.type) {
+            @case (GalleryMetadataType.String) {
+              <mat-form-field [formGroup]="metadata" class="metadata-form-field">
+                <mat-label>{{ metadata.value.name }}</mat-label>
+                <input matInput formControlName="value" type="text" autocomplete="off" />
+              </mat-form-field>
+            }
+            @case (GalleryMetadataType.Date) {
+              <mat-form-field [formGroup]="metadata" class="metadata-form-field">
+                <mat-label>{{ metadata.value.name }}</mat-label>
+                <input matInput formControlName="value" [matDatepicker]="picker" />
+                <mat-datepicker-toggle matIconSuffix [for]="picker" />
+                <mat-datepicker #picker />
+              </mat-form-field>
+            }
+            @case (GalleryMetadataType.Integer) {
+              <mat-form-field [formGroup]="metadata" class="metadata-form-field">
+                <mat-label>{{ metadata.value.name }}</mat-label>
+                <input matInput formControlName="value" type="number" autocomplete="off" step="1" />
+              </mat-form-field>
+            }
+            @case (GalleryMetadataType.Double) {
+              <mat-form-field [formGroup]="metadata" class="metadata-form-field">
+                <mat-label>{{ metadata.value.name }}</mat-label>
+                <input matInput formControlName="value" type="number" autocomplete="off" />
+              </mat-form-field>
+            }
+          }
+        } @empty {
+          <ogm-no-data-message>No Gallery Metadata</ogm-no-data-message>
+        }
+      </div>
+    } @else {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    <h3>Tags</h3>
+
+    @if (!loadingAllTags) {
+      <mat-chip-listbox multiple aria-label="Tags selection" formControlName="tagIds">
+        @for (tag of allTags; track tag.id) {
+          <mat-chip-option [value]="tag.id">
+            <div class="vertical-center">
+              @if (tag.showTag) {
+                <mat-icon class="tag-icon">visibility</mat-icon>
+              }
+              {{ tag.name }}
+            </div>
+          </mat-chip-option>
+        } @empty {
+          <ogm-no-data-message class="no-tags">No Tags</ogm-no-data-message>
+        }
+      </mat-chip-listbox>
+    } @else {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </form>
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

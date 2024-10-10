@@ -1,0 +1,18 @@
+@import 'extends';
+
+:host {
+  @extend %flex-fill-overflow;
+
+  .tags-and-metadata {
+    width: 340px;
+    display: flex;
+
+    ogm-gallery-tags-and-metadata {
+      padding-right: 16px;
+    }
+
+    .divider {
+      margin-right: 16px;
+    }
+  }
+}

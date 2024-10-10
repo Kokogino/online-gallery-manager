@@ -87,7 +87,7 @@ export class UploadComponent implements OnInit {
     return this.uploadForm.valid && !this.uploading;
   }
 
-  getGalleryName = (gallery: GalleryResponse): string => gallery.name;
+  getGalleryName = (gallery: GalleryResponse): string => (gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery');
 
   private resetForm(): void {
     this.form.resetForm({

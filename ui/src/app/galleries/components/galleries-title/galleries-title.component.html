@@ -5,10 +5,10 @@
   @if (gallery$ | async; as gallery) {
     <mat-icon class="chevron">chevron_right</mat-icon>
     <a [routerLink]="'/galleries/' + gallery.id" routerLinkActive="hide">
-      {{ gallery.name }}
+      {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
     </a>
     <span [routerLink]="'/galleries/' + gallery.id" class="hide" routerLinkActive="active">
-      {{ gallery.name }}
+      {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
     </span>
   }
 

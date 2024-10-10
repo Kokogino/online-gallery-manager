@@ -1,7 +1,9 @@
 @if (mediaQueryService.isMinimumDesktopQuery.matches) {
-  <ogm-tags class="tags" (tagClicked)="addTagToQuery($event)" />
+  <div class="tags">
+    <ogm-tags (tagClicked)="addTagToQuery($event)" />
 
-  <mat-divider [vertical]="true" class="divider" />
+    <mat-divider [vertical]="true" class="divider" />
+  </div>
 }
 
 <div class="galleries">
@@ -21,7 +23,7 @@
         }
         <a [routerLink]="'/galleries/' + gallery.id" class="gallery-link">
           <div class="gallery" matRipple>
-            <h3 class="gallery-name">{{ gallery.name }}</h3>
+            <h3 class="gallery-name">{{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}</h3>
           </div>
         </a>
         <mat-divider></mat-divider>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, distinctUntilChanged, finalize, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import { GalleryResponse, GalleryService } from '@app/gen/ogm-backend';
+import { GalleryResponse, GalleryService, UpdateGalleryDto } from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
@@ -87,5 +87,18 @@ export class GalleriesService {
       .findGalleries(this.galleriesFilterForm.getRawValue())
       .pipe(finalize(() => this.loadingGalleriesSubject.next(false)))
       .subscribe((galleries) => this.galleriesSubject.next(galleries));
+  }
+
+  updateGalleryDetails(updateGalleryDto: UpdateGalleryDto): void {
+    const oldGallery = this.selectedGallerySubject.value;
+    this.galleryService.updateGallery(oldGallery.id, updateGalleryDto).subscribe((newGallery) => {
+      this.selectedGallerySubject.next(newGallery);
+      const galleries = this.galleriesSubject.value;
+      const index = galleries.findIndex((gallery) => gallery.id === oldGallery.id);
+      if (index >= 0) {
+        galleries.splice(index, 1, newGallery);
+        this.galleriesSubject.next(galleries);
+      }
+    });
   }
 }

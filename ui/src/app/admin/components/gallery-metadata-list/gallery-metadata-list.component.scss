@@ -1,9 +1,8 @@
 @import 'variables';
+@import 'extends';
 
 :host {
-  display: flex;
-  flex-grow: 1;
-  overflow: auto;
+  @extend %flex-fill-overflow;
   flex-direction: column;
 
   .title {
