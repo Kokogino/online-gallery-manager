@@ -81,7 +81,11 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
       this.allTags,
     ])
       .pipe(filter(([filter, tags]) => Boolean(filter) && Boolean(tags)))
-      .subscribe(([filter, tags]) => this.queryControl.setValue(FilterQueryUtil.filterExpressionToQuery(filter, tags) + ' '));
+      .subscribe(([filter, tags]) => {
+        if (!this.queryControl.value) {
+          this.queryControl.setValue(FilterQueryUtil.filterExpressionToQuery(filter, tags) + ' ');
+        }
+      });
   }
 
   ngOnDestroy(): void {
