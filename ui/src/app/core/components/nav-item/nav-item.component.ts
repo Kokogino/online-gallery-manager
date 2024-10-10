@@ -1,12 +1,12 @@
 import { booleanAttribute, Component, Input } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'ogm-nav-item',
   standalone: true,
-  imports: [MatButton, RouterLink, RouterLinkActive, MatIcon],
+  imports: [RouterLink, RouterLinkActive, MatIcon, MatAnchor],
   templateUrl: './nav-item.component.html',
   styleUrl: './nav-item.component.scss',
 })
