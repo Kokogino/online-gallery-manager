@@ -4,7 +4,7 @@ import { MediaQueryService } from '@app/core/services/media-query.service';
 import { MatDivider } from '@angular/material/divider';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';
-import { GalleryResponse, TagResponse } from '@app/gen/ogm-backend';
+import { GalleryMetadataType, GalleryResponse, TagResponse } from '@app/gen/ogm-backend';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -14,7 +14,8 @@ import { MatRipple } from '@angular/material/core';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { Observable } from 'rxjs';
 import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
+import { MatChip } from '@angular/material/chips';
 
 @Component({
   selector: 'ogm-galleries-view',
@@ -31,6 +32,8 @@ import { AsyncPipe } from '@angular/common';
     RouterLink,
     MatRipple,
     AsyncPipe,
+    MatChip,
+    DatePipe,
   ],
   templateUrl: './galleries-view.component.html',
   styleUrl: './galleries-view.component.scss',
@@ -44,6 +47,8 @@ export class GalleriesViewComponent implements OnInit {
   galleries: Observable<GalleryResponse[]>;
 
   loading: Observable<boolean>;
+
+  GalleryMetadataType = GalleryMetadataType;
 
   constructor(
     public readonly mediaQueryService: MediaQueryService,

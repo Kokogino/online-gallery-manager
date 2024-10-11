@@ -110,8 +110,19 @@ public class GalleryService {
       .name(gallery.getName())
       .editUrl(gallery.getEditUrl())
       .host(gallery.getHost())
-      .tags(gallery.getGalleryTags().stream().map(GalleryService::galleryTagToResponse).toList())
-      .metadata(gallery.getGalleryMetadataEntries().stream().map(GalleryService::galleryMetadataEntryToResponse).toList());
+      .tags(
+        gallery.getGalleryTags()
+          .stream()
+          .map(GalleryService::galleryTagToResponse)
+          .sorted(GalleryService::compareGalleryTagResponse)
+          .toList())
+      .metadata(
+        gallery.getGalleryMetadataEntries()
+          .stream()
+          .map(GalleryService::galleryMetadataEntryToResponse)
+          .sorted(GalleryService::compareGalleryMetadataEntryResponse)
+          .toList()
+      );
   }
 
   private static GalleryTagResponse galleryTagToResponse(GalleryTag galleryTag) {
@@ -131,5 +142,13 @@ public class GalleryService {
       .value(galleryMetadataEntry.getValue())
       .name(galleryMetadata.getName())
       .type(galleryMetadata.getType());
+  }
+
+  private static int compareGalleryMetadataEntryResponse(GalleryMetadataEntryResponse m1, GalleryMetadataEntryResponse m2) {
+    return m1.getName().compareToIgnoreCase(m2.getName());
+  }
+
+  private static int compareGalleryTagResponse(GalleryTagResponse t1, GalleryTagResponse t2) {
+    return t1.getName().compareToIgnoreCase(t2.getName());
   }
 }

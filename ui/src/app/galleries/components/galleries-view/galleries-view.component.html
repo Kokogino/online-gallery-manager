@@ -19,14 +19,36 @@
     <div class="gallery-list">
       @for (gallery of galleries | async; track gallery.id; let isFirst = $first) {
         @if (isFirst) {
-          <mat-divider></mat-divider>
+          <mat-divider />
         }
         <a [routerLink]="'/galleries/' + gallery.id" class="gallery-link">
           <div class="gallery" matRipple>
-            <h3 class="gallery-name">{{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}</h3>
+            <h3 class="gallery-name vertical-center">
+              {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
+              @for (tag of gallery.tags; track tag.tagId) {
+                @if (tag.showTag) {
+                  <mat-chip color="primary" highlighted class="tag-chip">{{ tag.name }}</mat-chip>
+                }
+              }
+            </h3>
+            @for (metadata of gallery.metadata; track metadata.galleryMetadataId) {
+              @if (metadata.value?.length > 0) {
+                <mat-chip color="accent" highlighted class="metadata-chip">
+                  {{ metadata.name }}:
+                  @switch (metadata.type) {
+                    @case (GalleryMetadataType.Date) {
+                      {{ metadata.value | date: 'dd.MM.YYYY' }}
+                    }
+                    @default {
+                      {{ metadata.value }}
+                    }
+                  }
+                </mat-chip>
+              }
+            }
           </div>
         </a>
-        <mat-divider></mat-divider>
+        <mat-divider />
       } @empty {
         <ogm-no-data-message>No galleries</ogm-no-data-message>
       }
