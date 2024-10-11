@@ -1,5 +1,5 @@
 <header class="vertical-center">
-  @if (mediaQueryService.isMaximumDesktopQuery.matches) {
+  @if (mediaQueryService.isMaximumDesktopLayout$ | async) {
     <button mat-icon-button (click)="sidenav.toggle()" class="menu-button">
       <mat-icon>menu</mat-icon>
     </button>
@@ -7,7 +7,7 @@
 
   <h3 class="title">Online Gallery Manager</h3>
 
-  @if (mediaQueryService.isMinimumDesktopQuery.matches) {
+  @if (mediaQueryService.isMinimumDesktopLayout$ | async) {
     <mat-divider class="divider" [vertical]="true" />
 
     <nav>

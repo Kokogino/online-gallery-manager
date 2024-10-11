@@ -1,18 +1,35 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, distinctUntilChanged, finalize, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import { GalleryResponse, GalleryService, UpdateGalleryDto } from '@app/gen/ogm-backend';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  finalize,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
+import { FilterExpressionDto, FindImagesDto, GalleryResponse, GalleryService, ImageResponse, UpdateGalleryDto } from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
+import { GalleryImagesFilterForm } from '@app/shared/model/gallery-images-filter-form';
+import { random } from 'lodash-es';
+import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GalleriesService {
+export class GalleriesService implements ImageLoaderService {
   public static readonly GALLERY_ID_PARAM = 'gallery';
   public static readonly IMAGE_ID_PARAM = 'image';
 
   public galleriesFilterForm: FormGroup<GalleryFilterForm>;
+  public galleryImagesFilterForm: FormGroup<GalleryImagesFilterForm>;
 
   private loadingGalleriesSubject = new BehaviorSubject<boolean>(false);
   private loadingGallerySubject = new BehaviorSubject<boolean>(false);
@@ -21,6 +38,16 @@ export class GalleriesService {
   private galleriesSubject = new BehaviorSubject<GalleryResponse[]>(undefined);
   private selectedGalleryIdSubject = new BehaviorSubject<number>(undefined);
   private selectedGallerySubject = new BehaviorSubject<GalleryResponse>(undefined);
+
+  private galleryImagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
+
+  private findImagesOnGalleryChangeSubject = new BehaviorSubject<boolean>(false);
+
+  private loadImagesSkip = new BehaviorSubject<number>(undefined);
+
+  private imageFilter: FilterExpressionDto;
+  private randomnessSeed: number;
+  private totalImagesCount: number;
 
   constructor(
     private readonly galleryService: GalleryService,
@@ -54,6 +81,41 @@ export class GalleriesService {
       randomizeOrder: [false],
     });
 
+    this.galleryImagesFilterForm = this.formBuilder.group({
+      filter: [],
+      randomizeOrder: [false],
+    });
+
+    combineLatest([this.selectedGalleryIdSubject, this.findImagesOnGalleryChangeSubject])
+      .pipe(
+        filter(([id, shouldFind]) => Boolean(id) && shouldFind),
+        map(([id, _]) => id),
+        distinctUntilChanged((prevId, currentId) => prevId === currentId),
+      )
+      .subscribe(() => this.findImages());
+
+    this.loadImagesSkip
+      .pipe(
+        filter((skip) => skip > 0),
+        distinctUntilChanged(),
+      )
+      .subscribe((skip) => {
+        this.loadingImagesSubject.next(true);
+        const findImagesDto: FindImagesDto = {
+          filter: this.imageFilter,
+          randomnessSeed: this.randomnessSeed,
+          limit: 20,
+          skip,
+        };
+        this.galleryService
+          .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
+          .pipe(finalize(() => this.loadingImagesSubject.next(false)))
+          .subscribe((response) => {
+            this.galleryImagesSubject.next([...this.galleryImagesSubject.value, ...response.images]);
+            this.totalImagesCount = response.totalCount;
+          });
+      });
+
     this.findGalleries();
   }
 
@@ -65,12 +127,28 @@ export class GalleriesService {
     return this.loadingGallerySubject.asObservable();
   }
 
+  get loadingImages$(): Observable<boolean> {
+    return this.loadingImagesSubject.asObservable();
+  }
+
   get galleries$(): Observable<GalleryResponse[]> {
     return this.galleriesSubject.asObservable();
   }
 
   get selectedGallery$(): Observable<GalleryResponse> {
     return this.selectedGallerySubject.asObservable();
+  }
+
+  get selectedGalleryId$(): Observable<number> {
+    return this.selectedGalleryIdSubject.asObservable();
+  }
+
+  get images$(): Observable<ImageResponse[]> {
+    return this.galleryImagesSubject.asObservable();
+  }
+
+  set findImagesOnGalleryChange(shouldFind: boolean) {
+    this.findImagesOnGalleryChangeSubject.next(shouldFind);
   }
 
   changeSelectedGalleryId(newId: number): void {
@@ -100,5 +178,38 @@ export class GalleriesService {
         this.galleriesSubject.next(galleries);
       }
     });
+  }
+
+  findImages(): void {
+    this.loadingImagesSubject.next(true);
+    const formValues = this.galleryImagesFilterForm.getRawValue();
+    if (formValues.randomizeOrder) {
+      this.randomnessSeed = random(-1, 1, true);
+    } else {
+      this.randomnessSeed = undefined;
+    }
+    this.imageFilter = formValues.filter;
+    const findImagesDto: FindImagesDto = {
+      filter: formValues.filter,
+      randomnessSeed: this.randomnessSeed,
+      limit: 20,
+      skip: 0,
+    };
+    this.loadImagesSkip.next(0);
+    this.galleryService
+      .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
+      .pipe(finalize(() => this.loadingImagesSubject.next(false)))
+      .subscribe((response) => {
+        this.galleryImagesSubject.next(response.images);
+        this.totalImagesCount = response.totalCount;
+      });
+  }
+
+  loadMoreImages(): void {
+    const images = this.galleryImagesSubject.value;
+    if (this.totalImagesCount === images.length) {
+      return;
+    }
+    this.loadImagesSkip.next(images.length);
   }
 }

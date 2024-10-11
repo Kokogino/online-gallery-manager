@@ -1,0 +1,35 @@
+@import 'variables';
+@import 'extends';
+
+:host {
+  @extend %flex-fill-overflow;
+
+  .placeholder {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .images-list {
+    display: flex;
+    flex-grow: 1;
+    column-gap: 8px;
+
+    .column {
+      display: flex;
+      flex-grow: 1;
+      width: 1px;
+      flex-direction: column;
+      row-gap: 8px;
+
+      .image-link {
+        width: 100%;
+
+        .image-thumbnail {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

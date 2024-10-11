@@ -1,4 +1,4 @@
-@if (mediaQueryService.isMinimumDesktopQuery.matches) {
+@if (mediaQueryService.isMinimumDesktopLayout$ | async) {
   <div class="tags">
     <ogm-tags (tagClicked)="addTagToQuery($event)" />
 

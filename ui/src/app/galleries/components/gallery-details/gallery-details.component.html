@@ -3,3 +3,15 @@
 
   <mat-divider [vertical]="true" class="divider" />
 </div>
+
+<div class="images">
+  <form [formGroup]="imagesFilterForm" (submit)="findImages()" class="filter-form">
+    <ogm-filter-query-input formControlName="filter" class="filter-query" />
+    <div class="rest-form">
+      <button mat-raised-button color="primary" type="submit">Apply filter</button>
+      <mat-checkbox formControlName="randomizeOrder">Randomize order</mat-checkbox>
+    </div>
+  </form>
+
+  <ogm-image-list [imageLoaderService]="galleriesService" [imageDetailsBaseRoute]="'/galleries/' + (galleryId$ | async) + '/'" />
+</div>

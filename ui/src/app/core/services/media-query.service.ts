@@ -1,41 +1,42 @@
 import { Injectable } from '@angular/core';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MediaQueryService {
-  private readonly _isMaximumMobileQuery: MediaQueryList;
-  private readonly _isMaximumTabletQuery: MediaQueryList;
-  private readonly _isMaximumDesktopQuery: MediaQueryList;
-  private readonly _isMinimumTabletQuery: MediaQueryList;
-  private readonly _isMinimumDesktopQuery: MediaQueryList;
+  private readonly _isMaximumMobileLayout$: Observable<BreakpointState>;
+  private readonly _isMaximumTabletLayout$: Observable<BreakpointState>;
+  private readonly _isMaximumDesktopLayout$: Observable<BreakpointState>;
+  private readonly _isMinimumTabletLayout$: Observable<BreakpointState>;
+  private readonly _isMinimumDesktopLayout$: Observable<BreakpointState>;
 
-  constructor(private readonly media: MediaMatcher) {
-    this._isMaximumMobileQuery = media.matchMedia('(max-width: 424px)');
-    this._isMaximumTabletQuery = media.matchMedia('(max-width: 767px)');
-    this._isMaximumDesktopQuery = media.matchMedia('(max-width: 1023px)');
-    this._isMinimumTabletQuery = media.matchMedia('(min-width: 768px)');
-    this._isMinimumDesktopQuery = media.matchMedia('(min-width: 1024px)');
+  constructor(private readonly breakpointObserver: BreakpointObserver) {
+    this._isMaximumMobileLayout$ = this.breakpointObserver.observe('(max-width: 424px)');
+    this._isMaximumTabletLayout$ = this.breakpointObserver.observe('(max-width: 767px)');
+    this._isMaximumDesktopLayout$ = this.breakpointObserver.observe('(max-width: 1023px)');
+    this._isMinimumTabletLayout$ = this.breakpointObserver.observe('(min-width: 768px)');
+    this._isMinimumDesktopLayout$ = this.breakpointObserver.observe('(min-width: 1024px)');
   }
 
-  get isMaximumMobileQuery(): MediaQueryList {
-    return this._isMaximumMobileQuery;
+  get isMaximumMobileLayout$(): Observable<boolean> {
+    return this._isMaximumMobileLayout$.pipe(map((state) => state.matches));
   }
 
-  get isMinimumTabletQuery(): MediaQueryList {
-    return this._isMinimumTabletQuery;
+  get isMinimumTabletLayout$(): Observable<boolean> {
+    return this._isMinimumTabletLayout$.pipe(map((state) => state.matches));
   }
 
-  get isMaximumDesktopQuery(): MediaQueryList {
-    return this._isMaximumDesktopQuery;
+  get isMaximumDesktopLayout$(): Observable<boolean> {
+    return this._isMaximumDesktopLayout$.pipe(map((state) => state.matches));
   }
 
-  get isMaximumTabletQuery(): MediaQueryList {
-    return this._isMaximumTabletQuery;
+  get isMaximumTabletLayout$(): Observable<boolean> {
+    return this._isMaximumTabletLayout$.pipe(map((state) => state.matches));
   }
 
-  get isMinimumDesktopQuery(): MediaQueryList {
-    return this._isMinimumDesktopQuery;
+  get isMinimumDesktopLayout$(): Observable<boolean> {
+    return this._isMinimumDesktopLayout$.pipe(map((state) => state.matches));
   }
 }
