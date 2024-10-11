@@ -1,9 +1,16 @@
-@if (!(loadingGallery$ | async) && galleryDetailsForm) {
+@if (!(loadingGallery$ | async) && galleryDetailsForm && gallery$ | async; as gallery) {
   <form [formGroup]="galleryDetailsForm">
     <mat-form-field class="name-form-field">
       <mat-label>Gallery Name</mat-label>
       <input matInput formControlName="name" type="text" autocomplete="off" />
     </mat-form-field>
+
+    @if (gallery.editUrl?.length > 0) {
+      <a target="_blank" [href]="gallery.editUrl" class="edit-url">
+        Edit Gallery
+        <mat-icon class="edit-url-icon">open_in_new</mat-icon>
+      </a>
+    }
 
     <h3>Metadata</h3>
 

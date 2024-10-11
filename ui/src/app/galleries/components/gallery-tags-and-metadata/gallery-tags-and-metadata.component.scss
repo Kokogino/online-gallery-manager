@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
+  width: 100%;
   padding-top: 8px;
   margin-top: -8px;
 
@@ -12,6 +13,18 @@
   .metadata-form-field {
     width: 100%;
     margin: 8px 0;
+  }
+
+  .edit-url {
+    margin-top: 8px;
+    display: inline-block;
+
+    .edit-url-icon {
+      margin-left: 4px;
+      font-size: 1rem;
+      width: 1rem;
+      height: 1rem;
+    }
   }
 
   .tag-icon {
