@@ -1,0 +1,64 @@
+@if (imageForm) {
+  @if (image.editUrl?.length > 0) {
+    <div>
+      <a target="_blank" [href]="image.editUrl" class="edit-url">
+        Edit Image
+        <mat-icon class="edit-url-icon">open_in_new</mat-icon>
+      </a>
+    </div>
+  }
+
+  @if (image.galleryId !== undefined) {
+    <div>
+      <a [routerLink]="'/galleries/' + image.galleryId" class="gallery-url">Open Gallery</a>
+    </div>
+
+    <h3>Gallery Tags</h3>
+
+    @if (!loadingGallery) {
+      <mat-chip-listbox multiple aria-label="Gallery Tags" disabled>
+        @for (tag of gallery?.tags; track tag.id) {
+          <mat-chip-option [value]="tag.id" selected>
+            <div class="vertical-center">
+              @if (tag.showTag) {
+                <mat-icon class="tag-icon">visibility</mat-icon>
+              }
+              {{ tag.name }}
+            </div>
+          </mat-chip-option>
+        } @empty {
+          <ogm-no-data-message class="no-tags">No Gallery Tags</ogm-no-data-message>
+        }
+      </mat-chip-listbox>
+    } @else {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  }
+
+  <h3>Tags</h3>
+
+  <form [formGroup]="imageForm">
+    @if (!loadingAllTags && !loadingGallery) {
+      <mat-chip-listbox multiple aria-label="Tags selection" formControlName="tagIds">
+        @for (tag of allTags; track tag.id) {
+          @if (!galleryHasTag(tag.id)) {
+            <mat-chip-option [value]="tag.id">
+              <div class="vertical-center">
+                @if (tag.showTag) {
+                  <mat-icon class="tag-icon">visibility</mat-icon>
+                }
+                {{ tag.name }}
+              </div>
+            </mat-chip-option>
+          }
+        } @empty {
+          <ogm-no-data-message class="no-tags">No Tags</ogm-no-data-message>
+        }
+      </mat-chip-listbox>
+    } @else {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </form>
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

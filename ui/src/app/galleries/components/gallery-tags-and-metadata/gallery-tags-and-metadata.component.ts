@@ -92,7 +92,7 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
     this.formSubscription?.unsubscribe();
   }
 
-  setupDetailsForm(gallery: GalleryResponse, galleryMetadata: GalleryMetadataResponse[]): void {
+  private setupDetailsForm(gallery: GalleryResponse, galleryMetadata: GalleryMetadataResponse[]): void {
     this.galleryDetailsForm = this.formBuilder.group({
       name: [gallery.name],
       tagIds: [gallery.tags.map((tag) => tag.tagId)],

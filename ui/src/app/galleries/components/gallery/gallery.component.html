@@ -1,5 +1,5 @@
-<ogm-gallery-details [ngClass]="{ hide: outlet.isActivated }" />
+<ogm-gallery-details [ngClass]="{ hide: showOutlet }" />
 
-<div class="route-overlay" [ngClass]="{ hide: !outlet.isActivated }">
-  <router-outlet #outlet="outlet" />
+<div [ngClass]="{ 'route-overlay': showOutlet }">
+  <router-outlet (activate)="toggleOutletVisibility(true)" (deactivate)="toggleOutletVisibility(false)" />
 </div>

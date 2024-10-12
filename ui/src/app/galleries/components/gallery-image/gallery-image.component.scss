@@ -1,0 +1,37 @@
+@import 'extends';
+
+:host {
+  @extend %flex-fill-overflow;
+  height: 100%;
+
+  .image-tags {
+    width: 340px;
+    height: 100%;
+    display: flex;
+
+    ogm-image-tags {
+      padding-right: 16px;
+    }
+
+    .divider {
+      margin-right: 16px;
+    }
+  }
+
+  .image-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .image-link {
+      display: contents;
+
+      .image {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+}

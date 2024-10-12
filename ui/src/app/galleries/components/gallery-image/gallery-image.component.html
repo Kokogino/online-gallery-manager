@@ -1,1 +1,13 @@
-<p>gallery-image works!</p>
+@if (!loadingImage && selectedImageSubject | async; as image) {
+  <div class="image-tags">
+    <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+
+    <mat-divider [vertical]="true" class="divider" />
+  </div>
+
+  <div class="image-container">
+    <a target="_blank" [href]="image.imageUrl" class="image-link">
+      <img [src]="image.pureImageUrl || image.thumbnailUrl" alt="Image" class="image" />
+    </a>
+  </div>
+}

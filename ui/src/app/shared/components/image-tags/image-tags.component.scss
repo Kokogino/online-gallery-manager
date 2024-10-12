@@ -5,20 +5,13 @@
   flex-direction: column;
   width: 100%;
 
-  .name-form-field {
-    width: 100%;
-  }
-
-  .metadata-form-field {
-    width: 100%;
-    margin: 8px 0;
-  }
-
-  .edit-url {
+  .edit-url,
+  .gallery-url {
     margin-top: 8px;
     display: inline-block;
 
-    .edit-url-icon {
+    .edit-url-icon,
+    .gallery-url-icon {
       margin-left: 4px;
       font-size: 1rem;
       width: 1rem;

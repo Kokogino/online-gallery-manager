@@ -40,11 +40,9 @@ export class GalleriesService implements ImageLoaderService {
   private selectedGallerySubject = new BehaviorSubject<GalleryResponse>(undefined);
 
   private galleryImagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
-
   private findImagesOnGalleryChangeSubject = new BehaviorSubject<boolean>(false);
 
   private loadImagesSkip = new BehaviorSubject<number>(undefined);
-
   private imageFilter: FilterExpressionDto;
   private randomnessSeed: number;
   private totalImagesCount: number;
@@ -54,65 +52,9 @@ export class GalleriesService implements ImageLoaderService {
     private readonly router: Router,
     private readonly formBuilder: FormBuilder,
   ) {
-    this.selectedGalleryIdSubject
-      .pipe(
-        distinctUntilChanged(),
-        tap(() => this.loadingGallerySubject.next(true)),
-        switchMap((id) => {
-          if (id !== undefined) {
-            return this.galleryService.getGalleryById(id).pipe(
-              catchError((err) => {
-                if (err.error?.errorCode === 6502) {
-                  this.selectedGalleryIdSubject.next(undefined);
-                  void this.router.navigateByUrl('galleries');
-                }
-                return throwError(() => err);
-              }),
-            );
-          }
-          return of(undefined);
-        }),
-        tap(() => this.loadingGallerySubject.next(false)),
-      )
-      .subscribe((gallery) => this.selectedGallerySubject.next(gallery));
-
-    this.galleriesFilterForm = this.formBuilder.group({
-      filter: [],
-      randomizeOrder: [false],
-    });
-
-    this.galleryImagesFilterForm = this.formBuilder.group({
-      filter: [],
-      randomizeOrder: [false],
-    });
-
-    combineLatest([this.selectedGalleryIdSubject, this.findImagesOnGalleryChangeSubject])
-      .pipe(
-        filter(([id, shouldFind]) => Boolean(id) && shouldFind),
-        map(([id, _]) => id),
-        distinctUntilChanged((prevId, currentId) => prevId === currentId),
-      )
-      .subscribe(() => this.findImages());
-
-    this.loadImagesSkip
-      .pipe(
-        filter((skip) => skip > 0),
-        distinctUntilChanged(),
-      )
-      .subscribe((skip) => {
-        this.loadingImagesSubject.next(true);
-        const findImagesDto: FindImagesDto = {
-          filter: this.imageFilter,
-          randomnessSeed: this.randomnessSeed,
-          limit: 20,
-          skip,
-        };
-        this.galleryService
-          .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
-          .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-          .subscribe((response) => this.galleryImagesSubject.next(this.galleryImagesSubject.value.concat(...response.images)));
-      });
-
+    this.fetchGalleryOnIdChange();
+    this.initForms();
+    this.loadImagesOnGalleryChange();
     this.findGalleries();
   }
 
@@ -208,5 +150,83 @@ export class GalleriesService implements ImageLoaderService {
       return;
     }
     this.loadImagesSkip.next(images.length);
+  }
+
+  updateImage(updatedImage: ImageResponse): void {
+    const images = this.galleryImagesSubject.value;
+    const index = images.findIndex((image) => image.id === updatedImage.id);
+    if (index >= 0) {
+      if (updatedImage.galleryId !== this.selectedGalleryIdSubject.value) {
+        images.splice(index, 1);
+      } else {
+        images.splice(index, 1, updatedImage);
+      }
+      this.galleryImagesSubject.next(images);
+    }
+  }
+
+  private fetchGalleryOnIdChange(): void {
+    this.selectedGalleryIdSubject
+      .pipe(
+        distinctUntilChanged(),
+        tap(() => this.loadingGallerySubject.next(true)),
+        switchMap((id) => {
+          if (id !== undefined) {
+            return this.galleryService.getGalleryById(id).pipe(
+              catchError((err) => {
+                if (err.error?.errorCode === 6502) {
+                  this.selectedGalleryIdSubject.next(undefined);
+                  void this.router.navigateByUrl('galleries');
+                }
+                return throwError(() => err);
+              }),
+            );
+          }
+          return of(undefined);
+        }),
+        tap(() => this.loadingGallerySubject.next(false)),
+      )
+      .subscribe((gallery) => this.selectedGallerySubject.next(gallery));
+  }
+
+  private initForms(): void {
+    this.galleriesFilterForm = this.formBuilder.group({
+      filter: [],
+      randomizeOrder: [false],
+    });
+
+    this.galleryImagesFilterForm = this.formBuilder.group({
+      filter: [],
+      randomizeOrder: [false],
+    });
+  }
+
+  private loadImagesOnGalleryChange(): void {
+    combineLatest([this.selectedGalleryIdSubject, this.findImagesOnGalleryChangeSubject])
+      .pipe(
+        filter(([id, shouldFind]) => Boolean(id) && shouldFind),
+        map(([id, _]) => id),
+        distinctUntilChanged((prevId, currentId) => prevId === currentId),
+      )
+      .subscribe(() => this.findImages());
+
+    this.loadImagesSkip
+      .pipe(
+        filter((skip) => skip > 0),
+        distinctUntilChanged(),
+      )
+      .subscribe((skip) => {
+        this.loadingImagesSubject.next(true);
+        const findImagesDto: FindImagesDto = {
+          filter: this.imageFilter,
+          randomnessSeed: this.randomnessSeed,
+          limit: 20,
+          skip,
+        };
+        this.galleryService
+          .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
+          .pipe(finalize(() => this.loadingImagesSubject.next(false)))
+          .subscribe((response) => this.galleryImagesSubject.next(this.galleryImagesSubject.value.concat(...response.images)));
+      });
   }
 }
