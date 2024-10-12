@@ -33,6 +33,8 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
 
     cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
 
+    cq.groupBy(image.get("id"));
+
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())
       .setMaxResults(findImagesDto.getLimit())
@@ -54,6 +56,8 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     setSeed(findImagesDto.getRandomnessSeed());
 
     cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
+
+    cq.groupBy(image.get("id"));
 
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())

@@ -26,6 +26,8 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
 
     cq.orderBy(createOrder(findGalleriesDto.getRandomizeOrder(), gallery, cb));
 
+    cq.groupBy(gallery.get("id"));
+
     return entityManager.createQuery(cq).getResultList();
   }
 
