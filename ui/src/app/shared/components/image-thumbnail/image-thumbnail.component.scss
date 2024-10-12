@@ -1,7 +1,32 @@
+@import 'variables';
+
 :host {
   display: flex;
 
-  .image {
-    width: 100%;
+  .figure {
+    margin: 0;
+    display: block;
+
+    .image {
+      width: 100%;
+      border-radius: 5px 5px 5px 5px;
+
+      &.tagged {
+        border: 4px solid $color-primary;
+        box-sizing: border-box;
+        border-radius: 5px 5px 5px 0;
+      }
+    }
+
+    .caption {
+      font-size: 12px;
+      background-color: $color-primary;
+      color: white;
+      padding: 0 4px 2px 4px;
+      display: block;
+      margin-top: -4px;
+      width: fit-content;
+      border-radius: 0 0 5px 5px;
+    }
   }
 }

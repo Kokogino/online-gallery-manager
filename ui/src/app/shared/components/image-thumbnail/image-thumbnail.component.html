@@ -1,1 +1,6 @@
-<img [src]="image.thumbnailUrl" alt="Image" (load)="onLoad()" class="image" />
+<figure class="figure">
+  <img [src]="image.thumbnailUrl" alt="Image" (load)="onLoad()" class="image" [ngClass]="{ tagged: hasTags() }" />
+  @if (hasTags()) {
+    <figcaption class="caption">{{ getTags() }}</figcaption>
+  }
+</figure>
