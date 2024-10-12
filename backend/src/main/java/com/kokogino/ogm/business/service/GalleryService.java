@@ -61,6 +61,10 @@ public class GalleryService {
   }
 
   private Set<GalleryTag> upsertGalleryTags(Gallery gallery, Collection<Long> tagIds) {
+    if (tagIds == null || tagIds.isEmpty()) {
+      galleryTagRepository.deleteByGallery(gallery);
+      return new HashSet<>();
+    }
     galleryTagRepository.deleteByGalleryAndTagIdNotIn(gallery, tagIds);
 
     Set<GalleryTag> galleryTags = new HashSet<>();
@@ -81,6 +85,10 @@ public class GalleryService {
   }
 
   private Set<GalleryMetadataEntry> upsertGalleryMetadataEntries(Gallery gallery, Collection<UpdateGalleryMetadataEntryDto> metadata) {
+    if (metadata == null || metadata.isEmpty()) {
+      galleryMetadataEntryRepository.deleteByGallery(gallery);
+      return new HashSet<>();
+    }
     List<Long> galleryMetadataIds = metadata.stream().map(UpdateGalleryMetadataEntryDto::getGalleryMetadataId).toList();
     galleryMetadataEntryRepository.deleteByGalleryAndGalleryMetadataIdNotIn(gallery, galleryMetadataIds);
 

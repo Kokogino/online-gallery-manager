@@ -100,6 +100,10 @@ public class ImageService {
   }
 
   private Set<ImageTag> upsertImageTags(Image image, Collection<Long> tagIds) {
+    if (tagIds == null || tagIds.isEmpty()) {
+      imageTagRepository.deleteByImage(image);
+      return new HashSet<>();
+    }
     imageTagRepository.deleteByImageAndTagIdNotIn(image, tagIds);
 
     Set<ImageTag> imageTags = new HashSet<>();

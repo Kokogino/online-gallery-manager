@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 
 @Transactional
 public interface ImageTagRepository extends BaseEntityRepository<ImageTag> {
+  void deleteByImage(Image image);
+
   void deleteByImageAndTagIdNotIn(Image image, Collection<Long> tagIds);
 
   Optional<ImageTag> findByImageAndTag(Image image, Tag tag);

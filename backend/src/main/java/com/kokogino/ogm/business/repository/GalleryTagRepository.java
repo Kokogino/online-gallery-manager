@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 
 @Transactional
 public interface GalleryTagRepository extends BaseEntityRepository<GalleryTag> {
+  void deleteByGallery(Gallery gallery);
+
   void deleteByGalleryAndTagIdNotIn(Gallery gallery, Collection<Long> tagIds);
 
   Optional<GalleryTag> findByGalleryAndTag(Gallery gallery, Tag tag);
