@@ -110,10 +110,7 @@ export class GalleriesService implements ImageLoaderService {
         this.galleryService
           .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
           .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-          .subscribe((response) => {
-            this.galleryImagesSubject.next([...this.galleryImagesSubject.value, ...response.images]);
-            this.totalImagesCount = response.totalCount;
-          });
+          .subscribe((response) => this.galleryImagesSubject.next(this.galleryImagesSubject.value.concat(...response.images)));
       });
 
     this.findGalleries();
