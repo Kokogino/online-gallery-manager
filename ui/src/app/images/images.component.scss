@@ -1,0 +1,61 @@
+@import 'extends';
+
+:host {
+  @extend %basic-container;
+  flex-direction: column;
+
+  .route-container {
+    @extend %flex-fill-overflow;
+    position: relative;
+
+    .images-container {
+      @extend %flex-fill-overflow;
+
+      .tags {
+        width: 340px;
+        display: flex;
+
+        ogm-tags {
+          padding-right: 16px;
+        }
+
+        .divider {
+          margin-right: 16px;
+        }
+      }
+
+      .images {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+
+        .filter-form {
+          display: flex;
+          flex-wrap: wrap;
+          column-gap: 16px;
+          margin-bottom: 16px;
+
+          .filter-query {
+            flex-grow: 1;
+            min-width: 320px;
+          }
+
+          .rest-form {
+            display: flex;
+            margin-top: 8px;
+            column-gap: 8px;
+          }
+        }
+      }
+    }
+
+    .route-overlay {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      margin-top: -8px;
+      background-color: $background-color;
+      z-index: 10;
+    }
+  }
+}

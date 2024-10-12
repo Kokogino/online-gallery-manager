@@ -16,8 +16,8 @@ import {
 import { FilterExpressionDto, FindImagesDto, GalleryResponse, GalleryService, ImageResponse, UpdateGalleryDto } from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
-import { GalleryImagesFilterForm } from '@app/shared/model/gallery-images-filter-form';
+import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
+import { GalleryImagesFilterForm } from '@app/galleries/model/gallery-images-filter-form';
 import { random } from 'lodash-es';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 
@@ -135,6 +135,7 @@ export class GalleriesService implements ImageLoaderService {
       skip: 0,
     };
     this.loadImagesSkip.next(0);
+    this.galleryImagesSubject.next(undefined);
     this.galleryService
       .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
       .pipe(finalize(() => this.loadingImagesSubject.next(false)))
@@ -146,7 +147,7 @@ export class GalleriesService implements ImageLoaderService {
 
   loadMoreImages(): void {
     const images = this.galleryImagesSubject.value;
-    if (this.totalImagesCount === images.length) {
+    if (this.totalImagesCount <= images.length) {
       return;
     }
     this.loadImagesSkip.next(images.length);
@@ -212,8 +213,8 @@ export class GalleriesService implements ImageLoaderService {
 
     this.loadImagesSkip
       .pipe(
-        filter((skip) => skip > 0),
         distinctUntilChanged(),
+        filter((skip) => skip > 0),
       )
       .subscribe((skip) => {
         this.loadingImagesSubject.next(true);

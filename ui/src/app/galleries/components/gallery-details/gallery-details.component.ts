@@ -5,7 +5,7 @@ import { FilterQueryInputComponent } from '@app/shared/components/filter-query-i
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
+import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { AsyncPipe } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';

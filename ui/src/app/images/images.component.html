@@ -1,0 +1,29 @@
+<h1>Images</h1>
+
+<div class="route-container">
+  <div class="images-container" [ngClass]="{ hide: showOutlet }">
+    @if (mediaQueryService.isMinimumDesktopLayout$ | async) {
+      <div class="tags">
+        <ogm-tags (tagClicked)="addTagToQuery($event)" />
+
+        <mat-divider [vertical]="true" class="divider" />
+      </div>
+    }
+
+    <div class="images">
+      <form [formGroup]="filterForm" (submit)="findImages()" class="filter-form">
+        <ogm-filter-query-input #queryInput formControlName="filter" class="filter-query" />
+        <div class="rest-form">
+          <button mat-raised-button color="primary" type="submit">Apply filter</button>
+          <mat-checkbox formControlName="randomizeOrder">Randomize order</mat-checkbox>
+        </div>
+      </form>
+
+      <ogm-image-list [imageLoaderService]="imagesService" imageDetailsBaseRoute="/images/" />
+    </div>
+  </div>
+
+  <div [ngClass]="{ 'route-overlay': showOutlet }">
+    <router-outlet (activate)="toggleOutletVisibility(true)" (deactivate)="toggleOutletVisibility(false)" />
+  </div>
+</div>

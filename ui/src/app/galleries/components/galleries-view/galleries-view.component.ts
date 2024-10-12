@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
 import { MatRipple } from '@angular/material/core';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { Observable } from 'rxjs';
-import { GalleryFilterForm } from '@app/shared/model/gallery-filter-form';
+import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { MatChip } from '@angular/material/chips';
 

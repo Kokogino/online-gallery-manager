@@ -13,5 +13,9 @@ export const routes: Routes = [
     path: 'galleries',
     loadChildren: () => import('./galleries/galleries.routes'),
   },
+  {
+    path: 'images',
+    loadChildren: () => import('./images/images.routes'),
+  },
   { path: '**', redirectTo: 'images' },
 ];
