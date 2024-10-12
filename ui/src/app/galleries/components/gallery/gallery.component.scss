@@ -1,5 +1,16 @@
+@import 'variables';
 @import 'extends';
 
 :host {
   @extend %flex-fill-overflow;
+  position: relative;
+
+  .route-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin-top: -8px;
+    background-color: $background-color;
+    z-index: 10;
+  }
 }

@@ -2,11 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { Subscription } from 'rxjs';
+import { GalleryDetailsComponent } from '@app/galleries/components/gallery-details/gallery-details.component';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-gallery',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, GalleryDetailsComponent, NgClass],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
 })
