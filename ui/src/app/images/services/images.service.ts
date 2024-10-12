@@ -73,6 +73,15 @@ export class ImagesService implements ImageLoaderService {
     this.loadImagesSkip.next(images.length);
   }
 
+  updateImage(updatedImage: ImageResponse): void {
+    const images = this.imagesSubject.value;
+    const index = images.findIndex((image) => image.id === updatedImage.id);
+    if (index >= 0) {
+      images.splice(index, 1, updatedImage);
+      this.imagesSubject.next(images);
+    }
+  }
+
   private initForm(): void {
     this.imagesFilterForm = this.formBuilder.group({
       filter: [],
