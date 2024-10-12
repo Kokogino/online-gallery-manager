@@ -1,7 +1,9 @@
 package com.kokogino.ogm.business.repository;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.datamodel.entity.*;
@@ -132,12 +134,12 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     return cb.isTrue(cb.literal(true));
   }
 
-  private Order createOrder(BigDecimal seed, Root<Image> image, CriteriaBuilder cb) {
+  private List<Order> createOrder(BigDecimal seed, Root<Image> image, CriteriaBuilder cb) {
     if (isValidSeed(seed)) {
       Expression<Double> random = cb.function("random", Double.class);
-      return cb.asc(random);
+      return Arrays.asList(cb.asc(random), cb.asc(image.get("id")));
     }
-    return cb.desc(image.get("updatedAt"));
+    return Arrays.asList(cb.desc(image.get("updatedAt")), cb.asc(image.get("id")));
   }
 
   private void setSeed(BigDecimal seed) {

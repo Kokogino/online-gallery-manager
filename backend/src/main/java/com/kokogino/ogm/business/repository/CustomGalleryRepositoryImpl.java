@@ -1,6 +1,8 @@
 package com.kokogino.ogm.business.repository;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.datamodel.entity.Gallery;
@@ -61,11 +63,11 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
     return cb.isTrue(cb.literal(true));
   }
 
-  private Order createOrder(Boolean randomizeOrder, Root<Gallery> gallery, CriteriaBuilder cb) {
+  private List<Order> createOrder(Boolean randomizeOrder, Root<Gallery> gallery, CriteriaBuilder cb) {
     if (Boolean.TRUE.equals(randomizeOrder)) {
       Expression<Double> random = cb.function("random", Double.class);
-      return cb.asc(random);
+      return Arrays.asList(cb.asc(random), cb.asc(gallery.get("id")));
     }
-    return cb.desc(gallery.get("updatedAt"));
+    return Arrays.asList(cb.desc(gallery.get("updatedAt")), cb.asc(gallery.get("id")));
   }
 }
