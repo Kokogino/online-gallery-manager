@@ -6,7 +6,8 @@
 
   .figure {
     margin: 0;
-    display: block;
+    display: flex;
+    flex-direction: column;
 
     .image {
       width: 100%;
@@ -23,7 +24,7 @@
       font-size: 12px;
       background-color: $color-primary;
       color: white;
-      padding: 0 4px 2px 4px;
+      padding: 4px 4px 2px 4px;
       display: block;
       margin-top: -4px;
       width: fit-content;
