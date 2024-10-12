@@ -20,18 +20,5 @@
 
   .image-container {
     flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .image-link {
-      display: contents;
-
-      .image {
-        display: block;
-        max-width: 100%;
-        max-height: 100%;
-      }
-    }
   }
 }

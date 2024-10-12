@@ -6,11 +6,12 @@ import { ImageResponse, ImageService, UpdateImageDto } from '@app/gen/ogm-backen
 import { MatDivider } from '@angular/material/divider';
 import { ImageTagsComponent } from '@app/shared/components/image-tags/image-tags.component';
 import { AsyncPipe } from '@angular/common';
+import { ImageComponent } from '@app/shared/components/image/image.component';
 
 @Component({
   selector: 'ogm-gallery-image',
   standalone: true,
-  imports: [MatDivider, ImageTagsComponent, AsyncPipe],
+  imports: [MatDivider, ImageTagsComponent, AsyncPipe, ImageComponent],
   templateUrl: './gallery-image.component.html',
   styleUrl: './gallery-image.component.scss',
 })

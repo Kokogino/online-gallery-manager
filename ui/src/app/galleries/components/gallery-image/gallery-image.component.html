@@ -6,8 +6,6 @@
   </div>
 
   <div class="image-container">
-    <a target="_blank" [href]="image.imageUrl" class="image-link">
-      <img [src]="image.pureImageUrl || image.thumbnailUrl" alt="Image" class="image" />
-    </a>
+    <ogm-image [image]="image" />
   </div>
 }
