@@ -13,20 +13,10 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import {
-  FilterExpressionDto,
-  FindImagesDto,
-  GalleryResponse,
-  GalleryService,
-  ImageResponse,
-  ImageService,
-  UpdateGalleryDto,
-} from '@app/gen/ogm-backend';
+import { FindImagesDto, FindImagesResponse, GalleryResponse, GalleryService, ImageService, UpdateGalleryDto } from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
-import { GalleryImagesFilterForm } from '@app/galleries/model/gallery-images-filter-form';
-import { random } from 'lodash-es';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 
 @Injectable({
@@ -37,31 +27,23 @@ export class GalleriesService extends ImageLoaderService {
   public static readonly IMAGE_ID_PARAM = 'image';
 
   public galleriesFilterForm: FormGroup<GalleryFilterForm>;
-  public galleryImagesFilterForm: FormGroup<GalleryImagesFilterForm>;
 
   private loadingGalleriesSubject = new BehaviorSubject<boolean>(false);
   private loadingGallerySubject = new BehaviorSubject<boolean>(false);
-  private loadingImagesSubject = new BehaviorSubject<boolean>(false);
 
   private galleriesSubject = new BehaviorSubject<GalleryResponse[]>(undefined);
   private selectedGalleryIdSubject = new BehaviorSubject<number>(undefined);
   private selectedGallerySubject = new BehaviorSubject<GalleryResponse>(undefined);
 
-  private galleryImagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
   private findImagesOnGalleryChangeSubject = new BehaviorSubject<boolean>(false);
-
-  private loadImagesSkip = new BehaviorSubject<number>(undefined);
-  private imageFilter: FilterExpressionDto;
-  private randomnessSeed: number;
-  private totalImagesCount: number;
 
   constructor(
     private readonly galleryService: GalleryService,
     private readonly router: Router,
-    private readonly formBuilder: FormBuilder,
+    protected override readonly formBuilder: FormBuilder,
     protected override readonly imageService: ImageService,
   ) {
-    super(imageService);
+    super(imageService, formBuilder);
     this.fetchGalleryOnIdChange();
     this.initForms();
     this.loadImagesOnGalleryChange();
@@ -76,10 +58,6 @@ export class GalleriesService extends ImageLoaderService {
     return this.loadingGallerySubject.asObservable();
   }
 
-  get loadingImages$(): Observable<boolean> {
-    return this.loadingImagesSubject.asObservable();
-  }
-
   get galleries$(): Observable<GalleryResponse[]> {
     return this.galleriesSubject.asObservable();
   }
@@ -90,10 +68,6 @@ export class GalleriesService extends ImageLoaderService {
 
   get selectedGalleryId$(): Observable<number> {
     return this.selectedGalleryIdSubject.asObservable();
-  }
-
-  get images$(): Observable<ImageResponse[]> {
-    return this.galleryImagesSubject.asObservable();
   }
 
   set findImagesOnGalleryChange(shouldFind: boolean) {
@@ -129,66 +103,8 @@ export class GalleriesService extends ImageLoaderService {
     });
   }
 
-  findImages(): void {
-    this.loadingImagesSubject.next(true);
-    const formValues = this.galleryImagesFilterForm.getRawValue();
-    if (formValues.randomizeOrder) {
-      this.randomnessSeed = random(-1, 1, true);
-    } else {
-      this.randomnessSeed = undefined;
-    }
-    this.imageFilter = formValues.filter;
-    const findImagesDto: FindImagesDto = {
-      filter: formValues.filter,
-      randomnessSeed: this.randomnessSeed,
-      limit: 20,
-      skip: 0,
-    };
-    this.loadImagesSkip.next(0);
-    this.galleryImagesSubject.next(undefined);
-    this.galleryService
-      .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
-      .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-      .subscribe((response) => {
-        this.galleryImagesSubject.next(response.images);
-        this.totalImagesCount = response.totalCount;
-      });
-  }
-
-  loadMoreImages(): void {
-    const images = this.galleryImagesSubject.value;
-    if (this.totalImagesCount <= images.length) {
-      return;
-    }
-    this.loadImagesSkip.next(images.length);
-  }
-
-  updateImage(updatedImage: ImageResponse): void {
-    const images = this.galleryImagesSubject.value;
-    const index = images.findIndex((image) => image.id === updatedImage.id);
-    if (index >= 0) {
-      if (updatedImage.galleryId !== this.selectedGalleryIdSubject.value) {
-        images.splice(index, 1);
-      } else {
-        images.splice(index, 1, updatedImage);
-      }
-      this.galleryImagesSubject.next(images);
-    }
-  }
-
-  updateImages(updatedImages: ImageResponse[]): void {
-    const images = this.galleryImagesSubject.value;
-    for (let updatedImage of updatedImages) {
-      const index = images.findIndex((image) => image.id === updatedImage.id);
-      if (index >= 0) {
-        if (updatedImage.galleryId !== this.selectedGalleryIdSubject.value) {
-          images.splice(index, 1);
-        } else {
-          images.splice(index, 1, updatedImage);
-        }
-      }
-    }
-    this.galleryImagesSubject.next(images);
+  override fetchImages(findImagesDto: FindImagesDto): Observable<FindImagesResponse> {
+    return this.galleryService.findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto);
   }
 
   private fetchGalleryOnIdChange(): void {
@@ -220,11 +136,6 @@ export class GalleriesService extends ImageLoaderService {
       filter: [],
       randomizeOrder: [false],
     });
-
-    this.galleryImagesFilterForm = this.formBuilder.group({
-      filter: [],
-      randomizeOrder: [false],
-    });
   }
 
   private loadImagesOnGalleryChange(): void {
@@ -235,24 +146,5 @@ export class GalleriesService extends ImageLoaderService {
         distinctUntilChanged((prevId, currentId) => prevId === currentId),
       )
       .subscribe(() => this.findImages());
-
-    this.loadImagesSkip
-      .pipe(
-        distinctUntilChanged(),
-        filter((skip) => skip > 0),
-      )
-      .subscribe((skip) => {
-        this.loadingImagesSubject.next(true);
-        const findImagesDto: FindImagesDto = {
-          filter: this.imageFilter,
-          randomnessSeed: this.randomnessSeed,
-          limit: 20,
-          skip,
-        };
-        this.galleryService
-          .findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto)
-          .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-          .subscribe((response) => this.galleryImagesSubject.next(this.galleryImagesSubject.value.concat(...response.images)));
-      });
   }
 }

@@ -38,7 +38,7 @@ export class GalleryDetailsComponent implements OnInit, OnDestroy {
   constructor(public readonly galleriesService: GalleriesService) {}
 
   ngOnInit(): void {
-    this.imagesFilterForm = this.galleriesService.galleryImagesFilterForm;
+    this.imagesFilterForm = this.galleriesService.imagesFilterForm;
     this.galleriesService.findImagesOnGalleryChange = true;
     this.galleryId$ = this.galleriesService.selectedGalleryId$;
   }
