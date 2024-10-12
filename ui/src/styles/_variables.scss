@@ -47,6 +47,7 @@ $ui-light-theme: mat.m2-define-light-theme(
 }
 
 $background-color: rgba(var(--background-color));
+$background-color-rgb: var(--background-color);
 $color-on-background-rgb: var(--color-on-background);
 $color-on-background: rgba(var(--color-on-background));
 

@@ -9,7 +9,7 @@ import { random } from 'lodash-es';
 @Injectable({
   providedIn: 'root',
 })
-export class ImagesService implements ImageLoaderService {
+export class ImagesService extends ImageLoaderService {
   public static readonly IMAGE_ID_PARAM = 'image';
 
   public imagesFilterForm: FormGroup<ImagesFilterForm>;
@@ -23,9 +23,10 @@ export class ImagesService implements ImageLoaderService {
   private totalImagesCount: number;
 
   constructor(
-    private readonly imageService: ImageService,
+    protected override readonly imageService: ImageService,
     private readonly formBuilder: FormBuilder,
   ) {
+    super(imageService);
     this.initForm();
     this.setupImageLoad();
     this.findImages();
@@ -80,6 +81,17 @@ export class ImagesService implements ImageLoaderService {
       images.splice(index, 1, updatedImage);
       this.imagesSubject.next(images);
     }
+  }
+
+  updateImages(updatedImages: ImageResponse[]): void {
+    const images = this.imagesSubject.value;
+    for (let updatedImage of updatedImages) {
+      const index = images.findIndex((image) => image.id === updatedImage.id);
+      if (index >= 0) {
+        images.splice(index, 1, updatedImage);
+      }
+    }
+    this.imagesSubject.next(images);
   }
 
   private initForm(): void {

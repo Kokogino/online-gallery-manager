@@ -13,7 +13,15 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { FilterExpressionDto, FindImagesDto, GalleryResponse, GalleryService, ImageResponse, UpdateGalleryDto } from '@app/gen/ogm-backend';
+import {
+  FilterExpressionDto,
+  FindImagesDto,
+  GalleryResponse,
+  GalleryService,
+  ImageResponse,
+  ImageService,
+  UpdateGalleryDto,
+} from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
@@ -24,7 +32,7 @@ import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 @Injectable({
   providedIn: 'root',
 })
-export class GalleriesService implements ImageLoaderService {
+export class GalleriesService extends ImageLoaderService {
   public static readonly GALLERY_ID_PARAM = 'gallery';
   public static readonly IMAGE_ID_PARAM = 'image';
 
@@ -51,7 +59,9 @@ export class GalleriesService implements ImageLoaderService {
     private readonly galleryService: GalleryService,
     private readonly router: Router,
     private readonly formBuilder: FormBuilder,
+    protected override readonly imageService: ImageService,
   ) {
+    super(imageService);
     this.fetchGalleryOnIdChange();
     this.initForms();
     this.loadImagesOnGalleryChange();
@@ -164,6 +174,21 @@ export class GalleriesService implements ImageLoaderService {
       }
       this.galleryImagesSubject.next(images);
     }
+  }
+
+  updateImages(updatedImages: ImageResponse[]): void {
+    const images = this.galleryImagesSubject.value;
+    for (let updatedImage of updatedImages) {
+      const index = images.findIndex((image) => image.id === updatedImage.id);
+      if (index >= 0) {
+        if (updatedImage.galleryId !== this.selectedGalleryIdSubject.value) {
+          images.splice(index, 1);
+        } else {
+          images.splice(index, 1, updatedImage);
+        }
+      }
+    }
+    this.galleryImagesSubject.next(images);
   }
 
   private fetchGalleryOnIdChange(): void {

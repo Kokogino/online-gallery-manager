@@ -1,18 +1,45 @@
+@if (!((images$ | async)?.length > 0) && !(loading$ | async)) {
+  <ogm-no-data-message>No images</ogm-no-data-message>
+}
+
+@if (selectedImageIds.length > 0) {
+  <form [formGroup]="addTagsForm" class="add-tags-form" (submit)="addTags()">
+    <ogm-autocomplete-chip-list-input
+      class="tags-input"
+      formControlName="tags"
+      labelText="Tags to add"
+      [options]="allTags"
+      [optionValue]="getTagName"
+      [optionDisplayValue]="getTagName" />
+    <div class="rest-form">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!addTagsForm.valid">Add Tags</button>
+      <button mat-flat-button type="button" (click)="deselectAll()">Deselect all</button>
+      <mat-checkbox [formControl]="onlyShowSelected">Only show selected</mat-checkbox>
+    </div>
+  </form>
+}
+
 <div class="images-list">
-  @if (!((images$ | async)?.length > 0) && !(loading$ | async)) {
-    <ogm-no-data-message>No images</ogm-no-data-message>
-  }
   @for (column of columns; track column; let i = $index) {
     <div class="column">
       @for (image of images$ | async; track image.id; let j = $index; let count = $count) {
         @if (j % columns.length === i) {
-          @defer (on viewport) {
-            <a [routerLink]="imageDetailsBaseRoute + image.id" class="image-link">
-              <ogm-image-thumbnail [image]="image" class="image-thumbnail" (loaded)="loaded(j, count)" />
-            </a>
-          } @placeholder {
-            <div class="placeholder">Loading...</div>
-          }
+          <div [ngClass]="{ hide: shouldHide(image) }">
+            @defer (on viewport) {
+              <div class="image-container">
+                <a [routerLink]="imageDetailsBaseRoute + image.id">
+                  <ogm-image-thumbnail [image]="image" class="image-thumbnail" (loaded)="loaded(j, count)" />
+                </a>
+                <mat-checkbox
+                  (change)="toggleSelection($event, image)"
+                  [checked]="isImageSelected(image)"
+                  class="selection-checkbox"
+                  [ngClass]="{ show: isImageSelected(image) }" />
+              </div>
+            } @placeholder {
+              <div class="placeholder">Loading...</div>
+            }
+          </div>
         }
       }
     </div>
