@@ -138,7 +138,7 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
       Expression<Double> random = cb.function("random", Double.class);
       return Arrays.asList(cb.asc(random), cb.asc(image.get("id")));
     }
-    return Arrays.asList(cb.desc(image.get("updatedAt")), cb.asc(image.get("id")));
+    return Arrays.asList(cb.desc(image.get("createdAt")), cb.asc(image.get("id")));
   }
 
   private void setSeed(BigDecimal seed) {

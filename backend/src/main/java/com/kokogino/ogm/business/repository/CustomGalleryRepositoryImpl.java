@@ -65,6 +65,6 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
       Expression<Double> random = cb.function("random", Double.class);
       return Arrays.asList(cb.asc(random), cb.asc(gallery.get("id")));
     }
-    return Arrays.asList(cb.desc(gallery.get("updatedAt")), cb.asc(gallery.get("id")));
+    return Arrays.asList(cb.desc(gallery.get("createdAt")), cb.asc(gallery.get("id")));
   }
 }
