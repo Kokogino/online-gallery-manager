@@ -35,7 +35,7 @@ import { SharedResizeObserver } from '@angular/cdk/observers/private';
   templateUrl: './image-list.component.html',
   styleUrl: './image-list.component.scss',
 })
-export class ImageListComponent extends SharedResizeObserver implements OnInit, AfterViewInit, OnDestroy {
+export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true })
   imageLoaderService: ImageLoaderService;
 
@@ -61,15 +61,13 @@ export class ImageListComponent extends SharedResizeObserver implements OnInit, 
   onlyShowSelected = new FormControl<boolean>(false);
 
   private resizeSubscription: Subscription;
-  private columnSubscription: Subscription;
   private imagesSubscription: Subscription;
 
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly tagService: TagService,
-  ) {
-    super();
-  }
+    private readonly sharedResizeObserver: SharedResizeObserver,
+  ) {}
 
   ngOnInit(): void {
     this.images$ = this.imageLoaderService.images$;
@@ -87,13 +85,15 @@ export class ImageListComponent extends SharedResizeObserver implements OnInit, 
   }
 
   ngAfterViewInit(): void {
-    this.observeImageListSize();
+    this.resizeSubscription = this.sharedResizeObserver
+      .observe(this.imageList.nativeElement)
+      .subscribe((entries) =>
+        this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250 || 1), ImageLoaderService.BATCH_SIZE)),
+      );
   }
 
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
+  ngOnDestroy(): void {
     this.resizeSubscription?.unsubscribe();
-    this.columnSubscription?.unsubscribe();
     this.imagesSubscription?.unsubscribe();
   }
 
@@ -142,10 +142,4 @@ export class ImageListComponent extends SharedResizeObserver implements OnInit, 
   }
 
   getTagName = (tag: TagResponse): string => tag.name;
-
-  private observeImageListSize(): void {
-    this.resizeSubscription = this.observe(this.imageList.nativeElement).subscribe((entries) =>
-      this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250 || 1), ImageLoaderService.BATCH_SIZE)),
-    );
-  }
 }
