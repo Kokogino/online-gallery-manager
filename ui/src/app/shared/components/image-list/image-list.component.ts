@@ -1,11 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
-import { combineLatest, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ImageResponse, TagResponse, TagService } from '@app/gen/ogm-backend';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
-import { MediaQueryService } from '@app/core/services/media-query.service';
 import { random } from 'lodash-es';
 import { ImageThumbnailComponent } from '@app/shared/components/image-thumbnail/image-thumbnail.component';
 import { RouterLink } from '@angular/router';
@@ -14,6 +13,8 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { AddTagsForm } from '@app/shared/model/add-tags-form';
 import { AutocompleteChipListInputComponent } from '@app/shared/components/autocomplete-chip-list-input/autocomplete-chip-list-input.component';
 import { MatButton } from '@angular/material/button';
+import { CdkObserveContent } from '@angular/cdk/observers';
+import { SharedResizeObserver } from '@angular/cdk/observers/private';
 
 @Component({
   selector: 'ogm-image-list',
@@ -29,22 +30,27 @@ import { MatButton } from '@angular/material/button';
     AutocompleteChipListInputComponent,
     MatButton,
     NgClass,
+    CdkObserveContent,
   ],
   templateUrl: './image-list.component.html',
   styleUrl: './image-list.component.scss',
 })
-export class ImageListComponent implements OnInit, OnDestroy {
+export class ImageListComponent extends SharedResizeObserver implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true })
   imageLoaderService: ImageLoaderService;
 
   @Input({ required: true })
   imageDetailsBaseRoute: string;
 
+  @ViewChild('imageList')
+  imageList: ElementRef<HTMLDivElement>;
+
   images$: Observable<ImageResponse[]>;
 
   loading$: Observable<boolean>;
 
-  columns: number[] = [];
+  numberOfColumns = signal<number>(0);
+  columns = computed<number[]>(() => [...Array(this.numberOfColumns())].map(() => random(true)));
 
   allTags: TagResponse[];
 
@@ -54,29 +60,22 @@ export class ImageListComponent implements OnInit, OnDestroy {
 
   onlyShowSelected = new FormControl<boolean>(false);
 
+  private resizeSubscription: Subscription;
   private columnSubscription: Subscription;
   private imagesSubscription: Subscription;
 
   constructor(
-    private readonly mediaQueryService: MediaQueryService,
     private readonly formBuilder: FormBuilder,
     private readonly tagService: TagService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.images$ = this.imageLoaderService.images$;
     this.loading$ = this.imageLoaderService.loadingImages$;
 
     this.tagService.getAllTags().subscribe((tags) => (this.allTags = tags));
-
-    this.columnSubscription = combineLatest([
-      this.mediaQueryService.isMaximumMobileLayout$,
-      this.mediaQueryService.isMaximumTabletLayout$,
-      this.mediaQueryService.isMaximumDesktopLayout$,
-    ]).subscribe(([biggerThanMobile, biggerThanTablet, biggerThanDesktop]) => {
-      const numberOfColumns = 1 + (!biggerThanMobile ? 1 : 0) + (!biggerThanTablet ? 2 : 0) + (!biggerThanDesktop ? 2 : 0);
-      this.columns = [...Array(numberOfColumns)].map(() => random(true));
-    });
 
     this.imagesSubscription = this.images$.subscribe(
       (images) => (this.selectedImageIds = this.selectedImageIds.filter((id) => images?.findIndex((image) => image.id === id) >= 0)),
@@ -87,13 +86,19 @@ export class ImageListComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  ngAfterViewInit(): void {
+    this.observeImageListSize();
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.resizeSubscription?.unsubscribe();
     this.columnSubscription?.unsubscribe();
     this.imagesSubscription?.unsubscribe();
   }
 
   loaded(index: number, imageCount: number): void {
-    if (index >= Math.max(imageCount - this.columns.length, 0)) {
+    if (index >= Math.max(imageCount - this.numberOfColumns(), 0)) {
       this.imageLoaderService.loadMoreImages();
     }
   }
@@ -137,4 +142,10 @@ export class ImageListComponent implements OnInit, OnDestroy {
   }
 
   getTagName = (tag: TagResponse): string => tag.name;
+
+  private observeImageListSize(): void {
+    this.resizeSubscription = this.observe(this.imageList.nativeElement).subscribe((entries) =>
+      this.numberOfColumns.set(Math.floor(entries[0].contentRect.width / 250 || 1)),
+    );
+  }
 }

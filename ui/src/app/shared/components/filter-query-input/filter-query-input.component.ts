@@ -48,7 +48,7 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
   autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('queryInput')
-  queryInput: ElementRef;
+  queryInput: ElementRef<HTMLInputElement>;
 
   querySubscription: Subscription;
   controlSubscription: Subscription;

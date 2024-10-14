@@ -19,11 +19,11 @@
   </form>
 }
 
-<div class="images-list">
-  @for (column of columns; track column; let i = $index) {
+<div class="images-list" #imageList>
+  @for (column of columns(); track column; let i = $index) {
     <div class="column">
       @for (image of images$ | async; track image.id; let j = $index; let count = $count) {
-        @if (j % columns.length === i) {
+        @if (j % numberOfColumns() === i) {
           <div [ngClass]="{ hide: shouldHide(image) }">
             @defer (on viewport) {
               <div class="image-container">
