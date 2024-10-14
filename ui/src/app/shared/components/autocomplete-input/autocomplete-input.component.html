@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field [ngClass]="{ 'slim-form-field': isSearchInput }">
   @if (isSearchInput) {
     <mat-icon matPrefix>search</mat-icon>
   }
@@ -14,7 +14,13 @@
     }
   </mat-autocomplete>
   @if (isSearchInput && control.value) {
-    <button (click)="clearSearch()" aria-label="Clear" mat-icon-button matSuffix type="button">
+    <button
+      (click)="clearSearch()"
+      aria-label="Clear"
+      mat-icon-button
+      matSuffix
+      type="button"
+      [ngClass]="{ 'small-icon-button': isSearchInput }">
       <mat-icon>close</mat-icon>
     </button>
   }

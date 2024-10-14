@@ -5,7 +5,7 @@ import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/mat
 import { map, Observable, startWith, tap } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatError, MatLabel } from '@angular/material/form-field';
 
@@ -26,6 +26,7 @@ import { MatError, MatLabel } from '@angular/material/form-field';
     MatError,
     MatPrefix,
     MatSuffix,
+    NgClass,
   ],
   templateUrl: './autocomplete-input.component.html',
   styleUrl: './autocomplete-input.component.scss',
