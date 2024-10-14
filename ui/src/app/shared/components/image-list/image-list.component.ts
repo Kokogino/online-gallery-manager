@@ -145,7 +145,7 @@ export class ImageListComponent extends SharedResizeObserver implements OnInit, 
 
   private observeImageListSize(): void {
     this.resizeSubscription = this.observe(this.imageList.nativeElement).subscribe((entries) =>
-      this.numberOfColumns.set(Math.floor(entries[0].contentRect.width / 250 || 1)),
+      this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250 || 1), ImageLoaderService.BATCH_SIZE)),
     );
   }
 }

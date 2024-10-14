@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ImagesFilterForm } from '@app/images/model/images-filter-form';
 
 export abstract class ImageLoaderService {
-  private static readonly BATCH_SIZE = 20;
+  public static readonly BATCH_SIZE = 20;
 
   public imagesFilterForm: FormGroup<ImagesFilterForm>;
 
