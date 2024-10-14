@@ -21,13 +21,10 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Gallery> cq = cb.createQuery(Gallery.class);
     Root<Gallery> gallery = cq.from(Gallery.class);
+
     cq.select(gallery);
-
-    Predicate filterPredicate = createPredicateWithFilter(findGalleriesDto.getFilter(), gallery, cb, cq);
-    cq.where(filterPredicate);
-
+    cq.where(createPredicateWithFilter(findGalleriesDto.getFilter(), gallery, cb, cq));
     cq.orderBy(createOrder(findGalleriesDto.getRandomizeOrder(), gallery, cb));
-
     cq.groupBy(gallery.get("id"));
 
     return entityManager.createQuery(cq).getResultList();

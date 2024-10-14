@@ -71,7 +71,7 @@ public class ImageService {
 
   public FindImagesResponse findImages(FindImagesDto findImagesDto) {
     Collection<Image> images = imageRepository.findImagesByFilter(findImagesDto);
-    Long totalCount = imageRepository.countImagesByFilter(findImagesDto.getFilter());
+    Long totalCount = imageRepository.countImagesByFilter(findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
     response.setImages(images.stream().map(ImageService::imageToResponse).toList());

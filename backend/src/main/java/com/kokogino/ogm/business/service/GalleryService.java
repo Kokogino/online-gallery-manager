@@ -32,7 +32,7 @@ public class GalleryService {
       throw new BusinessException(String.format("Gallery with id '%s' does not exist", galleryId), BusinessReason.ERROR_GALLERY_NOT_EXISTENT);
     }
     Collection<Image> images = imageRepository.findImagesOfGalleryByFilter(galleryId, findImagesDto);
-    Long totalCount = imageRepository.countImagesOfGalleryByFilter(galleryId, findImagesDto.getFilter());
+    Long totalCount = imageRepository.countImagesOfGalleryByFilter(galleryId, findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
     response.setImages(images.stream().map(ImageService::imageToResponse).toList());

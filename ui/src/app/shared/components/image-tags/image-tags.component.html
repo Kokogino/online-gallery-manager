@@ -8,7 +8,7 @@
     </div>
   }
 
-  @if (image.galleryId !== undefined) {
+  @if (!isNil(image.galleryId)) {
     <div>
       <a [routerLink]="'/galleries/' + image.galleryId" class="gallery-url">Open Gallery</a>
     </div>

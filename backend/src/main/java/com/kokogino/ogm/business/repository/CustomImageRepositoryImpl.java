@@ -23,19 +23,13 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Image> cq = cb.createQuery(Image.class);
     Root<Image> image = cq.from(Image.class);
+
     cq.select(image);
-
-    Join<Image, Gallery> gallery = image.join("gallery");
-    Predicate galleryPredicate = cb.equal(gallery.get("id"), galleryId);
-
-    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
-    cq.where(cb.and(galleryPredicate, filterPredicate));
+    cq.where(createWhereClause(findImagesDto, galleryId, image, cb, cq));
+    cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
+    cq.groupBy(image.get("id"));
 
     setSeed(findImagesDto.getRandomnessSeed());
-
-    cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
-
-    cq.groupBy(image.get("id"));
 
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())
@@ -48,18 +42,13 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Image> cq = cb.createQuery(Image.class);
     Root<Image> image = cq.from(Image.class);
+
     cq.select(image);
-
-    Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
-
-    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
-    cq.where(filterPredicate);
+    cq.where(createWhereClause(findImagesDto, image, cb, cq));
+    cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
+    cq.groupBy(image.get("id"));
 
     setSeed(findImagesDto.getRandomnessSeed());
-
-    cq.orderBy(createOrder(findImagesDto.getRandomnessSeed(), image, cb));
-
-    cq.groupBy(image.get("id"));
 
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())
@@ -68,34 +57,44 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
   }
 
   @Override
-  public Long countImagesOfGalleryByFilter(Long galleryId, FilterExpressionDto filter) {
+  public Long countImagesOfGalleryByFilter(Long galleryId, FindImagesDto findImagesDto) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Image> image = cq.from(Image.class);
+
     cq.select(cb.countDistinct(image));
-
-    Join<Image, Gallery> gallery = image.join("gallery");
-    Predicate galleryPredicate = cb.equal(gallery.get("id"), galleryId);
-
-    Predicate filterPredicate = createPredicateWithFilter(filter, image, gallery, cb, cq);
-    cq.where(cb.and(galleryPredicate, filterPredicate));
+    cq.where(createWhereClause(findImagesDto, galleryId, image, cb, cq));
 
     return entityManager.createQuery(cq).getSingleResult();
   }
 
   @Override
-  public Long countImagesByFilter(FilterExpressionDto filter) {
+  public Long countImagesByFilter(FindImagesDto findImagesDto) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Image> image = cq.from(Image.class);
+
     cq.select(cb.countDistinct(image));
-
-    Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
-
-    Predicate filterPredicate = createPredicateWithFilter(filter, image, gallery, cb, cq);
-    cq.where(filterPredicate);
+    cq.where(createWhereClause(findImagesDto, image, cb, cq));
 
     return entityManager.createQuery(cq).getSingleResult();
+  }
+
+  private Predicate createWhereClause(FindImagesDto findImagesDto, Long galleryId, Root<Image> image, CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    Join<Image, Gallery> gallery = image.join("gallery");
+    Predicate galleryPredicate = cb.equal(gallery.get("id"), galleryId);
+    Predicate createdAtPredicate = cb.lessThan(image.get("createdAt"), findImagesDto.getStartingDate());
+
+    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
+    return cb.and(galleryPredicate, createdAtPredicate, filterPredicate);
+  }
+
+  private Predicate createWhereClause(FindImagesDto findImagesDto, Root<Image> image, CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
+    Predicate createdAtPredicate = cb.lessThan(image.get("createdAt"), findImagesDto.getStartingDate());
+
+    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
+    return cb.and(createdAtPredicate, filterPredicate);
   }
 
   private Predicate createPredicateWithFilter(FilterExpressionDto filter, Root<Image> image, Join<Image, Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

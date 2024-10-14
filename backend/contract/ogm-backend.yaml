@@ -723,6 +723,10 @@ components:
       properties:
         filter:
           $ref: "#/components/schemas/FilterExpressionDto"
+        startingDate:
+          type: string
+          format: date-time
+          description: Only images with creation date < startingDate will be returned
         randomnessSeed:
           type: number
           minimum: -1

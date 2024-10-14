@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ImagesFilterForm } from '@app/images/model/images-filter-form';
 
 export abstract class ImageLoaderService {
+  private static readonly BATCH_SIZE = 20;
+
   public imagesFilterForm: FormGroup<ImagesFilterForm>;
 
   protected loadingImagesSubject = new BehaviorSubject<boolean>(false);
@@ -12,6 +14,7 @@ export abstract class ImageLoaderService {
 
   private loadImagesSkip = new BehaviorSubject<number>(undefined);
   private imageFilter: FilterExpressionDto;
+  private startingDate: Date;
   private randomnessSeed: number;
   private totalImagesCount: number;
 
@@ -42,10 +45,12 @@ export abstract class ImageLoaderService {
       this.randomnessSeed = undefined;
     }
     this.imageFilter = formValues.filter;
+    this.startingDate = new Date();
     const findImagesDto: FindImagesDto = {
       filter: formValues.filter,
       randomnessSeed: this.randomnessSeed,
-      limit: 20,
+      startingDate: this.startingDate.toISOString(),
+      limit: ImageLoaderService.BATCH_SIZE,
       skip: 0,
     };
     this.loadImagesSkip.next(0);
@@ -126,7 +131,8 @@ export abstract class ImageLoaderService {
         const findImagesDto: FindImagesDto = {
           filter: this.imageFilter,
           randomnessSeed: this.randomnessSeed,
-          limit: 20,
+          startingDate: this.startingDate.toISOString(),
+          limit: ImageLoaderService.BATCH_SIZE,
           skip,
         };
         this.fetchImages(findImagesDto)

@@ -9,6 +9,7 @@ import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
 import { AsyncPipe } from '@angular/common';
+import { isNil } from 'lodash-es';
 
 @Component({
   selector: 'ogm-image-tags',
@@ -32,6 +33,8 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   imageForm: FormGroup<ImageForm>;
 
+  protected readonly isNil = isNil;
+
   private formSubscription: Subscription;
 
   constructor(
@@ -49,7 +52,7 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.image?.currentValue) {
-      if (this.image.galleryId !== undefined) {
+      if (!isNil(this.image.galleryId)) {
         if (this.image.galleryId !== this.gallery?.id) {
           this.loadingGallery = true;
           this.galleryService

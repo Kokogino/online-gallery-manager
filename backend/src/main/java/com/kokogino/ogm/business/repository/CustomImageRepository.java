@@ -2,7 +2,6 @@ package com.kokogino.ogm.business.repository;
 
 import java.util.Collection;
 
-import com.kokogino.ogm.backend.genapi.business.dto.FilterExpressionDto;
 import com.kokogino.ogm.backend.genapi.business.dto.FindImagesDto;
 import com.kokogino.ogm.datamodel.entity.Image;
 
@@ -11,7 +10,7 @@ public interface CustomImageRepository {
 
   Collection<Image> findImagesByFilter(FindImagesDto findImagesDto);
 
-  Long countImagesOfGalleryByFilter(Long galleryId, FilterExpressionDto filter);
+  Long countImagesOfGalleryByFilter(Long galleryId, FindImagesDto findImagesDto);
 
-  Long countImagesByFilter(FilterExpressionDto filter);
+  Long countImagesByFilter(FindImagesDto findImagesDto);
 }
