@@ -7,7 +7,7 @@
 }
 
 <div class="galleries">
-  <form [formGroup]="filterForm" (submit)="findGalleries()" class="filter-form">
+  <form [formGroup]="filterForm" (submit)="findGalleries()" class="filter-form vertical-center">
     <ogm-filter-query-input #queryInput formControlName="filter" class="filter-query" />
     <div class="rest-form">
       <button mat-raised-button color="primary" type="submit">Apply filter</button>
@@ -16,6 +16,7 @@
   </form>
 
   @if (!(loading | async)) {
+    <ogm-autocomplete-input isSearchInput [formControl]="searchControl" class="gallery-search-field" />
     <div class="gallery-list">
       @for (gallery of galleries | async; track gallery.id; let isFirst = $first) {
         @if (isFirst) {
@@ -47,8 +48,8 @@
               }
             }
           </div>
+          <mat-divider />
         </a>
-        <mat-divider />
       } @empty {
         <ogm-no-data-message>No galleries</ogm-no-data-message>
       }

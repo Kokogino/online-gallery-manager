@@ -44,13 +44,7 @@
   <mat-divider />
 }
 
-<ogm-autocomplete-input
-  class="metadata-search-field"
-  isSearchInput
-  [options]="galleryMetadata"
-  [formControl]="searchGalleryMetadata"
-  [optionDisplayValue]="getMetadataName"
-  [optionValue]="getMetadataName" />
+<ogm-autocomplete-input class="metadata-search-field" isSearchInput [formControl]="searchGalleryMetadata" />
 
 @if (!loading) {
   <div class="metadata-list">

@@ -20,6 +20,7 @@ import { GalleryDetailsForm } from '@app/galleries/model/gallery-details-form';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import moment from 'moment';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -103,7 +104,7 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
           if (value !== undefined) {
             switch (metadata.type) {
               case GalleryMetadataType.Date:
-                value = new Date(value);
+                value = moment(value);
                 break;
               case GalleryMetadataType.Integer:
                 value = parseInt(value);
@@ -132,7 +133,7 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
           .filter((metadata) => metadata.value !== undefined && metadata.value !== null)
           .map((metadata) => ({
             galleryMetadataId: metadata.galleryMetadataId,
-            value: String(metadata.value),
+            value: metadata.type === GalleryMetadataType.Date ? moment(metadata.value).toISOString() : String(metadata.value),
           })),
       };
       this.galleriesService.updateGalleryDetails(updateGalleryDto);

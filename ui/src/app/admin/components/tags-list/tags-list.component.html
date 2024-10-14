@@ -31,13 +31,7 @@
   <mat-divider />
 }
 
-<ogm-autocomplete-input
-  class="tag-search-field"
-  isSearchInput
-  [options]="tags"
-  [formControl]="searchTags"
-  [optionDisplayValue]="getTagName"
-  [optionValue]="getTagName" />
+<ogm-autocomplete-input class="tag-search-field" isSearchInput [formControl]="searchTags" />
 
 @if (!loading) {
   <div class="tag-list">

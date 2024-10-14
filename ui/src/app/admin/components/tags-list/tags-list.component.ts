@@ -129,6 +129,4 @@ export class TagsListComponent implements OnInit {
         });
     }
   }
-
-  getTagName = (tag: TagResponse): string => tag.name;
 }

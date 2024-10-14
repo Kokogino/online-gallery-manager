@@ -34,7 +34,7 @@ export class AutocompleteInputComponent<T extends { id: any }> extends DefaultCo
   @Input()
   optionDisplayValue: (option: T) => string;
 
-  @Input({ required: true })
+  @Input()
   options: T[];
 
   @Input()

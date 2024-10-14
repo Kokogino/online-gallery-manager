@@ -11,7 +11,7 @@
     }
 
     <div class="images">
-      <form [formGroup]="filterForm" (submit)="findImages()" class="filter-form">
+      <form [formGroup]="filterForm" (submit)="findImages()" class="filter-form vertical-center">
         <ogm-filter-query-input #queryInput formControlName="filter" class="filter-query" />
         <div class="rest-form">
           <button mat-raised-button color="primary" type="submit">Apply filter</button>

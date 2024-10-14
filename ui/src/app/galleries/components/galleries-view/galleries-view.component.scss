@@ -26,7 +26,7 @@
       display: flex;
       flex-wrap: wrap;
       column-gap: 16px;
-      margin-bottom: 16px;
+      row-gap: 8px;
 
       .filter-query {
         flex-grow: 1;
@@ -35,9 +35,14 @@
 
       .rest-form {
         display: flex;
-        margin-top: 8px;
         column-gap: 8px;
       }
+    }
+
+    .gallery-search-field {
+      margin: 8px 0;
+      width: 320px;
+      max-width: 100%;
     }
 
     .gallery-list {

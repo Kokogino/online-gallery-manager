@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TagsComponent } from '@app/shared/components/tags/tags.component';
 import { MediaQueryService } from '@app/core/services/media-query.service';
 import { MatDivider } from '@angular/material/divider';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';
 import { GalleryMetadataType, GalleryResponse, TagResponse } from '@app/gen/ogm-backend';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { MatChip } from '@angular/material/chips';
+import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
 
 @Component({
   selector: 'ogm-galleries-view',
@@ -34,12 +35,15 @@ import { MatChip } from '@angular/material/chips';
     AsyncPipe,
     MatChip,
     DatePipe,
+    AutocompleteInputComponent,
   ],
   templateUrl: './galleries-view.component.html',
   styleUrl: './galleries-view.component.scss',
 })
 export class GalleriesViewComponent implements OnInit {
   filterForm: FormGroup<GalleryFilterForm>;
+
+  searchControl: FormControl<string>;
 
   @ViewChild('queryInput')
   queryInput: FilterQueryInputComponent;
@@ -57,8 +61,9 @@ export class GalleriesViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.filterForm = this.galleriesService.galleriesFilterForm;
+    this.searchControl = this.galleriesService.gallerySearchControl;
     this.loading = this.galleriesService.loadingGalleries$;
-    this.galleries = this.galleriesService.galleries$;
+    this.galleries = this.galleriesService.filteredGalleries$;
   }
 
   findGalleries(): void {

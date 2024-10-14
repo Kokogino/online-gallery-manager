@@ -145,6 +145,4 @@ export class GalleryMetadataListComponent implements OnInit {
     }
     throw new Error('Invalid Gallery Metadata type');
   }
-
-  getMetadataName = (metadata: GalleryMetadataResponse): string => metadata.name;
 }

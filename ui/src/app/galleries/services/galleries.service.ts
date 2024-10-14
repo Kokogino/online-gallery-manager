@@ -9,15 +9,27 @@ import {
   map,
   Observable,
   of,
+  startWith,
   switchMap,
   tap,
   throwError,
 } from 'rxjs';
-import { FindImagesDto, FindImagesResponse, GalleryResponse, GalleryService, ImageService, UpdateGalleryDto } from '@app/gen/ogm-backend';
+import {
+  FindImagesDto,
+  FindImagesResponse,
+  GalleryMetadataType,
+  GalleryResponse,
+  GalleryService,
+  ImageService,
+  UpdateGalleryDto,
+} from '@app/gen/ogm-backend';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
+import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
+import { some } from 'lodash-es';
+import moment from 'moment';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +39,7 @@ export class GalleriesService extends ImageLoaderService {
   public static readonly IMAGE_ID_PARAM = 'image';
 
   public galleriesFilterForm: FormGroup<GalleryFilterForm>;
+  public gallerySearchControl: FormControl<string>;
 
   private loadingGalleriesSubject = new BehaviorSubject<boolean>(false);
   private loadingGallerySubject = new BehaviorSubject<boolean>(false);
@@ -58,8 +71,24 @@ export class GalleriesService extends ImageLoaderService {
     return this.loadingGallerySubject.asObservable();
   }
 
-  get galleries$(): Observable<GalleryResponse[]> {
-    return this.galleriesSubject.asObservable();
+  get filteredGalleries$(): Observable<GalleryResponse[]> {
+    return combineLatest([
+      this.galleriesSubject.asObservable(),
+      this.gallerySearchControl.valueChanges.pipe(startWith(this.gallerySearchControl.value)),
+    ]).pipe(
+      map(([galleries, filterValue]) =>
+        galleries?.filter(
+          (gallery) =>
+            containsStringsIgnoringAccentsAndCase(gallery.name, filterValue) ||
+            some(
+              gallery.metadata?.map((metadata) =>
+                metadata.type === GalleryMetadataType.Date ? moment(metadata.value).format('DD.MM.YYYY') : metadata.value,
+              ),
+              (metadata) => containsStringsIgnoringAccentsAndCase(metadata, filterValue),
+            ),
+        ),
+      ),
+    );
   }
 
   get selectedGallery$(): Observable<GalleryResponse> {
@@ -136,6 +165,8 @@ export class GalleriesService extends ImageLoaderService {
       filter: [],
       randomizeOrder: [false],
     });
+
+    this.gallerySearchControl = new FormControl<string>('');
   }
 
   private loadImagesOnGalleryChange(): void {
