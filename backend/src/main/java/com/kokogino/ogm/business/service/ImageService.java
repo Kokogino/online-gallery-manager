@@ -99,6 +99,35 @@ public class ImageService {
     return imageToResponse(imageRepository.save(image));
   }
 
+  public List<ImageResponse> addTagsToImages(AddTagsToImagesDto addTagsToImagesDto) {
+    Collection<Image> images = imageRepository.findAllById(addTagsToImagesDto.getImageIds());
+    Collection<Tag> tags = tagRepository.findAllById(addTagsToImagesDto.getTagIds());
+
+    List<ImageResponse> imageResponses = new ArrayList<>();
+    for (Image image : images) {
+      image.getImageTags().addAll(insertImageTags(image, tags));
+      imageResponses.add(imageToResponse(image));
+    }
+    return imageResponses;
+  }
+
+  private Collection<ImageTag> insertImageTags(Image image, Collection<Tag> tags) {
+    Set<ImageTag> imageTags = new HashSet<>();
+    for (Tag tag : tags) {
+      Optional<ImageTag> imageTag = imageTagRepository.findByImageAndTag(image, tag);
+      if (imageTag.isEmpty()) {
+        ImageTag newImageTag = new ImageTag();
+        newImageTag.setImage(image);
+        newImageTag.setTag(tag);
+        imageTags.add(newImageTag);
+      }
+    }
+    if (imageTags.isEmpty()) {
+      return imageTags;
+    }
+    return imageTagRepository.saveAll(imageTags);
+  }
+
   private Set<ImageTag> upsertImageTags(Image image, Collection<Long> tagIds) {
     if (tagIds == null || tagIds.isEmpty()) {
       imageTagRepository.deleteByImage(image);

@@ -55,6 +55,38 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ImageResponse'
+  /images/addTags:
+    put:
+      tags:
+        - Image
+      summary: Add tags to images
+      description: Returns the updated images
+      operationId: addTagsToImages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTagsToImagesDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageResponse'
   /images/{id}:
     get:
       tags:
@@ -862,6 +894,17 @@ components:
           type: string
         showTag:
           type: boolean
+    AddTagsToImagesDto:
+      type: object
+      properties:
+        imageIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
+        tagIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Id'
 
 
     GalleryChoice:

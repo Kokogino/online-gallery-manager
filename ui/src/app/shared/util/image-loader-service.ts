@@ -1,5 +1,5 @@
-import { BehaviorSubject, distinctUntilChanged, filter, finalize, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
-import { FilterExpressionDto, FindImagesDto, FindImagesResponse, ImageResponse, ImageService, UpdateImageDto } from '@app/gen/ogm-backend';
+import { BehaviorSubject, distinctUntilChanged, filter, finalize, Observable, tap } from 'rxjs';
+import { FilterExpressionDto, FindImagesDto, FindImagesResponse, ImageResponse, ImageService } from '@app/gen/ogm-backend';
 import { random } from 'lodash-es';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ImagesFilterForm } from '@app/images/model/images-filter-form';
@@ -81,25 +81,7 @@ export abstract class ImageLoaderService {
   }
 
   addTagsToImages(tagIds: number[], imageIds: number[]): Observable<ImageResponse[]> {
-    return this.images$.pipe(
-      take(1),
-      switchMap((images) => {
-        const updates: Observable<ImageResponse>[] = [];
-        for (let imageId of imageIds) {
-          const image = images.find((img) => img.id === imageId);
-          const updateImageDto: UpdateImageDto = {
-            galleryId: image.galleryId,
-            tagIds: [...new Set([...image.tags.map((tag) => tag.tagId), ...tagIds])],
-          };
-          updates.push(this.imageService.updateImage(image.id, updateImageDto));
-        }
-
-        if (updates.length > 0) {
-          return forkJoin(updates).pipe(tap((updatedImages) => this.updateImages(updatedImages)));
-        }
-        return of([]);
-      }),
-    );
+    return this.imageService.addTagsToImages({ imageIds, tagIds }).pipe(tap((updatedImages) => this.updateImages(updatedImages)));
   }
 
   private updateImages(updatedImages: ImageResponse[]): void {

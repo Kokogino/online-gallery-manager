@@ -126,9 +126,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.addTagsForm.getRawValue().tags.map((tag) => tag.id),
           this.selectedImageIds,
         )
-        .subscribe(() => {
-          this.addTagsForm.reset();
-        });
+        .subscribe(() => this.addTagsForm.reset());
     }
   }
 

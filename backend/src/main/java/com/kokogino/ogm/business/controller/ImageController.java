@@ -40,4 +40,9 @@ public class ImageController implements ImageApi {
   public ResponseEntity<ImageResponse> updateImage(Long id, UpdateImageDto updateImageDto) {
     return ResponseEntity.ok(imageService.updateImage(id, updateImageDto));
   }
+
+  @Override
+  public ResponseEntity<List<ImageResponse>> addTagsToImages(AddTagsToImagesDto addTagsToImagesDto) {
+    return ResponseEntity.ok(imageService.addTagsToImages(addTagsToImagesDto));
+  }
 }
