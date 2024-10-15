@@ -49,3 +49,12 @@
 @if (loading$ | async) {
   <mat-progress-bar mode="indeterminate" />
 }
+
+<div class="auto-scroll vertical-center">
+  <mat-slider [min]="0" [max]="1" [step]="0.01" color="accent" class="auto-scroll-speed">
+    <input [(ngModel)]="scrollSpeed" matSliderThumb />
+  </mat-slider>
+  <button mat-fab (click)="toggleAutoScroll()" class="auto-scroll-button">
+    <mat-icon>{{ isScrollingPaused ? 'play_arrow' : 'pause' }}</mat-icon>
+  </button>
+</div>

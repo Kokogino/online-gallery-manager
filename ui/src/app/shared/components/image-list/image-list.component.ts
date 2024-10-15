@@ -9,12 +9,14 @@ import { random } from 'lodash-es';
 import { ImageThumbnailComponent } from '@app/shared/components/image-thumbnail/image-thumbnail.component';
 import { RouterLink } from '@angular/router';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AddTagsForm } from '@app/shared/model/add-tags-form';
 import { AutocompleteChipListInputComponent } from '@app/shared/components/autocomplete-chip-list-input/autocomplete-chip-list-input.component';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatFabButton } from '@angular/material/button';
 import { CdkObserveContent } from '@angular/cdk/observers';
 import { SharedResizeObserver } from '@angular/cdk/observers/private';
+import { MatIcon } from '@angular/material/icon';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 
 @Component({
   selector: 'ogm-image-list',
@@ -31,6 +33,11 @@ import { SharedResizeObserver } from '@angular/cdk/observers/private';
     MatButton,
     NgClass,
     CdkObserveContent,
+    MatFabButton,
+    MatIcon,
+    MatSlider,
+    FormsModule,
+    MatSliderThumb,
   ],
   templateUrl: './image-list.component.html',
   styleUrl: './image-list.component.scss',
@@ -60,8 +67,14 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onlyShowSelected = new FormControl<boolean>(false);
 
+  isScrollingPaused = true;
+  scrollSpeed = 0.5;
+
   private resizeSubscription: Subscription;
   private imagesSubscription: Subscription;
+
+  private accumulatedScroll = 0;
+  private lastScrollStepTime: number;
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -93,6 +106,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.isScrollingPaused = true;
     this.resizeSubscription?.unsubscribe();
     this.imagesSubscription?.unsubscribe();
   }
@@ -139,5 +153,44 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onlyShowSelected.setValue(false);
   }
 
+  toggleAutoScroll(): void {
+    if (this.isScrollingPaused) {
+      this.startAutoScroll();
+    } else {
+      this.isScrollingPaused = true;
+    }
+  }
+
   getTagName = (tag: TagResponse): string => tag.name;
+
+  private startAutoScroll(): void {
+    this.lastScrollStepTime = Date.now();
+    this.accumulatedScroll = 0;
+    this.isScrollingPaused = false;
+    this.autoScroll();
+  }
+
+  private autoScroll(): void {
+    const imagesList = this.imageList.nativeElement;
+
+    if (imagesList.clientHeight > 0) {
+      const timePassed = (Date.now() - this.lastScrollStepTime) / 1000;
+      const tickDistance = this.scrollSpeed * 200 + 50;
+      this.accumulatedScroll += timePassed * tickDistance;
+      if (this.accumulatedScroll > 1) {
+        const scrollDistance = Math.floor(this.accumulatedScroll);
+        imagesList.scrollBy(0, scrollDistance);
+        this.accumulatedScroll -= scrollDistance;
+      }
+
+      if (imagesList.scrollTop + imagesList.clientHeight === imagesList.scrollHeight) {
+        this.isScrollingPaused = true;
+      }
+    }
+
+    if (!this.isScrollingPaused) {
+      this.lastScrollStepTime = Date.now();
+      requestAnimationFrame(this.autoScroll.bind(this));
+    }
+  }
 }

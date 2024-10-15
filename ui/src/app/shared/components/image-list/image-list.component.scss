@@ -55,7 +55,7 @@
           position: absolute;
           top: 0;
           left: 0;
-          background-color: rgba($background-color-rgb, 0.1);
+          background-color: rgba($background-color-rgb, 0.3);
           border-radius: 5px 0 16px 0;
           display: none;
 
@@ -67,6 +67,35 @@
         &:hover .selection-checkbox {
           display: initial;
         }
+      }
+    }
+  }
+
+  .auto-scroll {
+    position: absolute;
+    bottom: 0;
+    right: 16px;
+
+    .auto-scroll-speed {
+      display: none;
+      margin-right: 16px;
+      width: 160px;
+    }
+
+    .auto-scroll-button {
+      opacity: 0.5;
+    }
+
+    &:hover {
+      background-color: rgba($background-color-rgb, 0.3);
+      border-radius: 30px;
+
+      .auto-scroll-speed {
+        display: inline-block;
+      }
+
+      .auto-scroll-button {
+        opacity: initial;
       }
     }
   }
