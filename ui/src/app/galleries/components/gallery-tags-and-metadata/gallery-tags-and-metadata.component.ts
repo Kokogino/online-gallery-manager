@@ -21,6 +21,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import moment from 'moment';
+import { isNil } from 'lodash-es';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -130,7 +131,7 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
         name: formValues.name,
         tagIds: formValues.tagIds,
         galleryMetadata: formValues.metadata
-          .filter((metadata) => metadata.value !== undefined && metadata.value !== null)
+          .filter((metadata) => !isNil(metadata.value))
           .map((metadata) => ({
             galleryMetadataId: metadata.galleryMetadataId,
             value: metadata.type === GalleryMetadataType.Date ? moment(metadata.value).toISOString() : String(metadata.value),

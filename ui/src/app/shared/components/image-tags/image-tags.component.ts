@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GalleryResponse, GalleryService, ImageResponse, TagResponse, TagService, UpdateImageDto } from '@app/gen/ogm-backend';
-import { debounceTime, finalize, Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ImageForm } from '@app/shared/model/image-form';
 import { MatIcon } from '@angular/material/icon';
@@ -78,7 +78,7 @@ export class ImageTagsComponent implements OnInit, OnChanges {
     });
 
     this.formSubscription?.unsubscribe();
-    this.formSubscription = this.imageForm.valueChanges.pipe(debounceTime(500)).subscribe((formValues) => {
+    this.formSubscription = this.imageForm.valueChanges.subscribe((formValues) => {
       const updateImageDto: UpdateImageDto = {
         galleryId: formValues.galleryId,
         tagIds: formValues.tagIds,
