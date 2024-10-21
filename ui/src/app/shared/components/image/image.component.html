@@ -1,11 +1,18 @@
-<a target="_blank" [href]="image.imageUrl" class="image-link">
-  @if (image.pureImageUrl?.length > 0) {
-    <img [src]="image.pureImageUrl" alt="Image" class="image" (load)="this.fullImageLoaded = true" [ngClass]="{ hide: !fullImageLoaded }" />
-  }
-  @if (!fullImageLoaded) {
-    <img [src]="image.thumbnailUrl" alt="Image" class="image" />
-  }
-</a>
+<div class="image-container">
+  <a target="_blank" [href]="image.imageUrl" class="image-link">
+    @if (image.pureImageUrl?.length > 0) {
+      <img
+        [src]="image.pureImageUrl"
+        alt="Image"
+        class="image"
+        (load)="this.fullImageLoaded = true"
+        [ngClass]="{ hide: !fullImageLoaded }" />
+    }
+    @if (!fullImageLoaded) {
+      <img [src]="image.thumbnailUrl" alt="Image" class="image" />
+    }
+  </a>
+</div>
 
 @if (!fullImageLoaded && image.pureImageUrl?.length > 0) {
   <div class="loading-indicator vertical-center">

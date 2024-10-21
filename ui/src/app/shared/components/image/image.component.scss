@@ -1,23 +1,29 @@
 :host {
   display: flex;
-  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
+  flex-direction: column;
 
-  .image-link {
-    display: contents;
+  .image-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
 
-    .image {
-      display: block;
-      max-width: 100%;
-      max-height: 100%;
+    .image-link {
+      display: contents;
+
+      .image {
+        max-width: 100%;
+        max-height: 100%;
+      }
     }
   }
 
   .loading-indicator {
-    position: fixed;
-    bottom: 8px;
+    margin-top: 8px;
 
     .spinner {
       margin-left: 8px;

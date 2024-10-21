@@ -1,11 +1,30 @@
-@if (!loadingImage && selectedImageSubject | async; as image) {
-  <div class="image-tags">
-    <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+<mat-sidenav-container class="image-details-container">
+  <mat-sidenav #detailsSidebar class="sidebar" mode="over" opened="false">
+    <div class="sidebar-details">
+      @if (!loadingImage && selectedImageSubject | async; as image) {
+        <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+      }
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="sidebar-content">
+    @if (!loadingImage && selectedImageSubject | async; as image) {
+      @if (mediaQueryService.isMinimumTabletLayout$ | async) {
+        <div class="image-tags">
+          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
 
-    <mat-divider [vertical]="true" class="divider" />
-  </div>
+          <mat-divider [vertical]="true" class="divider" />
+        </div>
+      }
 
-  <div class="image-container">
-    <ogm-image [image]="image" />
-  </div>
-}
+      <div class="image-container">
+        <ogm-image [image]="image" />
+      </div>
+
+      @if (mediaQueryService.isMaximumTabletLayout$ | async) {
+        <button mat-fab class="edit-image-button" (click)="detailsSidebar.toggle()">
+          <mat-icon>edit</mat-icon>
+        </button>
+      }
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>

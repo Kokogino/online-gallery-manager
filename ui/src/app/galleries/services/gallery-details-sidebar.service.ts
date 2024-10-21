@@ -17,10 +17,6 @@ export class GalleryDetailsSidebarService {
   }
 
   toggle(): void {
-    if (this._detailsSidebar?.opened) {
-      void this._detailsSidebar.close();
-    } else {
-      void this._detailsSidebar?.open();
-    }
+    void this._detailsSidebar?.toggle();
   }
 }

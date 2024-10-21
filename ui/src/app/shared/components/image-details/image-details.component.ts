@@ -7,11 +7,36 @@ import { MatDivider } from '@angular/material/divider';
 import { ImageComponent } from '@app/shared/components/image/image.component';
 import { AsyncPipe } from '@angular/common';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
+import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';
+import { FormsModule } from '@angular/forms';
+import { GalleryTagsAndMetadataComponent } from '@app/galleries/components/gallery-tags-and-metadata/gallery-tags-and-metadata.component';
+import { ImageListComponent } from '@app/shared/components/image-list/image-list.component';
+import { MatButton, MatFabButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'ogm-image-details',
   standalone: true,
-  imports: [ImageTagsComponent, MatDivider, ImageComponent, AsyncPipe],
+  imports: [
+    ImageTagsComponent,
+    MatDivider,
+    ImageComponent,
+    AsyncPipe,
+    FilterQueryInputComponent,
+    FormsModule,
+    GalleryTagsAndMetadataComponent,
+    ImageListComponent,
+    MatButton,
+    MatCheckbox,
+    MatSidenav,
+    MatSidenavContainer,
+    MatSidenavContent,
+    MatFabButton,
+    MatIcon,
+  ],
   templateUrl: './image-details.component.html',
   styleUrl: './image-details.component.scss',
 })
@@ -31,6 +56,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
   private routeSubscription: Subscription;
 
   constructor(
+    public readonly mediaQueryService: MediaQueryService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly imageService: ImageService,

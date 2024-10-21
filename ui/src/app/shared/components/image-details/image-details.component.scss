@@ -4,22 +4,51 @@
   @extend %flex-fill-overflow;
   height: 100%;
 
-  .image-tags {
-    width: 340px;
-    min-width: 340px;
-    height: 100%;
-    display: flex;
+  .image-details-container {
+    @extend %flex-fill-overflow;
 
-    ogm-image-tags {
-      padding-right: 16px;
+    .sidebar {
+      width: 320px;
+      max-width: 80%;
+
+      .sidebar-details {
+        display: block;
+        padding: 8px;
+      }
     }
 
-    .divider {
-      margin-right: 16px;
-    }
-  }
+    .sidebar-content {
+      @extend %flex-fill-overflow;
 
-  .image-container {
-    flex-grow: 1;
+      .image-tags {
+        width: 340px;
+        min-width: 340px;
+        height: 100%;
+        display: flex;
+
+        ogm-image-tags {
+          padding-right: 16px;
+        }
+
+        .divider {
+          margin-right: 16px;
+        }
+      }
+
+      .image-container {
+        flex-grow: 1;
+      }
+
+      .edit-image-button {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        opacity: 0.5;
+
+        &:hover {
+          opacity: initial;
+        }
+      }
+    }
   }
 }
