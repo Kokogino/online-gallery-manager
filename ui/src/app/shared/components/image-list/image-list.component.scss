@@ -34,7 +34,7 @@
     display: flex;
     flex-grow: 1;
     column-gap: 8px;
-    overflow: auto;
+    overflow-y: scroll;
 
     .column {
       display: flex;

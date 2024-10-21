@@ -101,7 +101,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resizeSubscription = this.sharedResizeObserver
       .observe(this.imageList.nativeElement)
       .subscribe((entries) =>
-        this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250 || 1), ImageLoaderService.BATCH_SIZE)),
+        this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250) || 1, ImageLoaderService.BATCH_SIZE)),
       );
   }
 
