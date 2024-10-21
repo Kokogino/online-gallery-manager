@@ -4,7 +4,7 @@ export interface Page {
   icon: string;
 }
 
-export const PAGES: Page[] = [
+export const PAGES: ReadonlyArray<Page> = [
   {
     route: 'images',
     text: 'Images',

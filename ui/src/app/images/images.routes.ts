@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { ImagesComponent } from '@app/images/images.component';
 import { ImagesService } from '@app/images/services/images.service';
-import { ImageDetailsComponent } from '@app/images/components/image-details/image-details.component';
+import { ImagePageComponent } from '@app/images/components/image-page/image-page.component';
 
 export const routes: Routes = [
   {
@@ -10,7 +10,7 @@ export const routes: Routes = [
     children: [
       {
         path: `:${ImagesService.IMAGE_ID_PARAM}`,
-        component: ImageDetailsComponent,
+        component: ImagePageComponent,
       },
     ],
   },

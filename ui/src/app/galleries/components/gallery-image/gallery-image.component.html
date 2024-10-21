@@ -1,11 +1,1 @@
-@if (!loadingImage && selectedImageSubject | async; as image) {
-  <div class="image-tags">
-    <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
-
-    <mat-divider [vertical]="true" class="divider" />
-  </div>
-
-  <div class="image-container">
-    <ogm-image [image]="image" />
-  </div>
-}
+<ogm-image-details [imageLoaderService]="galleriesService" [fallbackRoute]="fallbackRoute()" [imageIdParam]="imageIdParam" />

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, Subscription, switchMap, tap, throwError } from 'rxjs';
 import { ImageResponse, ImageService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { ImageTagsComponent } from '@app/shared/components/image-tags/image-tags
 import { MatDivider } from '@angular/material/divider';
 import { ImageComponent } from '@app/shared/components/image/image.component';
 import { AsyncPipe } from '@angular/common';
-import { ImagesService } from '@app/images/services/images.service';
+import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 
 @Component({
   selector: 'ogm-image-details',
@@ -16,6 +16,15 @@ import { ImagesService } from '@app/images/services/images.service';
   styleUrl: './image-details.component.scss',
 })
 export class ImageDetailsComponent implements OnInit, OnDestroy {
+  @Input({ required: true })
+  imageLoaderService: ImageLoaderService;
+
+  @Input({ required: true })
+  fallbackRoute: string;
+
+  @Input({ required: true })
+  imageIdParam: string;
+
   loadingImage = true;
   selectedImageSubject = new BehaviorSubject<ImageResponse>(undefined);
 
@@ -23,7 +32,6 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly imagesService: ImagesService,
     private readonly router: Router,
     private readonly imageService: ImageService,
   ) {}
@@ -39,7 +47,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
   updateImage(updateImageDto: UpdateImageDto, originalImage: ImageResponse): void {
     this.imageService.updateImage(originalImage.id, updateImageDto).subscribe((image) => {
       this.selectedImageSubject.next(image);
-      this.imagesService.updateImage(image);
+      this.imageLoaderService.updateImage(image);
     });
   }
 
@@ -47,9 +55,9 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.paramMap
       .pipe(
         map((params) => {
-          const imageId = parseInt(params.get(ImagesService.IMAGE_ID_PARAM));
+          const imageId = parseInt(params.get(this.imageIdParam));
           if (isNaN(imageId)) {
-            void this.router.navigateByUrl(`/images`);
+            void this.router.navigateByUrl(this.fallbackRoute);
             return undefined;
           }
           return imageId;
@@ -61,7 +69,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
           this.imageService.getImageById(id).pipe(
             catchError((err) => {
               if (err.error?.errorCode === 6503) {
-                void this.router.navigateByUrl(`/images`);
+                void this.router.navigateByUrl(this.fallbackRoute);
               }
               return throwError(() => err);
             }),
