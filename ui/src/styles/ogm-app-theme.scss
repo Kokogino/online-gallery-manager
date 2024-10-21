@@ -8,10 +8,6 @@
 
   @include setCSSProperty(--side-space-width, 32px);
 
-  @media screen and (max-width: $screen-size-tablet - 1) {
-    @include setCSSProperty(--side-space-width, 8px);
-  }
-
   @media screen and (max-width: $screen-size-desktop - 1) {
     @include setCSSProperty(--side-space-width, 16px);
   }

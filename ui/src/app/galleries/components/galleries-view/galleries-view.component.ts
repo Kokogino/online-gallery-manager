@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TagsComponent } from '@app/shared/components/tags/tags.component';
-import { MediaQueryService } from '@app/core/services/media-query.service';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { MatDivider } from '@angular/material/divider';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';

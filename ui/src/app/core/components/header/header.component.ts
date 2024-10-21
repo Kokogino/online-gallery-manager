@@ -3,11 +3,11 @@ import { NavItemComponent } from '@app/core/components/nav-item/nav-item.compone
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { map, Observable } from 'rxjs';
-import { ThemeService } from '@app/core/services/theme.service';
+import { ThemeService } from '@app/shared/services/theme.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AsyncPipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
-import { MediaQueryService } from '@app/core/services/media-query.service';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { PAGES } from '@app/core/model/page';
 

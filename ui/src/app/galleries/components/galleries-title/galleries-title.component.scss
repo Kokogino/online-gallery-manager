@@ -1,12 +1,8 @@
 .title {
   flex-wrap: wrap;
 
-  .hide.active {
-    display: block;
-    opacity: 1;
-    width: initial;
-    height: initial;
-    visibility: visible;
+  .edit-gallery-button {
+    margin-left: 8px;
   }
 
   .updating-spinner {

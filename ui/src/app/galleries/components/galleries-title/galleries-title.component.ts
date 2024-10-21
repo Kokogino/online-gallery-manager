@@ -6,11 +6,15 @@ import { AsyncPipe } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
+import { MatTooltip } from '@angular/material/tooltip';
+import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-details-sidebar.service';
 
 @Component({
   selector: 'ogm-galleries-title',
   standalone: true,
-  imports: [AsyncPipe, MatProgressSpinner, RouterLink, RouterLinkActive, MatIcon],
+  imports: [AsyncPipe, MatProgressSpinner, RouterLink, RouterLinkActive, MatIcon, MatIconButton, MatTooltip],
   templateUrl: './galleries-title.component.html',
   styleUrl: './galleries-title.component.scss',
 })
@@ -19,10 +23,18 @@ export class GalleriesTitleComponent implements OnInit {
 
   loadingGallery$: Observable<boolean>;
 
-  constructor(private readonly galleriesService: GalleriesService) {}
+  constructor(
+    public readonly mediaQueryService: MediaQueryService,
+    private readonly galleriesService: GalleriesService,
+    private readonly galleryDetailsSidebarService: GalleryDetailsSidebarService,
+  ) {}
 
   ngOnInit(): void {
     this.gallery$ = this.galleriesService.selectedGallery$;
     this.loadingGallery$ = this.galleriesService.loadingGallery$;
+  }
+
+  openDetailsSidebar(): void {
+    this.galleryDetailsSidebarService.toggle();
   }
 }

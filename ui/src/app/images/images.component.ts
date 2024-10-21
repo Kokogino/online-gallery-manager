@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { TagsComponent } from '@app/shared/components/tags/tags.component';
 import { AsyncPipe, DatePipe, NgClass } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
-import { MediaQueryService } from '@app/core/services/media-query.service';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { TagResponse } from '@app/gen/ogm-backend';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';

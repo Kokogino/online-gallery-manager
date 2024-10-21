@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { map, Observable } from 'rxjs';
-import { ThemeService } from '@app/core/services/theme.service';
+import { ThemeService } from '@app/shared/services/theme.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { CoreComponent } from '@app/core/core.component';
 import { AsyncPipe, NgClass } from '@angular/common';

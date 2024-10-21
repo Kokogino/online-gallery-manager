@@ -33,7 +33,7 @@ a {
   flex-grow: 1;
 }
 
-.hide {
+.hide:not(.active) {
   display: none;
   opacity: 0;
   width: 0;

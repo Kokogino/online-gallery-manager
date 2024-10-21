@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GalleryTagsAndMetadataComponent } from '@app/galleries/components/gallery-tags-and-metadata/gallery-tags-and-metadata.component';
 import { MatDivider } from '@angular/material/divider';
 import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';
@@ -11,6 +11,10 @@ import { AsyncPipe } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ImageListComponent } from '@app/shared/components/image-list/image-list.component';
 import { Observable } from 'rxjs';
+import { MediaQueryService } from '@app/shared/services/media-query.service';
+import { HeaderComponent } from '@app/core/components/header/header.component';
+import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
+import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-details-sidebar.service';
 
 @Component({
   selector: 'ogm-gallery-details',
@@ -26,16 +30,27 @@ import { Observable } from 'rxjs';
     AsyncPipe,
     MatProgressBar,
     ImageListComponent,
+    HeaderComponent,
+    MatSidenav,
+    MatSidenavContainer,
+    MatSidenavContent,
   ],
   templateUrl: './gallery-details.component.html',
   styleUrl: './gallery-details.component.scss',
 })
-export class GalleryDetailsComponent implements OnInit, OnDestroy {
+export class GalleryDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('detailsSidebar')
+  detailsSidebar: MatSidenav;
+
   imagesFilterForm: FormGroup<GalleryFilterForm>;
 
   galleryId$: Observable<number>;
 
-  constructor(public readonly galleriesService: GalleriesService) {}
+  constructor(
+    public readonly mediaQueryService: MediaQueryService,
+    public readonly galleriesService: GalleriesService,
+    private readonly galleryDetailsSidebarService: GalleryDetailsSidebarService,
+  ) {}
 
   ngOnInit(): void {
     this.imagesFilterForm = this.galleriesService.imagesFilterForm;
@@ -43,8 +58,13 @@ export class GalleryDetailsComponent implements OnInit, OnDestroy {
     this.galleryId$ = this.galleriesService.selectedGalleryId$;
   }
 
+  ngAfterViewInit(): void {
+    this.galleryDetailsSidebarService.detailsSidebar = this.detailsSidebar;
+  }
+
   ngOnDestroy(): void {
     this.galleriesService.findImagesOnGalleryChange = false;
+    this.galleryDetailsSidebarService.destroy();
   }
 
   findImages(): void {

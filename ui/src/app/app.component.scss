@@ -1,6 +1,7 @@
 .mat-app-background {
   height: 100%;
   display: flex;
+  overflow: auto;
 
   ogm-core {
     flex-grow: 1;

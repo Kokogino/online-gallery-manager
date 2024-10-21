@@ -1,17 +1,28 @@
-<div class="tags-and-metadata">
-  <ogm-gallery-tags-and-metadata />
-
-  <mat-divider [vertical]="true" class="divider" />
-</div>
-
-<div class="images">
-  <form [formGroup]="imagesFilterForm" (submit)="findImages()" class="filter-form">
-    <ogm-filter-query-input formControlName="filter" class="filter-query" />
-    <div class="rest-form">
-      <button mat-raised-button color="primary" type="submit">Apply filter</button>
-      <mat-checkbox formControlName="randomizeOrder">Randomize order</mat-checkbox>
+<mat-sidenav-container class="gallery-details-container">
+  <mat-sidenav #detailsSidebar class="sidebar" mode="over" opened="false">
+    <div class="sidebar-details">
+      <ogm-gallery-tags-and-metadata />
     </div>
-  </form>
+  </mat-sidenav>
+  <mat-sidenav-content class="sidebar-content">
+    @if (mediaQueryService.isMinimumTabletLayout$ | async) {
+      <div class="tags-and-metadata">
+        <ogm-gallery-tags-and-metadata />
 
-  <ogm-image-list [imageLoaderService]="galleriesService" [imageDetailsBaseRoute]="'/galleries/' + (galleryId$ | async) + '/'" />
-</div>
+        <mat-divider [vertical]="true" class="divider" />
+      </div>
+    }
+
+    <div class="images">
+      <form [formGroup]="imagesFilterForm" (submit)="findImages()" class="filter-form">
+        <ogm-filter-query-input formControlName="filter" class="filter-query" />
+        <div class="rest-form">
+          <button mat-raised-button color="primary" type="submit">Apply filter</button>
+          <mat-checkbox formControlName="randomizeOrder">Randomize order</mat-checkbox>
+        </div>
+      </form>
+
+      <ogm-image-list [imageLoaderService]="galleriesService" [imageDetailsBaseRoute]="'/galleries/' + (galleryId$ | async) + '/'" />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
