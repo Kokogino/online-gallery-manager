@@ -83,18 +83,23 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
   private Predicate createWhereClause(FindImagesDto findImagesDto, Long galleryId, Root<Image> image, CriteriaBuilder cb, CriteriaQuery<?> cq) {
     Join<Image, Gallery> gallery = image.join("gallery");
     Predicate galleryPredicate = cb.equal(gallery.get("id"), galleryId);
-    Predicate createdAtPredicate = cb.lessThan(image.get("createdAt"), findImagesDto.getStartingDate());
-
-    Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
-    return cb.and(galleryPredicate, createdAtPredicate, filterPredicate);
+    return cb.and(galleryPredicate, createWhereClause(findImagesDto, image, gallery, cb, cq));
   }
 
   private Predicate createWhereClause(FindImagesDto findImagesDto, Root<Image> image, CriteriaBuilder cb, CriteriaQuery<?> cq) {
     Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
+    return createWhereClause(findImagesDto, image, gallery, cb, cq);
+  }
+
+  private Predicate createWhereClause(FindImagesDto findImagesDto, Root<Image> image, Join<Image, Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {
     Predicate createdAtPredicate = cb.lessThan(image.get("createdAt"), findImagesDto.getStartingDate());
+    Predicate deletedAtPredicate = cb.or(
+      cb.isNull(image.get("deletedAt")),
+      cb.greaterThan(image.get("deletedAt"), findImagesDto.getStartingDate())
+    );
 
     Predicate filterPredicate = createPredicateWithFilter(findImagesDto.getFilter(), image, gallery, cb, cq);
-    return cb.and(createdAtPredicate, filterPredicate);
+    return cb.and(deletedAtPredicate, createdAtPredicate, filterPredicate);
   }
 
   private Predicate createPredicateWithFilter(FilterExpressionDto filter, Root<Image> image, Join<Image, Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

@@ -759,7 +759,7 @@ components:
         startingDate:
           type: string
           format: date-time
-          description: Only images with creation date < startingDate will be returned
+          description: Only images with creation date < startingDate and deletion date > startingDate will be returned
         randomnessSeed:
           type: number
           minimum: -1
