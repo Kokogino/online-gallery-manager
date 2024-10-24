@@ -1,6 +1,7 @@
 package com.kokogino.ogm.business.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,8 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
 
     setSeed(findImagesDto.getRandomnessSeed());
 
+    optimizeQuery(cq, image, cb);
+
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())
       .setMaxResults(findImagesDto.getLimit())
@@ -49,6 +52,8 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
     cq.groupBy(image.get("id"));
 
     setSeed(findImagesDto.getRandomnessSeed());
+
+    optimizeQuery(cq, image, cb);
 
     return entityManager.createQuery(cq)
       .setFirstResult(findImagesDto.getSkip())
@@ -165,5 +170,24 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
       return false;
     }
     return true;
+  }
+
+  /**
+   * This fetches tags and gallery to avoid N+1 problem.
+   */
+  private void optimizeQuery(CriteriaQuery<Image> cq, Root<Image> image, CriteriaBuilder cb) {
+    Join<Image, ImageTag> imageTag = (Join<Image, ImageTag>) image.<Image, ImageTag>fetch("imageTags", JoinType.LEFT);
+    Join<ImageTag, Tag> tag = (Join<ImageTag, Tag>) imageTag.<ImageTag, Tag>fetch("tag", JoinType.LEFT);
+    Join<Image, Gallery> gallery = (Join<Image, Gallery>) image.<Image, Gallery>fetch("gallery", JoinType.LEFT);
+
+    Predicate tagIsNotDeleted = cb.isNull(tag.get("deletedAt"));
+
+    List<Expression<?>> groupByList = new ArrayList<>(cq.getGroupList());
+    groupByList.add(imageTag.get("id"));
+    groupByList.add(tag.get("id"));
+    groupByList.add(gallery.get("id"));
+
+    cq.where(cb.and(cq.getRestriction(), tagIsNotDeleted));
+    cq.groupBy(groupByList);
   }
 }

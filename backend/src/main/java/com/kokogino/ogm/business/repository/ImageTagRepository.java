@@ -18,5 +18,5 @@ public interface ImageTagRepository extends BaseEntityRepository<ImageTag> {
   Optional<ImageTag> findByImageAndTag(Image image, Tag tag);
 
   @EntityGraph("ImageTag.tag")
-  Collection<ImageTag> findAllByImageAndTagDeletedAtIsNull(Image image);
+  Collection<ImageTag> findAllByImageAndTagDeletedAtIsNullOrderByTagName(Image image);
 }

@@ -21,8 +21,6 @@ public class GalleryService {
   private final GalleryTagRepository galleryTagRepository;
   private final GalleryMetadataEntryRepository galleryMetadataEntryRepository;
 
-  private final ImageService imageService;
-
   public void deleteGalleryById(Long id) {
     Gallery gallery = galleryRepository.findById(id)
       .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
@@ -38,7 +36,7 @@ public class GalleryService {
     Long totalCount = imageRepository.countImagesOfGalleryByFilter(galleryId, findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
-    response.setImages(images.stream().map(imageService::imageToResponse).toList());
+    response.setImages(images.stream().map(ImageService::imageToResponse).toList());
     response.setTotalCount(totalCount);
     return response;
   }

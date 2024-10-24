@@ -1,6 +1,7 @@
 package com.kokogino.ogm.business.service;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.business.repository.GalleryRepository;
@@ -59,7 +60,7 @@ public class ImageService {
 
     imageRepository.saveAll(images);
 
-    return images.stream().map(this::imageToResponse).toList();
+    return images.stream().map(this::imageToResponseFetchingTags).toList();
   }
 
   public void deleteImageById(Long id) {
@@ -74,14 +75,14 @@ public class ImageService {
     Long totalCount = imageRepository.countImagesByFilter(findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
-    response.setImages(images.stream().map(this::imageToResponse).toList());
+    response.setImages(images.stream().map(ImageService::imageToResponse).toList());
     response.setTotalCount(totalCount);
     return response;
   }
 
   public ImageResponse getImageById(Long id) {
     return imageRepository.findById(id)
-      .map(this::imageToResponse)
+      .map(this::imageToResponseFetchingTags)
       .orElseThrow(() -> new BusinessException(String.format("Image with id '%s' does not exist", id), BusinessReason.ERROR_IMAGE_NOT_EXISTENT));
   }
 
@@ -96,7 +97,7 @@ public class ImageService {
     image.setGallery(gallery);
     image.setImageTags(upsertImageTags(image, updateImageDto.getTagIds()));
 
-    return imageToResponse(imageRepository.save(image));
+    return imageToResponseFetchingTags(imageRepository.save(image));
   }
 
   public List<ImageResponse> addTagsToImages(AddTagsToImagesDto addTagsToImagesDto) {
@@ -106,13 +107,13 @@ public class ImageService {
     List<ImageResponse> imageResponses = new ArrayList<>();
     for (Image image : images) {
       image.getImageTags().addAll(insertImageTags(image, tags));
-      imageResponses.add(imageToResponse(image));
+      imageResponses.add(imageToResponseFetchingTags(image));
     }
     return imageResponses;
   }
 
-  public ImageResponse imageToResponse(Image image) {
-    return imageToResponse(image, imageTagRepository.findAllByImageAndTagDeletedAtIsNull(image));
+  public ImageResponse imageToResponseFetchingTags(Image image) {
+    return imageToResponse(image, imageTagRepository.findAllByImageAndTagDeletedAtIsNullOrderByTagName(image).stream());
   }
 
   private Collection<ImageTag> insertImageTags(Image image, Collection<Tag> tags) {
@@ -165,7 +166,11 @@ public class ImageService {
     return null;
   }
 
-  public static ImageResponse imageToResponse(Image image, Collection<ImageTag> imageTags) {
+  public static ImageResponse imageToResponse(Image image) {
+    return imageToResponse(image, image.getImageTags().stream().sorted(ImageService::compareImageTag));
+  }
+
+  public static ImageResponse imageToResponse(Image image, Stream<ImageTag> imageTags) {
     return new ImageResponse()
       .id(image.getId())
       .galleryId(Optional.ofNullable(image.getGallery()).map(Gallery::getId).orElse(null))
@@ -174,7 +179,7 @@ public class ImageService {
       .imageUrl(image.getImageUrl())
       .host(image.getHost())
       .editUrl(image.getEditUrl())
-      .tags(imageTags.stream().map(ImageService::imageTagToResponse).toList());
+      .tags(imageTags.map(ImageService::imageTagToResponse).toList());
   }
 
   public static ImageTagResponse imageTagToResponse(ImageTag imageTag) {
@@ -184,5 +189,9 @@ public class ImageService {
       .tagId(tag.getId())
       .name(tag.getName())
       .showTag(tag.getShowTag());
+  }
+
+  private static int compareImageTag(ImageTag t1, ImageTag t2) {
+    return t1.getTag().getName().compareToIgnoreCase(t2.getTag().getName());
   }
 }
