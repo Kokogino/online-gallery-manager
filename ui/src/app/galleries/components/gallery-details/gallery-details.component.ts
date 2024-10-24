@@ -8,13 +8,13 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { AsyncPipe } from '@angular/common';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { ImageListComponent } from '@app/shared/components/image-list/image-list.component';
 import { Observable } from 'rxjs';
 import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { HeaderComponent } from '@app/core/components/header/header.component';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-details-sidebar.service';
+import { DeletingOverlayComponent } from '@app/shared/components/deleting-overlay/deleting-overlay.component';
 
 @Component({
   selector: 'ogm-gallery-details',
@@ -28,12 +28,12 @@ import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-de
     MatCheckbox,
     ReactiveFormsModule,
     AsyncPipe,
-    MatProgressBar,
     ImageListComponent,
     HeaderComponent,
     MatSidenav,
     MatSidenavContainer,
     MatSidenavContent,
+    DeletingOverlayComponent,
   ],
   templateUrl: './gallery-details.component.html',
   styleUrl: './gallery-details.component.scss',
@@ -46,6 +46,8 @@ export class GalleryDetailsComponent implements OnInit, OnDestroy, AfterViewInit
 
   galleryId$: Observable<number>;
 
+  deletingGalleryId$: Observable<number>;
+
   constructor(
     public readonly mediaQueryService: MediaQueryService,
     public readonly galleriesService: GalleriesService,
@@ -56,6 +58,7 @@ export class GalleryDetailsComponent implements OnInit, OnDestroy, AfterViewInit
     this.imagesFilterForm = this.galleriesService.imagesFilterForm;
     this.galleriesService.findImagesOnGalleryChange = true;
     this.galleryId$ = this.galleriesService.selectedGalleryId$;
+    this.deletingGalleryId$ = this.galleriesService.deletingGalleryId$;
   }
 
   ngAfterViewInit(): void {

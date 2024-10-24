@@ -8,7 +8,7 @@ import {
   TagService,
   UpdateGalleryDto,
 } from '@app/gen/ogm-backend';
-import { BehaviorSubject, combineLatest, debounceTime, filter, finalize, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, filter, finalize, Observable, Subscription, switchMap, take } from 'rxjs';
 import { MatChip, MatChipListbox, MatChipOption, MatChipSet, MatChipTrailingIcon } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
@@ -22,6 +22,9 @@ import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import moment from 'moment';
 import { isNil } from 'lodash-es';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { RouterLinkActive } from '@angular/router';
+import { SharedDialogService } from '@app/shared/services/shared-dialog.service';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -44,6 +47,9 @@ import { isNil } from 'lodash-es';
     MatDatepickerToggle,
     MatDatepicker,
     MatSuffix,
+    MatAnchor,
+    RouterLinkActive,
+    MatButton,
   ],
   templateUrl: './gallery-tags-and-metadata.component.html',
   styleUrl: './gallery-tags-and-metadata.component.scss',
@@ -70,6 +76,7 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
     private readonly galleriesService: GalleriesService,
     private readonly formBuilder: FormBuilder,
     private readonly galleryMetadataService: GalleryMetadataService,
+    private readonly sharedDialogService: SharedDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -92,6 +99,21 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.gallerySubscription?.unsubscribe();
     this.formSubscription?.unsubscribe();
+  }
+
+  deleteGallery(): void {
+    this.gallery$
+      .pipe(
+        take(1),
+        switchMap((gallery) =>
+          this.sharedDialogService.openDeleteConfirmationDialog({
+            title: `Delete ${gallery.name?.length > 0 ? 'Gallery "' + gallery.name + '"' : 'Unnamed Gallery'}`,
+            message: 'Deleting the gallery will also delete all images of the gallery. Do you want to continue?',
+          }),
+        ),
+        filter(Boolean),
+      )
+      .subscribe(() => this.galleriesService.deleteSelectedGallery());
   }
 
   private setupDetailsForm(gallery: GalleryResponse, galleryMetadata: GalleryMetadataResponse[]): void {

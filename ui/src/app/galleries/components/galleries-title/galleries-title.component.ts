@@ -23,6 +23,8 @@ export class GalleriesTitleComponent implements OnInit {
 
   loadingGallery$: Observable<boolean>;
 
+  deletingGalleryId$: Observable<number>;
+
   constructor(
     public readonly mediaQueryService: MediaQueryService,
     private readonly galleriesService: GalleriesService,
@@ -32,6 +34,7 @@ export class GalleriesTitleComponent implements OnInit {
   ngOnInit(): void {
     this.gallery$ = this.galleriesService.selectedGallery$;
     this.loadingGallery$ = this.galleriesService.loadingGallery$;
+    this.deletingGalleryId$ = this.galleriesService.deletingGalleryId$;
   }
 
   openDetailsSidebar(): void {

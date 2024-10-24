@@ -73,6 +73,11 @@
     } @else {
       <mat-progress-bar mode="indeterminate" />
     }
+
+    <button class="delete-button" color="warn" mat-stroked-button (click)="deleteGallery()">
+      <mat-icon>delete</mat-icon>
+      Delete Gallery
+    </button>
   </form>
 } @else {
   <mat-progress-bar mode="indeterminate" />

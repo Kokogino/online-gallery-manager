@@ -11,7 +11,7 @@
       <span [routerLink]="'/galleries/' + gallery.id" class="hide" routerLinkActive="active">
         {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
       </span>
-      @if (mediaQueryService.isMaximumTabletLayout$ | async) {
+      @if ((mediaQueryService.isMaximumTabletLayout$ | async) && gallery.id !== (deletingGalleryId$ | async)) {
         <button
           mat-icon-button
           [routerLink]="'/galleries/' + gallery.id"

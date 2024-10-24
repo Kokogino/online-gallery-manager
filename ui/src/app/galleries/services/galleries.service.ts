@@ -30,6 +30,7 @@ import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 import { some } from 'lodash-es';
 import moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ export class GalleriesService extends ImageLoaderService {
 
   private loadingGalleriesSubject = new BehaviorSubject<boolean>(false);
   private loadingGallerySubject = new BehaviorSubject<boolean>(false);
+  private deletingGalleryIdSubject = new BehaviorSubject<number>(undefined);
 
   private galleriesSubject = new BehaviorSubject<GalleryResponse[]>(undefined);
   private selectedGalleryIdSubject = new BehaviorSubject<number>(undefined);
@@ -53,6 +55,7 @@ export class GalleriesService extends ImageLoaderService {
   constructor(
     private readonly galleryService: GalleryService,
     private readonly router: Router,
+    private readonly snackBar: MatSnackBar,
     protected override readonly formBuilder: FormBuilder,
     protected override readonly imageService: ImageService,
   ) {
@@ -69,6 +72,10 @@ export class GalleriesService extends ImageLoaderService {
 
   get loadingGallery$(): Observable<boolean> {
     return this.loadingGallerySubject.asObservable();
+  }
+
+  get deletingGalleryId$(): Observable<number> {
+    return this.deletingGalleryIdSubject.asObservable();
   }
 
   get filteredGalleries$(): Observable<GalleryResponse[]> {
@@ -130,6 +137,31 @@ export class GalleriesService extends ImageLoaderService {
         this.galleriesSubject.next(galleries);
       }
     });
+  }
+
+  deleteSelectedGallery(): void {
+    const selectedGalleryId = this.selectedGalleryIdSubject.value;
+    this.deletingGalleryIdSubject.next(selectedGalleryId);
+    this.galleryService
+      .deleteGalleryById(selectedGalleryId)
+      .pipe(
+        finalize(() => this.deletingGalleryIdSubject.next(undefined)),
+        tap(() => {
+          const galleries = this.galleriesSubject.value;
+          const index = galleries.findIndex((gallery) => gallery.id === selectedGalleryId);
+          galleries.splice(index, 1);
+          this.galleriesSubject.next(galleries);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          if (this.selectedGalleryIdSubject.value === selectedGalleryId) {
+            this.selectedGalleryIdSubject.next(undefined);
+            void this.router.navigateByUrl('galleries');
+          }
+        },
+        error: () => this.snackBar.open('Error occurred when deleting gallery', 'Dismiss'),
+      });
   }
 
   override fetchImages(findImagesDto: FindImagesDto): Observable<FindImagesResponse> {
