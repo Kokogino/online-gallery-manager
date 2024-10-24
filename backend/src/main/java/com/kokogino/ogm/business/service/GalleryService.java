@@ -1,5 +1,6 @@
 package com.kokogino.ogm.business.service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -24,8 +25,15 @@ public class GalleryService {
   public void deleteGalleryById(Long id) {
     Gallery gallery = galleryRepository.findById(id)
       .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
-    imageRepository.deleteAll(gallery.getImages());
-    galleryRepository.deleteById(id);
+    LocalDateTime now = LocalDateTime.now();
+    gallery.setDeletedAt(now);
+
+    Set<Image> images = gallery.getImages();
+    for (Image image : images) {
+      image.setDeletedAt(now);
+    }
+    imageRepository.saveAll(images);
+    galleryRepository.save(gallery);
   }
 
   public FindImagesResponse findImages(Long galleryId, FindImagesDto findImagesDto) {

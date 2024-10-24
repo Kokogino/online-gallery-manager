@@ -1,5 +1,6 @@
 package com.kokogino.ogm.business.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +31,10 @@ public class GalleryMetadataService {
   }
 
   public void deleteGalleryMetadataById(Long id) {
-    if (!galleryMetadataRepository.existsById(id)) {
-      throw new BusinessException(String.format("GalleryMetadata with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_METADATA_NOT_EXISTENT);
-    }
-    galleryMetadataRepository.deleteById(id);
+    GalleryMetadata galleryMetadata = galleryMetadataRepository.findById(id)
+      .orElseThrow(() -> new BusinessException(String.format("GalleryMetadata with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_METADATA_NOT_EXISTENT));
+    galleryMetadata.setDeletedAt(LocalDateTime.now());
+    galleryMetadataRepository.save(galleryMetadata);
   }
 
   public List<GalleryMetadataResponse> getAllGalleryMetadata() {

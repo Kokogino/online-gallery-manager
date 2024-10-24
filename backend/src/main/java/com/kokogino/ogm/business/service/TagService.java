@@ -1,5 +1,6 @@
 package com.kokogino.ogm.business.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +31,10 @@ public class TagService {
   }
 
   public void deleteTagById(Long id) {
-    if (!tagRepository.existsById(id)) {
-      throw new BusinessException(String.format("Tag with id '%s' does not exist", id), BusinessReason.ERROR_TAG_NOT_EXISTENT);
-    }
-    tagRepository.deleteById(id);
+    Tag tag = tagRepository.findById(id)
+      .orElseThrow(() -> new BusinessException(String.format("Tag with id '%s' does not exist", id), BusinessReason.ERROR_TAG_NOT_EXISTENT));
+    tag.setDeletedAt(LocalDateTime.now());
+    tagRepository.save(tag);
   }
 
   public List<TagResponse> getAllTags() {

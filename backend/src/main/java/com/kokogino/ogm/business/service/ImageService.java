@@ -1,5 +1,6 @@
 package com.kokogino.ogm.business.service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -64,10 +65,10 @@ public class ImageService {
   }
 
   public void deleteImageById(Long id) {
-    if (!imageRepository.existsById(id)) {
-      throw new BusinessException(String.format("Image with id '%s' does not exist", id), BusinessReason.ERROR_IMAGE_NOT_EXISTENT);
-    }
-    imageRepository.deleteById(id);
+    Image image = imageRepository.findById(id)
+      .orElseThrow(() -> new BusinessException(String.format("Image with id '%s' does not exist", id), BusinessReason.ERROR_IMAGE_NOT_EXISTENT));
+    image.setDeletedAt(LocalDateTime.now());
+    imageRepository.save(image);
   }
 
   public FindImagesResponse findImages(FindImagesDto findImagesDto) {
