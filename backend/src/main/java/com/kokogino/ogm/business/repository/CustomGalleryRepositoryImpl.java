@@ -23,11 +23,22 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
     Root<Gallery> gallery = cq.from(Gallery.class);
 
     cq.select(gallery);
-    cq.where(createPredicateWithFilter(findGalleriesDto.getFilter(), gallery, cb, cq));
+    cq.where(createWhereClause(findGalleriesDto, gallery, cb, cq));
     cq.orderBy(createOrder(findGalleriesDto.getRandomizeOrder(), gallery, cb));
     cq.groupBy(gallery.get("id"));
 
     return entityManager.createQuery(cq).getResultList();
+  }
+
+  private Predicate createWhereClause(FindGalleriesDto findGalleriesDto, Root<Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    Predicate createdAtPredicate = cb.lessThan(gallery.get("createdAt"), findGalleriesDto.getStartingDate());
+    Predicate deletedAtPredicate = cb.or(
+      cb.isNull(gallery.get("deletedAt")),
+      cb.greaterThan(gallery.get("deletedAt"), findGalleriesDto.getStartingDate())
+    );
+
+    Predicate filterPredicate = createPredicateWithFilter(findGalleriesDto.getFilter(), gallery, cb, cq);
+    return cb.and(deletedAtPredicate, createdAtPredicate, filterPredicate);
   }
 
   private Predicate createPredicateWithFilter(FilterExpressionDto filter, Root<Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

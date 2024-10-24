@@ -114,7 +114,7 @@ export class GalleriesService extends ImageLoaderService {
   findGalleries(): void {
     this.loadingGalleriesSubject.next(true);
     this.galleryService
-      .findGalleries(this.galleriesFilterForm.getRawValue())
+      .findGalleries({ ...this.galleriesFilterForm.getRawValue(), startingDate: new Date().toISOString() })
       .pipe(finalize(() => this.loadingGalleriesSubject.next(false)))
       .subscribe((galleries) => this.galleriesSubject.next(galleries));
   }

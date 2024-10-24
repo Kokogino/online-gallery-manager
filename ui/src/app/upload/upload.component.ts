@@ -62,7 +62,7 @@ export class UploadComponent implements OnInit {
       { validators: uploadFormValidator },
     );
 
-    this.galleries = this.galleryService.findGalleries({ randomizeOrder: false });
+    this.galleries = this.galleryService.findGalleries({ randomizeOrder: false, startingDate: new Date().toISOString() });
   }
 
   upload(): void {

@@ -751,6 +751,7 @@ components:
       required:
         - skip
         - limit
+        - startingDate
       type: object
       properties:
         filter:
@@ -769,10 +770,16 @@ components:
         limit:
           type: integer
     FindGalleriesDto:
+      required:
+        - startingDate
       type: object
       properties:
         filter:
           $ref: "#/components/schemas/FilterExpressionDto"
+        startingDate:
+          type: string
+          format: date-time
+          description: Only galleries with creation date < startingDate and deletion date > startingDate will be returned
         randomizeOrder:
           type: boolean
           description: If false, the galleries will be sorted by modification date descending
