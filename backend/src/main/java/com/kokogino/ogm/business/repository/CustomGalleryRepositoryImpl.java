@@ -1,13 +1,12 @@
 package com.kokogino.ogm.business.repository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
-import com.kokogino.ogm.datamodel.entity.Gallery;
-import com.kokogino.ogm.datamodel.entity.GalleryTag;
-import com.kokogino.ogm.datamodel.entity.Tag;
+import com.kokogino.ogm.datamodel.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,8 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
     cq.where(createWhereClause(findGalleriesDto, gallery, cb, cq));
     cq.orderBy(createOrder(findGalleriesDto.getRandomizeOrder(), gallery, cb));
     cq.groupBy(gallery.get("id"));
+
+    optimizeQuery(cq, gallery, cb);
 
     return entityManager.createQuery(cq).getResultList();
   }
@@ -77,5 +78,27 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
       return Arrays.asList(cb.asc(random), cb.asc(gallery.get("id")));
     }
     return Arrays.asList(cb.desc(gallery.get("createdAt")), cb.asc(gallery.get("id")));
+  }
+
+  /**
+   * This fetches tags and metadata to avoid N+1 problem.
+   */
+  private void optimizeQuery(CriteriaQuery<Gallery> cq, Root<Gallery> gallery, CriteriaBuilder cb) {
+    Join<Gallery, GalleryTag> galleryTag = (Join<Gallery, GalleryTag>) gallery.<Gallery, GalleryTag>fetch("galleryTags", JoinType.LEFT);
+    Join<GalleryTag, Tag> tag = (Join<GalleryTag, Tag>) galleryTag.<GalleryTag, Tag>fetch("tag", JoinType.LEFT);
+    Join<Gallery, GalleryMetadataEntry> galleryMetadataEntry = (Join<Gallery, GalleryMetadataEntry>) gallery.<Gallery, GalleryMetadataEntry>fetch("galleryMetadataEntries", JoinType.LEFT);
+    Join<GalleryMetadataEntry, GalleryMetadata> galleryMetadata = (Join<GalleryMetadataEntry, GalleryMetadata>) galleryMetadataEntry.<GalleryMetadataEntry, GalleryMetadata>fetch("galleryMetadata", JoinType.LEFT);
+
+    Predicate tagIsNotDeleted = cb.isNull(tag.get("deletedAt"));
+    Predicate galleryMetadataIsNotDeleted = cb.isNull(galleryMetadata.get("deletedAt"));
+
+    List<Expression<?>> groupByList = new ArrayList<>(cq.getGroupList());
+    groupByList.add(galleryTag.get("id"));
+    groupByList.add(tag.get("id"));
+    groupByList.add(galleryMetadataEntry.get("id"));
+    groupByList.add(galleryMetadata.get("id"));
+
+    cq.where(cb.and(cq.getRestriction(), tagIsNotDeleted, galleryMetadataIsNotDeleted));
+    cq.groupBy(groupByList);
   }
 }

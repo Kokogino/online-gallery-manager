@@ -7,6 +7,7 @@ import com.kokogino.ogm.datamodel.entity.Image;
 import com.kokogino.ogm.datamodel.entity.ImageTag;
 import com.kokogino.ogm.datamodel.entity.Tag;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 @Transactional
 public interface ImageTagRepository extends BaseEntityRepository<ImageTag> {
@@ -16,5 +17,6 @@ public interface ImageTagRepository extends BaseEntityRepository<ImageTag> {
 
   Optional<ImageTag> findByImageAndTag(Image image, Tag tag);
 
+  @EntityGraph("ImageTag.tag")
   Collection<ImageTag> findAllByImageAndTagDeletedAtIsNull(Image image);
 }

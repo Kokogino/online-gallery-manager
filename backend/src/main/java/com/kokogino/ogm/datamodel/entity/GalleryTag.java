@@ -8,12 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"gallery_id", "tag_id"})})
+@NamedEntityGraph(name = "GalleryTag.tag", attributeNodes = @NamedAttributeNode("tag"))
 public class GalleryTag extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "gallery_id", nullable = false)
   private Gallery gallery;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne
   @JoinColumn(name = "tag_id", nullable = false)
   private Tag tag;
 }

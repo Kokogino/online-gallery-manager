@@ -1,6 +1,7 @@
 package com.kokogino.ogm.business.service;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
 import com.kokogino.ogm.business.repository.*;
@@ -43,12 +44,12 @@ public class GalleryService {
   }
 
   public List<GalleryResponse> findGalleries(FindGalleriesDto findGalleriesDto) {
-    return galleryRepository.findGalleriesByFilter(findGalleriesDto).stream().map(this::galleryToResponse).toList();
+    return galleryRepository.findGalleriesByFilter(findGalleriesDto).stream().map(GalleryService::galleryToResponse).toList();
   }
 
   public GalleryResponse getGalleryById(Long id) {
     return galleryRepository.findById(id)
-      .map(this::galleryToResponse)
+      .map(this::galleryToResponseFetchingJoins)
       .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
   }
 
@@ -59,7 +60,7 @@ public class GalleryService {
     gallery.setGalleryTags(upsertGalleryTags(gallery, updateGalleryDto.getTagIds()));
     gallery.setGalleryMetadataEntries(upsertGalleryMetadataEntries(gallery, updateGalleryDto.getGalleryMetadata()));
 
-    return galleryToResponse(galleryRepository.save(gallery));
+    return galleryToResponseFetchingJoins(galleryRepository.save(gallery));
   }
 
   private Set<GalleryTag> upsertGalleryTags(Gallery gallery, Collection<Long> tagIds) {
@@ -114,22 +115,30 @@ public class GalleryService {
     return galleryMetadataEntries;
   }
 
-  private GalleryResponse galleryToResponse(Gallery gallery) {
+  private GalleryResponse galleryToResponseFetchingJoins(Gallery gallery) {
     return galleryToResponse(
       gallery,
-      galleryTagRepository.findAllByGalleryAndTagDeletedAtIsNullOrderByTagName(gallery),
-      galleryMetadataEntryRepository.findAllByGalleryAndGalleryMetadataDeletedAtIsNullOrderByGalleryMetadataName(gallery)
+      galleryTagRepository.findAllByGalleryAndTagDeletedAtIsNullOrderByTagName(gallery).stream(),
+      galleryMetadataEntryRepository.findAllByGalleryAndGalleryMetadataDeletedAtIsNullOrderByGalleryMetadataName(gallery).stream()
     );
   }
 
-  private static GalleryResponse galleryToResponse(Gallery gallery, Collection<GalleryTag> galleryTags, Collection<GalleryMetadataEntry> galleryMetadataEntries) {
+  private static GalleryResponse galleryToResponse(Gallery gallery) {
+    return galleryToResponse(
+      gallery,
+      gallery.getGalleryTags().stream().sorted(GalleryService::compareGalleryTag),
+      gallery.getGalleryMetadataEntries().stream().sorted(GalleryService::compareGalleryMetadataEntry)
+    );
+  }
+
+  private static GalleryResponse galleryToResponse(Gallery gallery, Stream<GalleryTag> galleryTags, Stream<GalleryMetadataEntry> galleryMetadataEntries) {
     return new GalleryResponse()
       .id(gallery.getId())
       .name(gallery.getName())
       .editUrl(gallery.getEditUrl())
       .host(gallery.getHost())
-      .tags(galleryTags.stream().map(GalleryService::galleryTagToResponse).toList())
-      .metadata(galleryMetadataEntries.stream().map(GalleryService::galleryMetadataEntryToResponse).toList());
+      .tags(galleryTags.map(GalleryService::galleryTagToResponse).toList())
+      .metadata(galleryMetadataEntries.map(GalleryService::galleryMetadataEntryToResponse).toList());
   }
 
   private static GalleryTagResponse galleryTagToResponse(GalleryTag galleryTag) {
@@ -149,5 +158,13 @@ public class GalleryService {
       .value(galleryMetadataEntry.getValue())
       .name(galleryMetadata.getName())
       .type(galleryMetadata.getType());
+  }
+
+  private static int compareGalleryMetadataEntry(GalleryMetadataEntry m1, GalleryMetadataEntry m2) {
+    return m1.getGalleryMetadata().getName().compareToIgnoreCase(m2.getGalleryMetadata().getName());
+  }
+
+  private static int compareGalleryTag(GalleryTag t1, GalleryTag t2) {
+    return t1.getTag().getName().compareToIgnoreCase(t2.getTag().getName());
   }
 }

@@ -7,6 +7,7 @@ import com.kokogino.ogm.datamodel.entity.Gallery;
 import com.kokogino.ogm.datamodel.entity.GalleryMetadata;
 import com.kokogino.ogm.datamodel.entity.GalleryMetadataEntry;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 @Transactional
 public interface GalleryMetadataEntryRepository extends BaseEntityRepository<GalleryMetadataEntry> {
@@ -16,5 +17,6 @@ public interface GalleryMetadataEntryRepository extends BaseEntityRepository<Gal
 
   Optional<GalleryMetadataEntry> findByGalleryAndGalleryMetadata(Gallery gallery, GalleryMetadata galleryMetadata);
 
+  @EntityGraph("GalleryMetadataEntry.galleryMetadata")
   Collection<GalleryMetadataEntry> findAllByGalleryAndGalleryMetadataDeletedAtIsNullOrderByGalleryMetadataName(Gallery gallery);
 }
