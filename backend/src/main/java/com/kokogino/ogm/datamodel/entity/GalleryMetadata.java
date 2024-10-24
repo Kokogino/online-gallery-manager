@@ -1,5 +1,6 @@
 package com.kokogino.ogm.datamodel.entity;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.kokogino.ogm.backend.genapi.business.dto.GalleryMetadataType;
@@ -15,13 +16,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GalleryMetadata extends BaseEntity {
-    @Column(nullable = false, unique = true, length = 50)
-    private String name;
+  @Column(nullable = false, unique = true, length = 50)
+  private String name;
 
-    @Column(nullable = false)
-    @Convert(converter = GalleryMetadataTypeConverter.class)
-    private GalleryMetadataType type;
+  @Column(nullable = false)
+  @Convert(converter = GalleryMetadataTypeConverter.class)
+  private GalleryMetadataType type;
 
-    @OneToMany(mappedBy = "galleryMetadata")
-    private Set<GalleryMetadataEntry> galleryMetadataEntries;
+  @OneToMany(mappedBy = "galleryMetadata")
+  private Set<GalleryMetadataEntry> galleryMetadataEntries;
+
+  private LocalDateTime deletedAt;
 }

@@ -1,5 +1,7 @@
 package com.kokogino.ogm.datamodel.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -13,4 +15,6 @@ public class Tag extends BaseEntity {
   private String name;
 
   private Boolean showTag;
+
+  private LocalDateTime deletedAt;
 }

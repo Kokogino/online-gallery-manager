@@ -1,5 +1,6 @@
 package com.kokogino.ogm.datamodel.entity;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.kokogino.ogm.backend.genapi.business.dto.ImageHost;
@@ -31,4 +32,6 @@ public class Gallery extends BaseEntity {
 
   @OneToMany(mappedBy = "gallery")
   private Set<Image> images;
+
+  private LocalDateTime deletedAt;
 }
