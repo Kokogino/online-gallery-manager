@@ -3,14 +3,17 @@ import { FilterExpressionDto, FindImagesDto, FindImagesResponse, ImageResponse, 
 import { random } from 'lodash-es';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ImagesFilterForm } from '@app/images/model/images-filter-form';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 export abstract class ImageLoaderService {
   public static readonly BATCH_SIZE = 20;
 
   public imagesFilterForm: FormGroup<ImagesFilterForm>;
 
-  protected loadingImagesSubject = new BehaviorSubject<boolean>(false);
-  protected imagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
+  private loadingImagesSubject = new BehaviorSubject<boolean>(false);
+  private deletingImageIdSubject = new BehaviorSubject<number>(undefined);
+  private imagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
 
   private loadImagesSkip = new BehaviorSubject<number>(undefined);
   private imageFilter: FilterExpressionDto;
@@ -20,9 +23,13 @@ export abstract class ImageLoaderService {
 
   abstract fetchImages(findImagesDto: FindImagesDto): Observable<FindImagesResponse>;
 
+  abstract basePath(): string;
+
   constructor(
     protected readonly imageService: ImageService,
     protected readonly formBuilder: FormBuilder,
+    protected readonly snackBar: MatSnackBar,
+    protected readonly router: Router,
   ) {
     this.initForm();
     this.setupImageLoad();
@@ -34,6 +41,10 @@ export abstract class ImageLoaderService {
 
   get images$(): Observable<ImageResponse[]> {
     return this.imagesSubject.asObservable();
+  }
+
+  get deletingImageId$(): Observable<number> {
+    return this.deletingImageIdSubject.asObservable();
   }
 
   findImages(): void {
@@ -78,6 +89,28 @@ export abstract class ImageLoaderService {
       images.splice(index, 1, updatedImage);
       this.imagesSubject.next(images);
     }
+  }
+
+  deleteImage(imageId: number): void {
+    this.deletingImageIdSubject.next(imageId);
+    this.imageService
+      .deleteImageById(imageId)
+      .pipe(
+        finalize(() => this.deletingImageIdSubject.next(undefined)),
+        tap(() => {
+          const images = this.imagesSubject.value;
+          const index = images.findIndex((image) => image.id === imageId);
+          const deletedImage = images.splice(index, 1);
+          if (deletedImage) {
+            this.totalImagesCount--;
+          }
+          this.imagesSubject.next(images);
+        }),
+      )
+      .subscribe({
+        next: () => void this.router.navigateByUrl(this.basePath()),
+        error: () => this.snackBar.open('Error occurred when deleting image', 'Dismiss'),
+      });
   }
 
   addTagsToImages(tagIds: number[], imageIds: number[]): Observable<ImageResponse[]> {

@@ -58,6 +58,11 @@
     } @else {
       <mat-progress-bar mode="indeterminate" />
     }
+
+    <button class="delete-button" color="warn" mat-stroked-button (click)="deleteImage.emit(true)" type="button">
+      <mat-icon>delete</mat-icon>
+      Delete Image
+    </button>
   </form>
 } @else {
   <mat-progress-bar mode="indeterminate" />

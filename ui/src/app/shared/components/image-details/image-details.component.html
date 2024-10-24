@@ -3,7 +3,7 @@
     @if (mediaQueryService.isMaximumTabletLayout$ | async) {
       <div class="sidebar-details">
         @if (!loadingImage && selectedImageSubject | async; as image) {
-          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" (deleteImage)="deleteImage()" />
         }
       </div>
     }
@@ -12,7 +12,7 @@
     @if (!loadingImage && selectedImageSubject | async; as image) {
       @if (mediaQueryService.isMinimumTabletLayout$ | async) {
         <div class="image-tags">
-          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" (deleteImage)="deleteImage()" />
 
           <mat-divider [vertical]="true" class="divider" />
         </div>
@@ -30,3 +30,7 @@
     }
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+@if ((deletingImageId$ | async) !== undefined && (selectedImageSubject | async)?.id === (deletingImageId$ | async)) {
+  <ogm-deleting-overlay />
+}

@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, Subscription, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, Observable, Subscription, switchMap, tap, throwError } from 'rxjs';
 import { ImageResponse, ImageService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageTagsComponent } from '@app/shared/components/image-tags/image-tags.component';
@@ -16,6 +16,8 @@ import { MatButton, MatFabButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { MatIcon } from '@angular/material/icon';
+import { SharedDialogService } from '@app/shared/services/shared-dialog.service';
+import { DeletingOverlayComponent } from '@app/shared/components/deleting-overlay/deleting-overlay.component';
 
 @Component({
   selector: 'ogm-image-details',
@@ -36,6 +38,7 @@ import { MatIcon } from '@angular/material/icon';
     MatSidenavContent,
     MatFabButton,
     MatIcon,
+    DeletingOverlayComponent,
   ],
   templateUrl: './image-details.component.html',
   styleUrl: './image-details.component.scss',
@@ -53,6 +56,8 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
   loadingImage = true;
   selectedImageSubject = new BehaviorSubject<ImageResponse>(undefined);
 
+  deletingImageId$: Observable<number>;
+
   private routeSubscription: Subscription;
 
   constructor(
@@ -60,10 +65,13 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly imageService: ImageService,
+    private readonly sharedDialogService: SharedDialogService,
   ) {}
 
   ngOnInit(): void {
     this.fetchImageOnIdChange();
+
+    this.deletingImageId$ = this.imageLoaderService.deletingImageId$;
   }
 
   ngOnDestroy(): void {
@@ -75,6 +83,16 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
       this.selectedImageSubject.next(image);
       this.imageLoaderService.updateImage(image);
     });
+  }
+
+  deleteImage(): void {
+    this.sharedDialogService
+      .openDeleteConfirmationDialog({
+        title: `Delete Image`,
+        message: 'Are you sure you want to delete this image?',
+      })
+      .pipe(filter(Boolean))
+      .subscribe(() => this.imageLoaderService.deleteImage(this.selectedImageSubject.value.id));
   }
 
   private fetchImageOnIdChange(): void {

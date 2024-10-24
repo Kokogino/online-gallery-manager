@@ -10,11 +10,22 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
 import { AsyncPipe } from '@angular/common';
 import { isNil } from 'lodash-es';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'ogm-image-tags',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIcon, RouterLink, MatChipListbox, MatChipOption, MatProgressBar, NoDataMessageComponent, AsyncPipe],
+  imports: [
+    ReactiveFormsModule,
+    MatIcon,
+    RouterLink,
+    MatChipListbox,
+    MatChipOption,
+    MatProgressBar,
+    NoDataMessageComponent,
+    AsyncPipe,
+    MatButton,
+  ],
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',
 })
@@ -24,6 +35,9 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   @Output()
   updateImage = new EventEmitter<UpdateImageDto>();
+
+  @Output()
+  deleteImage = new EventEmitter<boolean>();
 
   allTags: TagResponse[];
   gallery: GalleryResponse;

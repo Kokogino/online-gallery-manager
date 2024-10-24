@@ -54,12 +54,12 @@ export class GalleriesService extends ImageLoaderService {
 
   constructor(
     private readonly galleryService: GalleryService,
-    private readonly router: Router,
-    private readonly snackBar: MatSnackBar,
     protected override readonly formBuilder: FormBuilder,
     protected override readonly imageService: ImageService,
+    protected override readonly snackBar: MatSnackBar,
+    protected override readonly router: Router,
   ) {
-    super(imageService, formBuilder);
+    super(imageService, formBuilder, snackBar, router);
     this.fetchGalleryOnIdChange();
     this.initForms();
     this.loadImagesOnGalleryChange();
@@ -166,6 +166,10 @@ export class GalleriesService extends ImageLoaderService {
 
   override fetchImages(findImagesDto: FindImagesDto): Observable<FindImagesResponse> {
     return this.galleryService.findImagesOfGallery(this.selectedGalleryIdSubject.value, findImagesDto);
+  }
+
+  override basePath(): string {
+    return `galleries/${this.selectedGalleryIdSubject.value}`;
   }
 
   private fetchGalleryOnIdChange(): void {

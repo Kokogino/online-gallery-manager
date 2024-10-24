@@ -29,6 +29,6 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-@if ((galleryId$ | async) === (deletingGalleryId$ | async)) {
-  <ogm-deleting-overlay />
+@if ((deletingGalleryId$ | async) !== undefined && (galleryId$ | async) === (deletingGalleryId$ | async)) {
+  <ogm-deleting-overlay class="delete-overlay" />
 }
