@@ -1,10 +1,12 @@
 <mat-sidenav-container class="image-details-container">
   <mat-sidenav #detailsSidebar class="sidebar" mode="over" opened="false">
-    <div class="sidebar-details">
-      @if (!loadingImage && selectedImageSubject | async; as image) {
-        <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
-      }
-    </div>
+    @if (mediaQueryService.isMaximumTabletLayout$ | async) {
+      <div class="sidebar-details">
+        @if (!loadingImage && selectedImageSubject | async; as image) {
+          <ogm-image-tags [image]="image" (updateImage)="updateImage($event, image)" />
+        }
+      </div>
+    }
   </mat-sidenav>
   <mat-sidenav-content class="sidebar-content">
     @if (!loadingImage && selectedImageSubject | async; as image) {

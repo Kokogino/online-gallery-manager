@@ -1,8 +1,10 @@
 <mat-sidenav-container class="gallery-details-container">
   <mat-sidenav #detailsSidebar class="sidebar" mode="over" opened="false">
-    <div class="sidebar-details">
-      <ogm-gallery-tags-and-metadata />
-    </div>
+    @if (mediaQueryService.isMaximumTabletLayout$ | async) {
+      <div class="sidebar-details">
+        <ogm-gallery-tags-and-metadata />
+      </div>
+    }
   </mat-sidenav>
   <mat-sidenav-content class="sidebar-content">
     @if (mediaQueryService.isMinimumTabletLayout$ | async) {
