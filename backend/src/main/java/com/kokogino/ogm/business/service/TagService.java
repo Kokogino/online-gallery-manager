@@ -37,7 +37,10 @@ public class TagService {
   }
 
   public List<TagResponse> getAllTags() {
-    return tagRepository.findAll(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).stream().map(TagService::entityToResponse).toList();
+    return tagRepository.findAllByDeletedAtIsNull(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+      .stream()
+      .map(TagService::entityToResponse)
+      .toList();
   }
 
   public TagResponse updateTag(Long id, UpdateTagDto updateTagDto) {

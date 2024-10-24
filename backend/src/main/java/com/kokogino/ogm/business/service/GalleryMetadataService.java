@@ -37,7 +37,7 @@ public class GalleryMetadataService {
   }
 
   public List<GalleryMetadataResponse> getAllGalleryMetadata() {
-    return galleryMetadataRepository.findAll(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+    return galleryMetadataRepository.findAllByDeletedAtIsNull(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
       .stream()
       .map(GalleryMetadataService::entityToResponse)
       .toList();

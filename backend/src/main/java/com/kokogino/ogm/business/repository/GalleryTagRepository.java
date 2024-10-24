@@ -15,4 +15,6 @@ public interface GalleryTagRepository extends BaseEntityRepository<GalleryTag> {
   void deleteByGalleryAndTagIdNotIn(Gallery gallery, Collection<Long> tagIds);
 
   Optional<GalleryTag> findByGalleryAndTag(Gallery gallery, Tag tag);
+
+  Collection<GalleryTag> findAllByGalleryAndTagDeletedAtIsNullOrderByTagName(Gallery gallery);
 }

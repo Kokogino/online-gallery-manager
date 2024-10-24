@@ -15,4 +15,6 @@ public interface GalleryMetadataEntryRepository extends BaseEntityRepository<Gal
   void deleteByGalleryAndGalleryMetadataIdNotIn(Gallery gallery, Collection<Long> galleryMetadataIds);
 
   Optional<GalleryMetadataEntry> findByGalleryAndGalleryMetadata(Gallery gallery, GalleryMetadata galleryMetadata);
+
+  Collection<GalleryMetadataEntry> findAllByGalleryAndGalleryMetadataDeletedAtIsNullOrderByGalleryMetadataName(Gallery gallery);
 }

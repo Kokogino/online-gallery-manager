@@ -59,7 +59,7 @@ public class ImageService {
 
     imageRepository.saveAll(images);
 
-    return images.stream().map(ImageService::imageToResponse).toList();
+    return images.stream().map(this::imageToResponse).toList();
   }
 
   public void deleteImageById(Long id) {
@@ -74,14 +74,14 @@ public class ImageService {
     Long totalCount = imageRepository.countImagesByFilter(findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
-    response.setImages(images.stream().map(ImageService::imageToResponse).toList());
+    response.setImages(images.stream().map(this::imageToResponse).toList());
     response.setTotalCount(totalCount);
     return response;
   }
 
   public ImageResponse getImageById(Long id) {
     return imageRepository.findById(id)
-      .map(ImageService::imageToResponse)
+      .map(this::imageToResponse)
       .orElseThrow(() -> new BusinessException(String.format("Image with id '%s' does not exist", id), BusinessReason.ERROR_IMAGE_NOT_EXISTENT));
   }
 
@@ -109,6 +109,10 @@ public class ImageService {
       imageResponses.add(imageToResponse(image));
     }
     return imageResponses;
+  }
+
+  public ImageResponse imageToResponse(Image image) {
+    return imageToResponse(image, imageTagRepository.findAllByImageAndTagDeletedAtIsNull(image));
   }
 
   private Collection<ImageTag> insertImageTags(Image image, Collection<Tag> tags) {
@@ -161,7 +165,7 @@ public class ImageService {
     return null;
   }
 
-  public static ImageResponse imageToResponse(Image image) {
+  public static ImageResponse imageToResponse(Image image, Collection<ImageTag> imageTags) {
     return new ImageResponse()
       .id(image.getId())
       .galleryId(Optional.ofNullable(image.getGallery()).map(Gallery::getId).orElse(null))
@@ -170,7 +174,7 @@ public class ImageService {
       .imageUrl(image.getImageUrl())
       .host(image.getHost())
       .editUrl(image.getEditUrl())
-      .tags(image.getImageTags().stream().map(ImageService::imageTagToResponse).toList());
+      .tags(imageTags.stream().map(ImageService::imageTagToResponse).toList());
   }
 
   public static ImageTagResponse imageTagToResponse(ImageTag imageTag) {

@@ -15,4 +15,6 @@ public interface ImageTagRepository extends BaseEntityRepository<ImageTag> {
   void deleteByImageAndTagIdNotIn(Image image, Collection<Long> tagIds);
 
   Optional<ImageTag> findByImageAndTag(Image image, Tag tag);
+
+  Collection<ImageTag> findAllByImageAndTagDeletedAtIsNull(Image image);
 }

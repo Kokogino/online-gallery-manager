@@ -20,6 +20,8 @@ public class GalleryService {
   private final GalleryTagRepository galleryTagRepository;
   private final GalleryMetadataEntryRepository galleryMetadataEntryRepository;
 
+  private final ImageService imageService;
+
   public void deleteGalleryById(Long id) {
     Gallery gallery = galleryRepository.findById(id)
       .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
@@ -35,18 +37,18 @@ public class GalleryService {
     Long totalCount = imageRepository.countImagesOfGalleryByFilter(galleryId, findImagesDto);
 
     FindImagesResponse response = new FindImagesResponse();
-    response.setImages(images.stream().map(ImageService::imageToResponse).toList());
+    response.setImages(images.stream().map(imageService::imageToResponse).toList());
     response.setTotalCount(totalCount);
     return response;
   }
 
   public List<GalleryResponse> findGalleries(FindGalleriesDto findGalleriesDto) {
-    return galleryRepository.findGalleriesByFilter(findGalleriesDto).stream().map(GalleryService::galleryToResponse).toList();
+    return galleryRepository.findGalleriesByFilter(findGalleriesDto).stream().map(this::galleryToResponse).toList();
   }
 
   public GalleryResponse getGalleryById(Long id) {
     return galleryRepository.findById(id)
-      .map(GalleryService::galleryToResponse)
+      .map(this::galleryToResponse)
       .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", id), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
   }
 
@@ -112,25 +114,22 @@ public class GalleryService {
     return galleryMetadataEntries;
   }
 
-  private static GalleryResponse galleryToResponse(Gallery gallery) {
+  private GalleryResponse galleryToResponse(Gallery gallery) {
+    return galleryToResponse(
+      gallery,
+      galleryTagRepository.findAllByGalleryAndTagDeletedAtIsNullOrderByTagName(gallery),
+      galleryMetadataEntryRepository.findAllByGalleryAndGalleryMetadataDeletedAtIsNullOrderByGalleryMetadataName(gallery)
+    );
+  }
+
+  private static GalleryResponse galleryToResponse(Gallery gallery, Collection<GalleryTag> galleryTags, Collection<GalleryMetadataEntry> galleryMetadataEntries) {
     return new GalleryResponse()
       .id(gallery.getId())
       .name(gallery.getName())
       .editUrl(gallery.getEditUrl())
       .host(gallery.getHost())
-      .tags(
-        gallery.getGalleryTags()
-          .stream()
-          .map(GalleryService::galleryTagToResponse)
-          .sorted(GalleryService::compareGalleryTagResponse)
-          .toList())
-      .metadata(
-        gallery.getGalleryMetadataEntries()
-          .stream()
-          .map(GalleryService::galleryMetadataEntryToResponse)
-          .sorted(GalleryService::compareGalleryMetadataEntryResponse)
-          .toList()
-      );
+      .tags(galleryTags.stream().map(GalleryService::galleryTagToResponse).toList())
+      .metadata(galleryMetadataEntries.stream().map(GalleryService::galleryMetadataEntryToResponse).toList());
   }
 
   private static GalleryTagResponse galleryTagToResponse(GalleryTag galleryTag) {
@@ -150,13 +149,5 @@ public class GalleryService {
       .value(galleryMetadataEntry.getValue())
       .name(galleryMetadata.getName())
       .type(galleryMetadata.getType());
-  }
-
-  private static int compareGalleryMetadataEntryResponse(GalleryMetadataEntryResponse m1, GalleryMetadataEntryResponse m2) {
-    return m1.getName().compareToIgnoreCase(m2.getName());
-  }
-
-  private static int compareGalleryTagResponse(GalleryTagResponse t1, GalleryTagResponse t2) {
-    return t1.getName().compareToIgnoreCase(t2.getName());
   }
 }
