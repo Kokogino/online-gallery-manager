@@ -24,18 +24,16 @@
     <div class="column">
       @for (image of images$ | async; track image.id; let j = $index; let count = $count) {
         @if (j % numberOfColumns() === i) {
-          <div [ngClass]="{ hide: shouldHide(image) }">
+          <div [ngClass]="{ hide: shouldHide(image) }" class="image-container">
             @defer (on viewport) {
-              <div class="image-container">
-                <a [routerLink]="imageDetailsBaseRoute + image.id">
-                  <ogm-image-thumbnail [image]="image" class="image-thumbnail" (loaded)="loaded(j, count)" />
-                </a>
-                <mat-checkbox
-                  (change)="toggleSelection($event, image)"
-                  [checked]="isImageSelected(image)"
-                  class="selection-checkbox"
-                  [ngClass]="{ show: isImageSelected(image) }" />
-              </div>
+              <a [routerLink]="imageDetailsBaseRoute + image.id">
+                <ogm-image-thumbnail [image]="image" (loaded)="loaded(j, count)" />
+              </a>
+              <mat-checkbox
+                (change)="toggleSelection($event, image)"
+                [checked]="isImageSelected(image)"
+                class="selection-checkbox"
+                [ngClass]="{ show: isImageSelected(image) }" />
             } @placeholder {
               <div class="placeholder">Loading...</div>
             }
