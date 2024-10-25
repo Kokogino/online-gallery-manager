@@ -1,4 +1,4 @@
-import { BehaviorSubject, distinctUntilChanged, filter, finalize, Observable, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, finalize, Observable, switchMap, tap } from 'rxjs';
 import { FilterExpressionDto, FindImagesDto, FindImagesResponse, ImageResponse, ImageService } from '@app/gen/ogm-backend';
 import { random } from 'lodash-es';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -140,19 +140,18 @@ export abstract class ImageLoaderService {
       .pipe(
         distinctUntilChanged(),
         filter((skip) => skip > 0),
+        switchMap((skip) => {
+          this.loadingImagesSubject.next(true);
+          const findImagesDto: FindImagesDto = {
+            filter: this.imageFilter,
+            randomnessSeed: this.randomnessSeed,
+            startingDate: this.startingDate.toISOString(),
+            limit: ImageLoaderService.BATCH_SIZE,
+            skip,
+          };
+          return this.fetchImages(findImagesDto).pipe(finalize(() => this.loadingImagesSubject.next(false)));
+        }),
       )
-      .subscribe((skip) => {
-        this.loadingImagesSubject.next(true);
-        const findImagesDto: FindImagesDto = {
-          filter: this.imageFilter,
-          randomnessSeed: this.randomnessSeed,
-          startingDate: this.startingDate.toISOString(),
-          limit: ImageLoaderService.BATCH_SIZE,
-          skip,
-        };
-        this.fetchImages(findImagesDto)
-          .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-          .subscribe((response) => this.imagesSubject.next(this.imagesSubject.value.concat(...response.images)));
-      });
+      .subscribe((response) => this.imagesSubject.next(this.imagesSubject.value.concat(...response.images)));
   }
 }
