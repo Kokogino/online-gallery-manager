@@ -23,31 +23,7 @@
           <mat-divider />
         }
         <a [routerLink]="'/galleries/' + gallery.id" class="gallery-link">
-          <div class="gallery" matRipple>
-            <h3 class="gallery-name vertical-center">
-              {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
-              @for (tag of gallery.tags; track tag.tagId) {
-                @if (tag.showTag) {
-                  <mat-chip color="primary" highlighted class="tag-chip">{{ tag.name }}</mat-chip>
-                }
-              }
-            </h3>
-            @for (metadata of gallery.metadata; track metadata.galleryMetadataId) {
-              @if (metadata.value?.length > 0) {
-                <mat-chip color="accent" highlighted class="metadata-chip">
-                  {{ metadata.name }}:
-                  @switch (metadata.type) {
-                    @case (GalleryMetadataType.Date) {
-                      {{ metadata.value | date: 'dd.MM.YYYY' }}
-                    }
-                    @default {
-                      {{ metadata.value }}
-                    }
-                  }
-                </mat-chip>
-              }
-            }
-          </div>
+          <ogm-gallery-list-item [gallery]="gallery" />
           <mat-divider />
         </a>
       } @empty {

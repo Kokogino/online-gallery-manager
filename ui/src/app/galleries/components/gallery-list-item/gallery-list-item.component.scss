@@ -1,0 +1,27 @@
+@import 'variables';
+
+.gallery {
+  padding: 16px 8px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba($color-on-background-rgb, 0.1);
+  }
+
+  .tag-chip {
+    font-size: 12px;
+    margin-left: 8px;
+    height: 20px;
+  }
+
+  .metadata-chip {
+    font-size: 12px;
+    margin-right: 8px;
+    margin-top: 8px;
+    height: 20px;
+  }
+
+  .gallery-name {
+    margin: 0;
+  }
+}
