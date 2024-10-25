@@ -2,7 +2,7 @@ import { APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection } from '
 import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Configuration } from '@app/gen/ogm-backend';
 import { environment } from '@environments/environment';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -12,12 +12,13 @@ import { ThemeService } from '@app/shared/services/theme.service';
 import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import 'moment/locale/de-ch';
+import { httpCacheInterceptor } from '@app/shared/util/http-cache-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withViewTransitions()),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([httpCacheInterceptor()])),
     provideAnimations(),
     provideMomentDateAdapter(),
     {
