@@ -14,6 +14,10 @@
       .sidebar-details {
         display: block;
         padding: 8px;
+
+        ogm-image-tags {
+          overflow: initial;
+        }
       }
     }
 
