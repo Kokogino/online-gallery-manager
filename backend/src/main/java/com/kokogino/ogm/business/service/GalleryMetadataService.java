@@ -11,6 +11,7 @@ import com.kokogino.ogm.business.repository.GalleryMetadataRepository;
 import com.kokogino.ogm.datamodel.entity.GalleryMetadata;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,11 @@ public class GalleryMetadataService {
     }
     galleryMetadata.setName(updateGalleryMetadataDto.getName());
     return entityToResponse(galleryMetadataRepository.save(galleryMetadata));
+  }
+
+  @PostConstruct
+  public void cleanUpDeletedGalleryMetadata() {
+    galleryMetadataRepository.deleteByDeletedAtIsNotNull();
   }
 
   private static GalleryMetadataResponse entityToResponse(GalleryMetadata galleryMetadata) {

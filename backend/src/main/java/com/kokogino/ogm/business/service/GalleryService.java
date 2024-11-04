@@ -9,6 +9,7 @@ import com.kokogino.ogm.business.repository.*;
 import com.kokogino.ogm.datamodel.entity.*;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +68,11 @@ public class GalleryService {
     gallery.setGalleryMetadataEntries(upsertGalleryMetadataEntries(gallery, updateGalleryDto.getGalleryMetadata()));
 
     return galleryToResponseFetchingJoins(galleryRepository.save(gallery));
+  }
+
+  @PostConstruct
+  public void cleanUpDeletedGalleries() {
+    galleryRepository.deleteByDeletedAtIsNotNull();
   }
 
   private Set<GalleryTag> upsertGalleryTags(Gallery gallery, Collection<Long> tagIds) {

@@ -6,6 +6,7 @@
         alt="Image"
         class="image"
         (load)="this.fullImageLoaded = true"
+        (error)="this.fullImageLoaded = true"
         [ngClass]="{ hide: !fullImageLoaded }" />
     }
     @if (!fullImageLoaded) {

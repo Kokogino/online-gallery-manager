@@ -5,4 +5,5 @@ import jakarta.transaction.Transactional;
 
 @Transactional
 public interface ImageRepository extends BaseEntityRepository<Image>, CustomImageRepository {
+  void deleteByDeletedAtIsNotNull();
 }

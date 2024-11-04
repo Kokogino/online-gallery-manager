@@ -17,6 +17,7 @@ import com.kokogino.ogm.datamodel.entity.ImageTag;
 import com.kokogino.ogm.datamodel.entity.Tag;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -115,6 +116,11 @@ public class ImageService {
 
   public ImageResponse imageToResponseFetchingTags(Image image) {
     return imageToResponse(image, imageTagRepository.findAllByImageAndTagDeletedAtIsNullOrderByTagName(image).stream());
+  }
+
+  @PostConstruct
+  public void cleanUpDeletedImages() {
+    imageRepository.deleteByDeletedAtIsNotNull();
   }
 
   private Collection<ImageTag> insertImageTags(Image image, Collection<Tag> tags) {

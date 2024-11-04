@@ -11,6 +11,7 @@ import com.kokogino.ogm.business.repository.TagRepository;
 import com.kokogino.ogm.datamodel.entity.Tag;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,11 @@ public class TagService {
     tag.setName(updateTagDto.getName());
     tag.setShowTag(updateTagDto.getShowTag());
     return entityToResponse(tagRepository.save(tag));
+  }
+
+  @PostConstruct
+  public void cleanUpDeletedTags() {
+    tagRepository.deleteByDeletedAtIsNotNull();
   }
 
   private static TagResponse entityToResponse(Tag tag) {

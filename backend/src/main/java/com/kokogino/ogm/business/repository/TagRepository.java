@@ -14,4 +14,6 @@ public interface TagRepository extends BaseEntityRepository<Tag> {
   Optional<Tag> findByName(String name);
 
   Collection<Tag> findAllByDeletedAtIsNull(Sort sort);
+
+  void deleteByDeletedAtIsNotNull();
 }
