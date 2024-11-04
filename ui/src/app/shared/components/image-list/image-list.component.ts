@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, computed, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
-import { Observable, Subscription } from 'rxjs';
+import { map, Observable, Subscription } from 'rxjs';
 import { ImageResponse, TagResponse, TagService } from '@app/gen/ogm-backend';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -52,8 +52,6 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('imageList')
   imageList: ElementRef<HTMLDivElement>;
 
-  images$: Observable<ImageResponse[]>;
-
   loading$: Observable<boolean>;
 
   numberOfColumns = signal<number>(0);
@@ -69,6 +67,8 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isScrollingPaused = true;
   scrollSpeed = 0.5;
+
+  private images$: Observable<ImageResponse[]>;
 
   private resizeSubscription: Subscription;
   private imagesSubscription: Subscription;
@@ -144,10 +144,6 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  shouldHide(image: ImageResponse): boolean {
-    return this.selectedImageIds.length > 0 && this.onlyShowSelected.value && !this.isImageSelected(image);
-  }
-
   deselectAll(): void {
     this.selectedImageIds = [];
     this.onlyShowSelected.setValue(false);
@@ -161,7 +157,15 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  get filteredImages$(): Observable<ImageResponse[]> {
+    return this.images$.pipe(map((images) => images?.filter((image) => !this.shouldHide(image))));
+  }
+
   getTagName = (tag: TagResponse): string => tag.name;
+
+  private shouldHide(image: ImageResponse): boolean {
+    return (this.selectedImageIds.length > 0 && this.onlyShowSelected.value && !this.isImageSelected(image)) || !image.thumbnailUrl;
+  }
 
   private startAutoScroll(): void {
     this.lastScrollStepTime = Date.now();

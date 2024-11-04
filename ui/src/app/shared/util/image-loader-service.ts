@@ -99,11 +99,7 @@ export abstract class ImageLoaderService {
         finalize(() => this.deletingImageIdSubject.next(undefined)),
         tap(() => {
           const images = this.imagesSubject.value;
-          const index = images.findIndex((image) => image.id === imageId);
-          const deletedImage = images.splice(index, 1);
-          if (deletedImage) {
-            this.totalImagesCount--;
-          }
+          this.emptyImage(images.find((image) => image.id === imageId));
           this.imagesSubject.next(images);
         }),
       )
@@ -115,6 +111,16 @@ export abstract class ImageLoaderService {
 
   addTagsToImages(tagIds: number[], imageIds: number[]): Observable<ImageResponse[]> {
     return this.imageService.addTagsToImages({ imageIds, tagIds }).pipe(tap((updatedImages) => this.updateImages(updatedImages)));
+  }
+
+  private emptyImage(image: ImageResponse): void {
+    image.thumbnailUrl = undefined;
+    image.pureImageUrl = undefined;
+    image.imageUrl = undefined;
+    image.host = undefined;
+    image.galleryId = undefined;
+    image.editUrl = undefined;
+    image.tags = undefined;
   }
 
   private updateImages(updatedImages: ImageResponse[]): void {

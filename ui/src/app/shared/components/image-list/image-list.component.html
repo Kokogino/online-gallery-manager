@@ -1,4 +1,4 @@
-@if (!((images$ | async)?.length > 0) && !(loading$ | async)) {
+@if (!((filteredImages$ | async)?.length > 0) && !(loading$ | async)) {
   <ogm-no-data-message>No images</ogm-no-data-message>
 }
 
@@ -22,9 +22,9 @@
 <div class="images-list" #imageList>
   @for (column of columns(); track column; let i = $index) {
     <div class="column">
-      @for (image of images$ | async; track image.id; let j = $index; let count = $count) {
+      @for (image of filteredImages$ | async; track image.id; let j = $index; let count = $count) {
         @if (j % numberOfColumns() === i) {
-          <div [ngClass]="{ hide: shouldHide(image) }" class="image-container">
+          <div class="image-container">
             @defer (on viewport) {
               <a [routerLink]="imageDetailsBaseRoute + image.id">
                 <ogm-image-thumbnail [image]="image" (loaded)="loaded(j, count)" />
