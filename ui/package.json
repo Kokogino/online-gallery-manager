@@ -32,7 +32,7 @@
     "@angular-devkit/build-angular": "^18.2.10",
     "@angular/cli": "^18.2.10",
     "@angular/compiler-cli": "^18.2.9",
-    "@openapitools/openapi-generator-cli": " ^2.13.12",
+    "@openapitools/openapi-generator-cli": "^2.13.12",
     "@types/lodash-es": "^4.17.12",
     "prettier": "^3.3.3",
     "typescript": "~5.5.2"

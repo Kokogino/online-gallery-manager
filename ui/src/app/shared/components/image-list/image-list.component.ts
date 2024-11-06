@@ -89,7 +89,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.tagService.getAllTags().subscribe((tags) => (this.allTags = tags));
 
     this.imagesSubscription = this.images$.subscribe(
-      (images) => (this.selectedImageIds = this.selectedImageIds.filter((id) => images?.findIndex((image) => image.id === id) >= 0)),
+      (images) => (this.selectedImageIds = this.selectedImageIds.filter((id) => images?.find((image) => image.id === id)?.thumbnailUrl)),
     );
 
     this.addTagsForm = this.formBuilder.group({
