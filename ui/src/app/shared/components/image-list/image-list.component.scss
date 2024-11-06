@@ -37,9 +37,13 @@
       row-gap: 8px;
       align-items: center;
 
-      .image-container:not(.hide) {
+      .image-container {
         position: relative;
         display: inline-flex;
+
+        .thumbnail-link {
+          text-decoration: inherit;
+        }
 
         .placeholder {
           display: flex;
