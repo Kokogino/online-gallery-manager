@@ -17,6 +17,9 @@ import { CdkObserveContent } from '@angular/cdk/observers';
 import { SharedResizeObserver } from '@angular/cdk/observers/private';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { FlexResizerDirective } from '@app/shared/util/flex-resizer.directive';
+import { FlexResizableDirective } from '@app/shared/util/flex-resizable.directive';
+import { SettingsService } from '@app/shared/services/settings.service';
 
 @Component({
   selector: 'ogm-image-list',
@@ -38,6 +41,8 @@ import { MatSlider, MatSliderThumb } from '@angular/material/slider';
     MatSlider,
     FormsModule,
     MatSliderThumb,
+    FlexResizerDirective,
+    FlexResizableDirective,
   ],
   templateUrl: './image-list.component.html',
   styleUrl: './image-list.component.scss',
@@ -54,7 +59,9 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loading$: Observable<boolean>;
 
-  numberOfColumns = signal<number>(0);
+  numberOfColumns = computed<number>(() =>
+    Math.min(Math.floor(this.imagesListWidth() / this.columnWidth()) || 1, ImageLoaderService.BATCH_SIZE),
+  );
   columns = computed<number[]>(() => [...Array(this.numberOfColumns())].map(() => random(true)));
 
   allTags: TagResponse[];
@@ -68,6 +75,9 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   isScrollingPaused = true;
   scrollSpeed = 0.5;
 
+  private imagesListWidth = signal<number>(0);
+  private columnWidth = signal<number>(250);
+
   private images$: Observable<ImageResponse[]>;
 
   private resizeSubscription: Subscription;
@@ -80,6 +90,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly tagService: TagService,
     private readonly sharedResizeObserver: SharedResizeObserver,
+    private readonly settingsService: SettingsService,
   ) {}
 
   ngOnInit(): void {
@@ -95,14 +106,14 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addTagsForm = this.formBuilder.group({
       tags: [[] as TagResponse[], Validators.required],
     });
+
+    this.columnWidth.set(Math.max(50, this.settingsService.getColumnWidth() || 250));
   }
 
   ngAfterViewInit(): void {
     this.resizeSubscription = this.sharedResizeObserver
       .observe(this.imageList.nativeElement)
-      .subscribe((entries) =>
-        this.numberOfColumns.set(Math.min(Math.floor(entries[0].contentRect.width / 250) || 1, ImageLoaderService.BATCH_SIZE)),
-      );
+      .subscribe((entries) => this.imagesListWidth.set(entries[0].contentRect.width));
   }
 
   ngOnDestroy(): void {
@@ -162,6 +173,11 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getTagName = (tag: TagResponse): string => tag.name;
+
+  resizeColumn(amount: number): void {
+    this.columnWidth.update((columnWidth) => Math.min(this.imagesListWidth(), Math.max(50, columnWidth + amount)));
+    this.settingsService.setColumnWidth(this.columnWidth());
+  }
 
   private shouldHide(image: ImageResponse): boolean {
     return (this.selectedImageIds.length > 0 && this.onlyShowSelected.value && !this.isImageSelected(image)) || !image.thumbnailUrl;
