@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, computed, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
-import { map, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
 import { ImageResponse, TagResponse, TagService } from '@app/gen/ogm-backend';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -66,7 +66,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   allTags: TagResponse[];
 
-  selectedImageIds: number[] = [];
+  selectedImageIdsSubject = new BehaviorSubject<number[]>([]);
 
   addTagsForm: FormGroup<AddTagsForm>;
 
@@ -75,6 +75,8 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   isScrollingPaused = true;
   scrollSpeed = 0.5;
 
+  filteredImagesSubject = new BehaviorSubject<ImageResponse[]>(undefined);
+
   private imagesListWidth = signal<number>(0);
   private columnWidth = signal<number>(250);
 
@@ -82,6 +84,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private resizeSubscription: Subscription;
   private imagesSubscription: Subscription;
+  private filterSubscription: Subscription;
 
   private accumulatedScroll = 0;
   private lastScrollStepTime: number;
@@ -99,8 +102,10 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.tagService.getAllTags().subscribe((tags) => (this.allTags = tags));
 
-    this.imagesSubscription = this.images$.subscribe(
-      (images) => (this.selectedImageIds = this.selectedImageIds.filter((id) => images?.find((image) => image.id === id)?.thumbnailUrl)),
+    this.imagesSubscription = this.images$.subscribe((images) =>
+      this.selectedImageIdsSubject.next(
+        this.selectedImageIdsSubject.value.filter((id) => images?.find((image) => image.id === id)?.thumbnailUrl),
+      ),
     );
 
     this.addTagsForm = this.formBuilder.group({
@@ -108,6 +113,8 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.columnWidth.set(Math.max(50, this.settingsService.getColumnWidth() || 250));
+
+    this.filterImages();
   }
 
   ngAfterViewInit(): void {
@@ -120,6 +127,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isScrollingPaused = true;
     this.resizeSubscription?.unsubscribe();
     this.imagesSubscription?.unsubscribe();
+    this.filterSubscription?.unsubscribe();
   }
 
   loaded(index: number, imageCount: number): void {
@@ -129,34 +137,36 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleSelection(event: MatCheckboxChange, image: ImageResponse): void {
+    const selectedImageIds = this.selectedImageIdsSubject.value;
     if (event.checked) {
-      this.selectedImageIds.push(image.id);
+      selectedImageIds.push(image.id);
     } else {
-      const index = this.selectedImageIds.findIndex((id) => id === image.id);
-      this.selectedImageIds.splice(index, 1);
-      if (this.selectedImageIds.length === 0) {
+      const index = selectedImageIds.findIndex((id) => id === image.id);
+      selectedImageIds.splice(index, 1);
+      if (selectedImageIds.length === 0) {
         this.onlyShowSelected.setValue(false);
       }
     }
+    this.selectedImageIdsSubject.next(selectedImageIds);
   }
 
-  isImageSelected(image: ImageResponse): boolean {
-    return this.selectedImageIds.findIndex((id) => id === image.id) >= 0;
+  isImageSelected$(image: ImageResponse): Observable<boolean> {
+    return this.selectedImageIdsSubject.pipe(map((selectedImageIds) => selectedImageIds.findIndex((id) => id === image.id) >= 0));
   }
 
   addTags(): void {
-    if (this.addTagsForm.valid && this.selectedImageIds.length > 0) {
+    if (this.addTagsForm.valid && this.selectedImageIdsSubject.value.length > 0) {
       this.imageLoaderService
         .addTagsToImages(
           this.addTagsForm.getRawValue().tags.map((tag) => tag.id),
-          this.selectedImageIds,
+          this.selectedImageIdsSubject.value,
         )
         .subscribe(() => this.addTagsForm.reset());
     }
   }
 
   deselectAll(): void {
-    this.selectedImageIds = [];
+    this.selectedImageIdsSubject.next([]);
     this.onlyShowSelected.setValue(false);
   }
 
@@ -168,10 +178,6 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  get filteredImages$(): Observable<ImageResponse[]> {
-    return this.images$.pipe(map((images) => images?.filter((image) => !this.shouldHide(image))));
-  }
-
   getTagName = (tag: TagResponse): string => tag.name;
 
   resizeColumn(amount: number): void {
@@ -179,8 +185,18 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.settingsService.setColumnWidth(this.columnWidth());
   }
 
-  private shouldHide(image: ImageResponse): boolean {
-    return (this.selectedImageIds.length > 0 && this.onlyShowSelected.value && !this.isImageSelected(image)) || !image.thumbnailUrl;
+  private filterImages(): void {
+    this.filterSubscription = combineLatest([
+      this.images$,
+      this.onlyShowSelected.valueChanges.pipe(startWith(this.onlyShowSelected.value)),
+      this.selectedImageIdsSubject,
+    ])
+      .pipe(
+        map(([images, onlyShowSelected, selectedImageIds]) =>
+          images?.filter((image) => (!onlyShowSelected || selectedImageIds.findIndex((id) => id === image.id) >= 0) && image.thumbnailUrl),
+        ),
+      )
+      .subscribe((images) => this.filteredImagesSubject.next(images));
   }
 
   private startAutoScroll(): void {

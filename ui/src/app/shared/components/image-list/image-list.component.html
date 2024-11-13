@@ -1,8 +1,8 @@
-@if (!((filteredImages$ | async)?.length > 0) && !(loading$ | async)) {
+@if (!((filteredImagesSubject | async)?.length > 0) && !(loading$ | async)) {
   <ogm-no-data-message>No images</ogm-no-data-message>
 }
 
-@if (selectedImageIds.length > 0) {
+@if ((selectedImageIdsSubject | async).length > 0) {
   <form [formGroup]="addTagsForm" class="add-tags-form" (submit)="addTags()">
     <ogm-autocomplete-chip-list-input
       class="tags-input"
@@ -23,7 +23,7 @@
   <div class="images-list" ogmFlexResizable (resizeHorizontal)="resizeColumn($event)">
     @for (column of columns(); track column; let i = $index) {
       <div class="column">
-        @for (image of filteredImages$ | async; track image.id; let j = $index; let count = $count) {
+        @for (image of filteredImagesSubject | async; track image.id; let j = $index; let count = $count) {
           @if (j % numberOfColumns() === i) {
             <div class="image-container">
               @defer (on viewport) {
@@ -32,9 +32,9 @@
                 </a>
                 <mat-checkbox
                   (change)="toggleSelection($event, image)"
-                  [checked]="isImageSelected(image)"
+                  [checked]="isImageSelected$(image) | async"
                   class="selection-checkbox"
-                  [ngClass]="{ show: isImageSelected(image) }" />
+                  [ngClass]="{ show: isImageSelected$(image) | async }" />
               } @placeholder {
                 <div class="placeholder">Loading...</div>
               }
@@ -42,9 +42,11 @@
           }
         }
       </div>
-      <div class="flex-resizer" ogmFlexResizer>
-        <mat-icon>arrow_range</mat-icon>
-      </div>
+      @if ((filteredImagesSubject | async)?.length > 0) {
+        <div class="flex-resizer" ogmFlexResizer>
+          <mat-icon>arrow_range</mat-icon>
+        </div>
+      }
     }
   </div>
 </div>
