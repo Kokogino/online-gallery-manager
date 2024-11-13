@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UploadForm } from '@app/upload/model/upload-form';
 import { GalleryChoice, GalleryResponse, GalleryService, ImageHost, ImageService } from '@app/gen/ogm-backend';
 import { CustomFormValidators } from '@app/shared/util/custom-form-validators';
@@ -41,7 +41,7 @@ export class UploadComponent implements OnInit {
   uploading = false;
 
   @ViewChild('form')
-  form: NgForm;
+  form: FormGroupDirective;
 
   constructor(
     private readonly formBuilder: FormBuilder,

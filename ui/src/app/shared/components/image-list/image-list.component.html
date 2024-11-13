@@ -3,7 +3,7 @@
 }
 
 @if ((selectedImageIdsSubject | async).length > 0) {
-  <form [formGroup]="addTagsForm" class="add-tags-form" (submit)="addTags()">
+  <form [formGroup]="addTagsForm" class="add-tags-form" (submit)="addTags()" #tagsForm="ngForm">
     <ogm-autocomplete-chip-list-input
       class="tags-input"
       formControlName="tags"

@@ -68,9 +68,9 @@ export class AutocompleteChipListInputComponent<T extends { id?: any }> extends 
 
     this.filteredOptions$ = combineLatest([
       this.inputControl.valueChanges.pipe(startWith('')),
-      this.control.valueChanges.pipe(startWith([])),
+      this.control.valueChanges.pipe(startWith(this.control.value)),
     ]).pipe(
-      map(([value, _]): [string, T[]] => [value, this.filterOptions(value)]),
+      map(([value, addedValues]): [string, T[]] => [value, this.filterOptions(value, addedValues)]),
       tap(([value, options]: [string, T[]]) => {
         if (options?.length === 1 && value?.length > 0) {
           this.selectedOption = options[0];
@@ -115,11 +115,11 @@ export class AutocompleteChipListInputComponent<T extends { id?: any }> extends 
     this.autoTrigger.openPanel();
   }
 
-  private filterOptions(value: string): T[] {
+  private filterOptions(value: string, addedValues: T[]): T[] {
     return this.options.filter(
       (option) =>
         containsStringsIgnoringAccentsAndCase(this.optionDisplayValue(option), value) &&
-        !this.control.value?.find((selectedOption) => selectedOption.id === option.id),
+        !addedValues?.find((selectedOption) => selectedOption.id === option.id),
     );
   }
 }

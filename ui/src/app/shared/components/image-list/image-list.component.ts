@@ -9,7 +9,7 @@ import { random } from 'lodash-es';
 import { ImageThumbnailComponent } from '@app/shared/components/image-thumbnail/image-thumbnail.component';
 import { RouterLink } from '@angular/router';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AddTagsForm } from '@app/shared/model/add-tags-form';
 import { AutocompleteChipListInputComponent } from '@app/shared/components/autocomplete-chip-list-input/autocomplete-chip-list-input.component';
 import { MatButton, MatFabButton } from '@angular/material/button';
@@ -56,6 +56,9 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('imageList')
   imageList: ElementRef<HTMLDivElement>;
+
+  @ViewChild('tagsForm')
+  tagsForm: FormGroupDirective;
 
   loading$: Observable<boolean>;
 
@@ -161,7 +164,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.addTagsForm.getRawValue().tags.map((tag) => tag.id),
           this.selectedImageIdsSubject.value,
         )
-        .subscribe(() => this.addTagsForm.reset());
+        .subscribe(() => this.tagsForm.resetForm());
     }
   }
 
