@@ -1,4 +1,4 @@
-import { BehaviorSubject, distinctUntilChanged, filter, finalize, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, filter, finalize, forkJoin, Observable, of, switchMap, tap } from 'rxjs';
 import { FilterExpressionDto, FindImagesDto, FindImagesResponse, ImageResponse, ImageService } from '@app/gen/ogm-backend';
 import { random } from 'lodash-es';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -48,7 +48,6 @@ export abstract class ImageLoaderService {
   }
 
   findImages(): void {
-    this.loadingImagesSubject.next(true);
     const formValues = this.imagesFilterForm.getRawValue();
     if (formValues.randomizeOrder) {
       this.randomnessSeed = random(-1, 1, true);
@@ -57,29 +56,15 @@ export abstract class ImageLoaderService {
     }
     this.imageFilter = formValues.filter;
     this.startingDate = new Date();
-    const findImagesDto: FindImagesDto = {
-      filter: formValues.filter,
-      randomnessSeed: this.randomnessSeed,
-      startingDate: this.startingDate.toISOString(),
-      limit: ImageLoaderService.BATCH_SIZE,
-      skip: 0,
-    };
+    this.imagesSubject.next([]);
     this.loadImagesSkip.next(0);
-    this.imagesSubject.next(undefined);
-    this.fetchImages(findImagesDto)
-      .pipe(finalize(() => this.loadingImagesSubject.next(false)))
-      .subscribe((response) => {
-        this.imagesSubject.next(response.images);
-        this.totalImagesCount = response.totalCount;
-      });
   }
 
   loadMoreImages(): void {
     const images = this.imagesSubject.value;
-    if (this.totalImagesCount <= images.length) {
-      return;
+    if (this.totalImagesCount > images.length) {
+      this.loadImagesSkip.next(images.length);
     }
-    this.loadImagesSkip.next(images.length);
   }
 
   updateImage(updatedImage: ImageResponse): void {
@@ -144,8 +129,8 @@ export abstract class ImageLoaderService {
   private setupImageLoad(): void {
     this.loadImagesSkip
       .pipe(
-        distinctUntilChanged(),
-        filter((skip) => skip > 0),
+        filter((skip) => skip !== undefined),
+        distinctUntilChanged((prevSkip, currentSkip) => prevSkip === currentSkip && currentSkip !== 0),
         switchMap((skip) => {
           this.loadingImagesSubject.next(true);
           const findImagesDto: FindImagesDto = {
@@ -155,9 +140,17 @@ export abstract class ImageLoaderService {
             limit: ImageLoaderService.BATCH_SIZE,
             skip,
           };
-          return this.fetchImages(findImagesDto).pipe(finalize(() => this.loadingImagesSubject.next(false)));
+          return forkJoin([
+            this.fetchImages(findImagesDto).pipe(finalize(() => this.loadingImagesSubject.next(false))),
+            of(this.startingDate),
+          ]);
         }),
       )
-      .subscribe((response) => this.imagesSubject.next(this.imagesSubject.value.concat(...response.images)));
+      .subscribe(([response, startingDate]) => {
+        if (this.startingDate === startingDate) {
+          this.imagesSubject.next(this.imagesSubject.value.concat(...response.images));
+          this.totalImagesCount = response.totalCount;
+        }
+      });
   }
 }
