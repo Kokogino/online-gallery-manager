@@ -13,7 +13,6 @@ import { FormBuilder, FormControl, FormGroup, FormGroupDirective, FormsModule, R
 import { AddTagsForm } from '@app/shared/model/add-tags-form';
 import { AutocompleteChipListInputComponent } from '@app/shared/components/autocomplete-chip-list-input/autocomplete-chip-list-input.component';
 import { MatButton, MatFabButton } from '@angular/material/button';
-import { CdkObserveContent } from '@angular/cdk/observers';
 import { SharedResizeObserver } from '@angular/cdk/observers/private';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
@@ -35,7 +34,6 @@ import { SettingsService } from '@app/shared/services/settings.service';
     AutocompleteChipListInputComponent,
     MatButton,
     NgClass,
-    CdkObserveContent,
     MatFabButton,
     MatIcon,
     MatSlider,

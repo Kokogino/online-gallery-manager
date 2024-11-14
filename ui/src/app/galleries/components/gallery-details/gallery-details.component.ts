@@ -11,7 +11,6 @@ import { AsyncPipe } from '@angular/common';
 import { ImageListComponent } from '@app/shared/components/image-list/image-list.component';
 import { Observable } from 'rxjs';
 import { MediaQueryService } from '@app/shared/services/media-query.service';
-import { HeaderComponent } from '@app/core/components/header/header.component';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-details-sidebar.service';
 import { DeletingOverlayComponent } from '@app/shared/components/deleting-overlay/deleting-overlay.component';
@@ -29,7 +28,6 @@ import { DeletingOverlayComponent } from '@app/shared/components/deleting-overla
     ReactiveFormsModule,
     AsyncPipe,
     ImageListComponent,
-    HeaderComponent,
     MatSidenav,
     MatSidenavContainer,
     MatSidenavContent,

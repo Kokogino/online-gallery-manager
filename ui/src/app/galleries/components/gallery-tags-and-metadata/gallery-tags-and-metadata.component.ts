@@ -9,7 +9,7 @@ import {
   UpdateGalleryDto,
 } from '@app/gen/ogm-backend';
 import { BehaviorSubject, combineLatest, debounceTime, filter, finalize, Observable, Subscription, switchMap, take } from 'rxjs';
-import { MatChip, MatChipListbox, MatChipOption, MatChipSet, MatChipTrailingIcon } from '@angular/material/chips';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -22,8 +22,7 @@ import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
 import moment from 'moment';
 import { isNil } from 'lodash-es';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { RouterLinkActive } from '@angular/router';
+import { MatButton } from '@angular/material/button';
 import { SharedDialogService } from '@app/shared/services/shared-dialog.service';
 import { MetadataValue } from '@app/galleries/model/metadata-value';
 import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-entry-form';
@@ -32,9 +31,6 @@ import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-
   selector: 'ogm-gallery-tags-and-metadata',
   standalone: true,
   imports: [
-    MatChipSet,
-    MatChip,
-    MatChipTrailingIcon,
     MatIcon,
     NoDataMessageComponent,
     MatProgressBar,
@@ -49,8 +45,6 @@ import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-
     MatDatepickerToggle,
     MatDatepicker,
     MatSuffix,
-    MatAnchor,
-    RouterLinkActive,
     MatButton,
   ],
   templateUrl: './gallery-tags-and-metadata.component.html',
