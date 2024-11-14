@@ -6,7 +6,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 export abstract class DefaultControlValueAccessor<T> implements OnInit, ControlValueAccessor {
   control: FormControl<T> | null;
 
-  abstract formFieldControl: MatFormFieldControl<any>;
+  abstract formFieldControl: MatFormFieldControl<unknown>;
 
   constructor(@Self() protected ngControl: NgControl) {
     ngControl.valueAccessor = this;
@@ -16,14 +16,17 @@ export abstract class DefaultControlValueAccessor<T> implements OnInit, ControlV
     this.control = this.ngControl.control as FormControl;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   registerOnChange(fn: any): void {
     this.getValueAccessor()?.registerOnChange(fn);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   registerOnTouched(fn: any): void {
     this.getValueAccessor()?.registerOnTouched(fn);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   writeValue(obj: any): void {
     this.getValueAccessor()?.writeValue(obj);
   }

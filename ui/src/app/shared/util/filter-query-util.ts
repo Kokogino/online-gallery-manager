@@ -54,7 +54,7 @@ export class FilterQueryUtil {
     const splitQuery = query?.split(' ') || [];
     let currentToken = '';
     let isTag = false;
-    for (let part of splitQuery) {
+    for (const part of splitQuery) {
       if (part.startsWith('"')) {
         isTag = true;
         currentToken += part;
@@ -81,15 +81,18 @@ export class FilterQueryUtil {
     switch (filter.objectType) {
       case 'tag':
         return FilterQueryUtil.createTokenForTagId((filter as TagFilterExpressionDto).tagId, tags);
-      case 'not':
+      case 'not': {
         const tagFilter = filter as NotFilterExpressionDto;
         return `NOT ${FilterQueryUtil.filterExpressionToQuery(tagFilter.expression, tags)}`;
-      case 'and':
+      }
+      case 'and': {
         const andFilter = filter as AndFilterExpressionDto;
         return `${FilterQueryUtil.filterExpressionToQuery(andFilter.first, tags)} AND ${FilterQueryUtil.filterExpressionToQuery(andFilter.second, tags)}`;
-      case 'or':
+      }
+      case 'or': {
         const orFilter = filter as OrFilterExpressionDto;
         return `${FilterQueryUtil.filterExpressionToQuery(orFilter.first, tags)} OR ${FilterQueryUtil.filterExpressionToQuery(orFilter.second, tags)}`;
+      }
     }
     return '';
   }
@@ -101,7 +104,7 @@ export class FilterQueryUtil {
   ): FilterExpressionDto {
     const firstToken = tokens[0];
     switch (firstToken.toUpperCase()) {
-      case 'AND':
+      case 'AND': {
         const nextNumberOfTokens = tokens[1].toUpperCase() === 'NOT' ? 3 : 2;
         const second = this.tokensToFilterExpression(tokens.slice(1, nextNumberOfTokens), tags);
         const andFilter: AndFilterExpressionDto = {
@@ -113,13 +116,14 @@ export class FilterQueryUtil {
           return this.tokensToFilterExpression(tokens.slice(nextNumberOfTokens), tags, andFilter);
         }
         return andFilter;
+      }
       case 'OR':
         return {
           objectType: 'or',
           first: previousExpression,
           second: this.tokensToFilterExpression(tokens.slice(1), tags),
         };
-      case 'NOT':
+      case 'NOT': {
         const notFilter: NotFilterExpressionDto = {
           objectType: 'not',
           expression: this.tokensToFilterExpression(tokens.slice(1, 2), tags),
@@ -128,7 +132,8 @@ export class FilterQueryUtil {
           return this.tokensToFilterExpression(tokens.slice(2), tags, notFilter);
         }
         return notFilter;
-      default:
+      }
+      default: {
         const tagFilter: TagFilterExpressionDto = {
           objectType: 'tag',
           tagId: this.findTagIdForToken(firstToken, tags),
@@ -137,6 +142,7 @@ export class FilterQueryUtil {
           return this.tokensToFilterExpression(tokens.slice(1), tags, tagFilter);
         }
         return tagFilter;
+      }
     }
   }
 

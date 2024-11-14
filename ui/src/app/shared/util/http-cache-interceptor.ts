@@ -1,7 +1,7 @@
 import { HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { filter, finalize, of, Subject, tap } from 'rxjs';
 import { HttpCacheOptions } from '@app/shared/model/http-cache-options';
-import { HttpCacheEntry } from '@app/shared/model/http-cache-entry';
+import { HttpCacheEntry, RequestType, ResponseType } from '@app/shared/model/http-cache-entry';
 
 const requests = new Map<string, HttpCacheEntry>();
 
@@ -25,11 +25,11 @@ export const httpCacheInterceptor = (options?: HttpCacheOptions): HttpIntercepto
           return of(prevReq.data);
         }
 
-        prevReq.data$ = new Subject<any>();
+        prevReq.data$ = new Subject<ResponseType>();
       } else {
         requests.set(key, {
-          data$: new Subject<HttpResponse<any>>(),
-          data: new HttpResponse<any>(),
+          data$: new Subject<HttpResponse<ResponseType>>(),
+          data: new HttpResponse<ResponseType>(),
           ttl: getTTL(req.url, options),
         });
       }
@@ -38,7 +38,7 @@ export const httpCacheInterceptor = (options?: HttpCacheOptions): HttpIntercepto
     return next(req).pipe(
       filter((x) => x instanceof HttpResponse),
       tap((x) => {
-        const data = x as HttpResponse<any>;
+        const data = x as HttpResponse<ResponseType>;
         const r = prevRequest();
         if (!r) {
           return;
@@ -64,14 +64,14 @@ function getUniqueKey(req: HttpRequest<unknown>): string {
   return `${req.method}_${req.url}_${req.params.toString()}_${JSON.stringify(bodySorted)}`;
 }
 
-function sortObjectByKeys(obj: any): any {
+function sortObjectByKeys(obj: RequestType): RequestType {
   const keysSorted = Object.keys(obj ?? '').sort();
   return keysSorted.reduce((_obj, key) => {
     const val = obj[key];
     _obj[key] = typeof val === 'object' ? sortObjectByKeys(val) : val;
 
     return _obj;
-  }, {} as any);
+  }, {} as RequestType);
 }
 
 function getTTL(reqUrl: string, options?: HttpCacheOptions): number {

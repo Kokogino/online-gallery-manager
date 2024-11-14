@@ -68,7 +68,7 @@ export class UploadComponent implements OnInit {
   upload(): void {
     if (this.isValid()) {
       this.uploading = true;
-      let formValues = this.uploadForm.getRawValue();
+      const formValues = this.uploadForm.getRawValue();
       this.imageService
         .createImages({
           host: formValues.host,

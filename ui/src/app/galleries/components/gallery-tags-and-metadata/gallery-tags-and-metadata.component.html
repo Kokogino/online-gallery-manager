@@ -1,4 +1,4 @@
-@if (!(loadingGallery$ | async) && galleryDetailsForm && gallery$ | async; as gallery) {
+@if ((loadingGallery$ | async) === false && galleryDetailsForm && gallery$ | async; as gallery) {
   <form [formGroup]="galleryDetailsForm">
     <mat-form-field class="name-form-field">
       <mat-label>Gallery Name</mat-label>

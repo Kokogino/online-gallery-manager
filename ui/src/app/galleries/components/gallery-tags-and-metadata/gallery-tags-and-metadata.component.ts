@@ -25,6 +25,8 @@ import { isNil } from 'lodash-es';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLinkActive } from '@angular/router';
 import { SharedDialogService } from '@app/shared/services/shared-dialog.service';
+import { MetadataValue } from '@app/galleries/model/metadata-value';
+import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-entry-form';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -121,9 +123,9 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
       name: [gallery.name],
       tagIds: [gallery.tags.map((tag) => tag.tagId)],
       metadata: this.formBuilder.array(
-        galleryMetadata.map((metadata) => {
+        galleryMetadata.map((metadata): FormGroup<GalleryMetadataEntryForm> => {
           const entry = gallery.metadata.find((entry) => entry.galleryMetadataId === metadata.id);
-          let value: any = entry?.value;
+          let value: MetadataValue = entry?.value;
           if (value !== undefined) {
             switch (metadata.type) {
               case GalleryMetadataType.Date:

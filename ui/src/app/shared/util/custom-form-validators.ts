@@ -1,7 +1,5 @@
-import { AbstractControl, AsyncValidatorFn, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { filter } from 'lodash-es';
-import { first, map } from 'rxjs/operators';
 import { MatInput } from '@angular/material/input';
 import { compareStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 
@@ -31,18 +29,7 @@ export class CustomFormValidators {
     return Validators.required(newControl) ? { trimmedRequired: true } : null;
   }
 
-  public static asyncMaxNTimesIn(n: number, array$: Observable<Array<string>>): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> =>
-      array$.pipe(
-        map((array) => {
-          const count = filter(array, (arrayValue) => compareStringsIgnoringAccentsAndCase(control.value.trim(), arrayValue) === 0).length;
-          return count > n ? { asyncMaxNTimesIn: count } : null;
-        }),
-        first(),
-      );
-  }
-
-  public static maxNTimesIn(n: number, array: Array<string>): ValidatorFn {
+  public static maxNTimesIn(n: number, array: string[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const count = filter(array, (arrayValue) => compareStringsIgnoringAccentsAndCase(control.value.trim(), arrayValue) === 0).length;
       return count > n ? { maxNTimesIn: count } : null;

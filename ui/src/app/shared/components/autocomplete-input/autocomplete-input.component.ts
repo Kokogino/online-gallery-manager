@@ -31,7 +31,7 @@ import { MatError, MatLabel } from '@angular/material/form-field';
   templateUrl: './autocomplete-input.component.html',
   styleUrl: './autocomplete-input.component.scss',
 })
-export class AutocompleteInputComponent<T extends { id: any }> extends DefaultControlValueAccessor<string> implements OnInit {
+export class AutocompleteInputComponent<T extends { id: number }> extends DefaultControlValueAccessor<string> implements OnInit {
   @Input()
   optionDisplayValue: (option: T) => string;
 

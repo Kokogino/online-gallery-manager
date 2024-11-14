@@ -1,4 +1,4 @@
-@if (!((filteredImagesSubject | async)?.length > 0) && !(loading$ | async)) {
+@if (!((filteredImagesSubject | async)?.length > 0) && (loading$ | async) === false) {
   <ogm-no-data-message>No images</ogm-no-data-message>
 }
 

@@ -125,7 +125,7 @@ export abstract class ImageLoaderService {
 
   private updateImages(updatedImages: ImageResponse[]): void {
     const images = this.imagesSubject.value;
-    for (let updatedImage of updatedImages) {
+    for (const updatedImage of updatedImages) {
       const index = images.findIndex((image) => image.id === updatedImage.id);
       if (index >= 0) {
         images.splice(index, 1, updatedImage);

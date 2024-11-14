@@ -15,7 +15,7 @@
     </div>
   </form>
 
-  @if (!(loading | async)) {
+  @if ((loading | async) === false) {
     <ogm-autocomplete-input isSearchInput [formControl]="searchControl" class="gallery-search-field" />
     <div class="gallery-list">
       @for (gallery of galleries | async; track gallery.id; let isFirst = $first) {

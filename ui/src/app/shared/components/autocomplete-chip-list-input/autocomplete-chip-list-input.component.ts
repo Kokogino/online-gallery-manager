@@ -33,7 +33,7 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
   templateUrl: './autocomplete-chip-list-input.component.html',
   styleUrl: './autocomplete-chip-list-input.component.scss',
 })
-export class AutocompleteChipListInputComponent<T extends { id?: any }> extends DefaultControlValueAccessor<T[]> implements OnInit {
+export class AutocompleteChipListInputComponent<T extends { id?: number }> extends DefaultControlValueAccessor<T[]> implements OnInit {
   @Input()
   optionDisplayValue: (option: T) => string;
 
