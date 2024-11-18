@@ -34,7 +34,7 @@ import { AsyncPipe } from '@angular/common';
 export class UploadComponent implements OnInit {
   uploadForm: FormGroup<UploadForm>;
 
-  galleries: Observable<GalleryResponse[]>;
+  galleries$: Observable<GalleryResponse[]>;
 
   GalleryChoice = GalleryChoice;
 
@@ -62,7 +62,7 @@ export class UploadComponent implements OnInit {
       { validators: uploadFormValidator },
     );
 
-    this.galleries = this.galleryService.findGalleries({ randomizeOrder: false, startingDate: new Date().toISOString() });
+    this.galleries$ = this.galleryService.findGalleries({ randomizeOrder: false, startingDate: new Date().toISOString() });
   }
 
   upload(): void {

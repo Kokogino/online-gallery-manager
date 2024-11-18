@@ -15,7 +15,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 import { NgClass } from '@angular/common';
-import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
+import { SearchInputComponent } from '@app/shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'ogm-tags-list',
@@ -34,7 +34,7 @@ import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-
     MatCheckbox,
     MatDivider,
     NgClass,
-    AutocompleteInputComponent,
+    SearchInputComponent,
   ],
   templateUrl: './tags-list.component.html',
   styleUrl: './tags-list.component.scss',

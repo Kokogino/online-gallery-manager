@@ -16,7 +16,7 @@
   </form>
 
   @if ((loading | async) === false) {
-    <ogm-autocomplete-input isSearchInput [formControl]="searchControl" class="gallery-search-field" />
+    <ogm-search-input [formControl]="searchControl" class="gallery-search-field" />
     <div class="gallery-list">
       @for (gallery of galleries | async; track gallery.id; let isFirst = $first) {
         @if (isFirst) {

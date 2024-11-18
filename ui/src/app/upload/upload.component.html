@@ -19,10 +19,10 @@
       @case (GalleryChoice.AddToGallery) {
         <ogm-autocomplete-input
           formControlName="gallery"
-          [options]="galleries | async"
+          [options]="galleries$ | async"
           labelText="Gallery"
           [optionValue]="getGalleryName"
-          [optionDisplayValue]="getGalleryName">
+          required>
           <ng-container validationErrors>
             @if (uploadForm.controls.gallery.errors?.required) {
               Select a gallery for the images

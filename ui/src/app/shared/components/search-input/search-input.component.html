@@ -1,0 +1,16 @@
+<mat-form-field class="slim-form-field">
+  <mat-icon matPrefix>search</mat-icon>
+  <mat-label>Search</mat-label>
+  <input [formControl]="control" matInput type="text" autocomplete="off" />
+  @if (control.value) {
+    <button (click)="clearSearch()" aria-label="Clear" mat-icon-button matSuffix type="button" class="small-icon-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+
+  @if (control.errors) {
+    <mat-error>
+      <ng-content select="[validationErrors]" />
+    </mat-error>
+  }
+</mat-form-field>

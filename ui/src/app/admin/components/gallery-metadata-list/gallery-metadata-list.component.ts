@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
+import { SearchInputComponent } from '@app/shared/components/search-input/search-input.component';
 import { MatDivider } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -34,7 +34,7 @@ import { MatSelect } from '@angular/material/select';
     MatError,
     MatDivider,
     NgClass,
-    AutocompleteInputComponent,
+    SearchInputComponent,
     MatOption,
     MatSelect,
   ],

@@ -1,34 +1,25 @@
-<mat-form-field [ngClass]="{ 'slim-form-field': isSearchInput }">
-  @if (isSearchInput) {
-    <mat-icon matPrefix>search</mat-icon>
-  }
-  <mat-label>{{ isSearchInput ? 'Search' : labelText }}</mat-label>
-  <input #autoTrigger="matAutocompleteTrigger" [matAutocomplete]="auto" [formControl]="control" matInput type="text" autocomplete="off" />
-  <mat-autocomplete #auto="matAutocomplete" [panelWidth]="panelWidth">
+<mat-form-field>
+  <mat-label>{{ labelText }}</mat-label>
+  <input
+    [matAutocomplete]="auto"
+    [formControl]="inputControl"
+    [errorStateMatcher]="errorStateMatcher"
+    matInput
+    type="text"
+    autocomplete="off"
+    (blur)="updateValue()" />
+  <mat-autocomplete #auto="matAutocomplete" [panelWidth]="panelWidth" [displayWith]="displayValue">
     @if (options) {
       @for (option of filteredOptions$ | async; track option.id) {
-        <mat-option (click)="selectOption(option)" [value]="optionValue(option)">
-          {{ optionDisplayValue(option) }}
+        <mat-option [value]="option">
+          {{ optionValue(option) }}
         </mat-option>
       }
     }
   </mat-autocomplete>
-  @if (isSearchInput && control.value) {
-    <button
-      (click)="clearSearch()"
-      aria-label="Clear"
-      mat-icon-button
-      matSuffix
-      type="button"
-      [ngClass]="{ 'small-icon-button': isSearchInput }">
-      <mat-icon>close</mat-icon>
-    </button>
-  }
-  @if (!isSearchInput) {
-    <span matSuffix>
-      <ng-content select="[suffix]" />
-    </span>
-  }
+  <span matSuffix>
+    <ng-content select="[suffix]" />
+  </span>
 
   @if (control.errors) {
     <mat-error>
@@ -36,3 +27,5 @@
     </mat-error>
   }
 </mat-form-field>
+
+<input class="hide" matInput #hiddenInput="matInput" hidden />

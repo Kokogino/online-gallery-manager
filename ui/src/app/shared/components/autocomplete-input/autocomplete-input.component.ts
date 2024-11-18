@@ -1,40 +1,35 @@
-import { booleanAttribute, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatFormField, MatInput, MatPrefix, MatSuffix } from '@angular/material/input';
+import { booleanAttribute, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
-import { map, Observable, startWith, tap } from 'rxjs';
-import { MatIcon } from '@angular/material/icon';
-import { ReactiveFormsModule } from '@angular/forms';
-import { AsyncPipe, NgClass } from '@angular/common';
-import { MatIconButton } from '@angular/material/button';
+import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
 import { MatError, MatLabel } from '@angular/material/form-field';
+import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
+import { isNil } from 'lodash-es';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { AutocompleteErrorStateMatcher } from '@app/shared/model/autocomplete-error-state-matcher';
 
 @Component({
   selector: 'ogm-autocomplete-input',
   standalone: true,
   imports: [
     MatFormField,
-    MatIcon,
     MatAutocomplete,
     MatOption,
     MatAutocompleteTrigger,
     ReactiveFormsModule,
     MatInput,
     AsyncPipe,
-    MatIconButton,
     MatLabel,
     MatError,
-    MatPrefix,
     MatSuffix,
-    NgClass,
   ],
   templateUrl: './autocomplete-input.component.html',
   styleUrl: './autocomplete-input.component.scss',
 })
-export class AutocompleteInputComponent<T extends { id: number }> extends DefaultControlValueAccessor<string> implements OnInit {
-  @Input()
-  optionDisplayValue: (option: T) => string;
-
+export class AutocompleteInputComponent<T extends { id?: number }> extends DefaultControlValueAccessor<T> implements OnInit {
   @Input()
   options: T[];
 
@@ -42,63 +37,61 @@ export class AutocompleteInputComponent<T extends { id: number }> extends Defaul
   panelWidth: string;
 
   @Input()
-  selectedOption: T;
-
-  @Output()
-  selectedOptionChange: EventEmitter<T> = new EventEmitter<T>();
-
-  @Output()
-  optionSelected: EventEmitter<T> = new EventEmitter<T>();
-
-  @Input({ transform: booleanAttribute })
-  isSearchInput = false;
-
-  @Input()
   labelText: string;
 
   @Input()
-  optionValue = (option: T): string => option as unknown as string;
+  optionValue = (option: T) => option as unknown as string;
 
-  @ViewChild('autoTrigger')
-  autoTrigger: MatAutocompleteTrigger;
+  @Input({ transform: booleanAttribute })
+  required: boolean;
 
-  @ViewChild(MatInput)
+  @ViewChild('hiddenInput')
   formFieldControl: MatInput;
 
   filteredOptions$: Observable<T[]>;
 
+  inputControl: FormControl<string | T>;
+
+  errorStateMatcher: ErrorStateMatcher;
+
   override ngOnInit(): void {
     super.ngOnInit();
-    this.control.valueChanges.subscribe((value) =>
-      this.selectedOptionChange.emit(this.options?.find((option) => this.optionValue(option).toLowerCase() === value?.toLowerCase())),
-    );
 
-    this.filteredOptions$ = this.control.valueChanges.pipe(
+    this.inputControl = new FormControl(this.control.value, this.required ? Validators.required : []);
+
+    this.filteredOptions$ = this.inputControl.valueChanges.pipe(
       startWith(''),
-      map((value): [string, T[]] => [value, this.filterOptions(value)]),
-      tap(([value, options]: [string, T[]]) => {
-        if (options?.length === 1 && value?.length > 0) {
-          this.selectedOptionChange.emit(options[0]);
-        }
-      }),
-      map(([_, options]) => options),
+      distinctUntilChanged(),
+      map((value) => this.filterOptions(value)),
     );
 
-    this.optionDisplayValue = this.optionDisplayValue ?? this.optionValue;
+    this.filteredOptions$.subscribe((options) => {
+      const value = this.inputControl.value;
+      if (options?.length === 1 && Boolean(value)) {
+        this.control.setValue(options[0]);
+      } else if (typeof value !== 'string') {
+        this.control.setValue(value);
+      } else {
+        this.control.setValue(undefined);
+      }
+    });
+
+    this.errorStateMatcher = new AutocompleteErrorStateMatcher(this.control);
   }
 
-  clearSearch(): void {
-    this.control.reset();
-    requestAnimationFrame(() => this.autoTrigger.openPanel());
+  updateValue(): void {
+    const value = this.control.value;
+    if (!isNil(value)) {
+      this.inputControl.setValue(value);
+    }
   }
 
-  selectOption(option: T): void {
-    this.selectedOptionChange.emit(option);
-    this.optionSelected.emit(option);
-  }
+  displayValue = (option: T): string => {
+    return option ? this.optionValue(option) : '';
+  };
 
-  private filterOptions(value: string): T[] {
-    const filterValue = value?.toLowerCase() || '';
-    return this.options.filter((option) => this.optionDisplayValue(option).toLowerCase().includes(filterValue));
+  private filterOptions(value: string | T): T[] {
+    const filterValue = typeof value === 'string' ? value : this.optionValue(value);
+    return this.options?.filter((option) => containsStringsIgnoringAccentsAndCase(this.optionValue(option), filterValue));
   }
 }

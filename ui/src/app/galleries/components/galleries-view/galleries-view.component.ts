@@ -14,7 +14,7 @@ import { GalleriesService } from '@app/galleries/services/galleries.service';
 import { Observable } from 'rxjs';
 import { GalleryFilterForm } from '@app/galleries/model/gallery-filter-form';
 import { AsyncPipe } from '@angular/common';
-import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
+import { SearchInputComponent } from '@app/shared/components/search-input/search-input.component';
 import { GalleryListItemComponent } from '@app/galleries/components/gallery-list-item/gallery-list-item.component';
 
 @Component({
@@ -31,7 +31,7 @@ import { GalleryListItemComponent } from '@app/galleries/components/gallery-list
     NoDataMessageComponent,
     RouterLink,
     AsyncPipe,
-    AutocompleteInputComponent,
+    SearchInputComponent,
     GalleryListItemComponent,
   ],
   templateUrl: './galleries-view.component.html',
