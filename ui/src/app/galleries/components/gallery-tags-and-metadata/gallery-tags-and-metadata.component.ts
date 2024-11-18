@@ -14,8 +14,8 @@ import { MatIcon } from '@angular/material/icon';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { GalleriesService } from '@app/galleries/services/galleries.service';
-import { AsyncPipe } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe, NgClass } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { GalleryDetailsForm } from '@app/galleries/model/gallery-details-form';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatSuffix } from '@angular/material/input';
@@ -26,6 +26,8 @@ import { MatButton } from '@angular/material/button';
 import { SharedDialogService } from '@app/shared/services/shared-dialog.service';
 import { MetadataValue } from '@app/galleries/model/metadata-value';
 import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-entry-form';
+import { TagGroupSelectComponent } from '@app/shared/components/tag-group-select/tag-group-select.component';
+import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -46,6 +48,8 @@ import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-
     MatDatepicker,
     MatSuffix,
     MatButton,
+    TagGroupSelectComponent,
+    NgClass,
   ],
   templateUrl: './gallery-tags-and-metadata.component.html',
   styleUrl: './gallery-tags-and-metadata.component.scss',
@@ -66,6 +70,8 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
   formSubscription: Subscription;
 
   GalleryMetadataType = GalleryMetadataType;
+
+  tagGroupSelection = new FormControl<TagGroupSelection>(TagGroupSelection.Hidden);
 
   constructor(
     private readonly tagService: TagService,
@@ -110,6 +116,15 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
         filter(Boolean),
       )
       .subscribe(() => this.galleriesService.deleteSelectedGallery());
+  }
+
+  shouldShowTag(tag: TagResponse): boolean {
+    const tagGroup = this.tagGroupSelection.value;
+    return (
+      tagGroup === TagGroupSelection.All ||
+      (tagGroup === TagGroupSelection.Hidden && !tag.showTag) ||
+      (tagGroup === TagGroupSelection.Shown && tag.showTag)
+    );
   }
 
   private setupDetailsForm(gallery: GalleryResponse, galleryMetadata: GalleryMetadataResponse[]): void {

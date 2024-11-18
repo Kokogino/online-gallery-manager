@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { GalleryResponse, GalleryService, ImageResponse, TagResponse, TagService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { finalize, Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ImageForm } from '@app/shared/model/image-form';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -10,11 +10,25 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { NoDataMessageComponent } from '@app/shared/components/no-data-message/no-data-message.component';
 import { isNil } from 'lodash-es';
 import { MatButton } from '@angular/material/button';
+import { TagGroupSelectComponent } from '@app/shared/components/tag-group-select/tag-group-select.component';
+import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-image-tags',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIcon, RouterLink, MatChipListbox, MatChipOption, MatProgressBar, NoDataMessageComponent, MatButton],
+  imports: [
+    ReactiveFormsModule,
+    MatIcon,
+    RouterLink,
+    MatChipListbox,
+    MatChipOption,
+    MatProgressBar,
+    NoDataMessageComponent,
+    MatButton,
+    TagGroupSelectComponent,
+    NgClass,
+  ],
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',
 })
@@ -35,6 +49,8 @@ export class ImageTagsComponent implements OnInit, OnChanges {
   loadingGallery = false;
 
   imageForm: FormGroup<ImageForm>;
+
+  tagGroupSelection = new FormControl<TagGroupSelection>(TagGroupSelection.Hidden);
 
   protected readonly isNil = isNil;
 
@@ -72,6 +88,15 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   galleryHasTag(tagId: number): boolean {
     return this.gallery?.tags?.findIndex((tag) => tag.tagId === tagId) >= 0;
+  }
+
+  shouldShowTag(tag: TagResponse): boolean {
+    const tagGroup = this.tagGroupSelection.value;
+    return (
+      tagGroup === TagGroupSelection.All ||
+      (tagGroup === TagGroupSelection.Hidden && !tag.showTag) ||
+      (tagGroup === TagGroupSelection.Shown && tag.showTag)
+    );
   }
 
   private setupImageForm(): void {

@@ -8,7 +8,7 @@ export abstract class DefaultControlValueAccessor<T> implements OnInit, ControlV
 
   abstract formFieldControl: MatFormFieldControl<unknown>;
 
-  constructor(@Self() protected ngControl: NgControl) {
+  constructor(@Self() protected readonly ngControl: NgControl) {
     ngControl.valueAccessor = this;
   }
 

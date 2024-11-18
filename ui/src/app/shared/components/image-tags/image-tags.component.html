@@ -35,14 +35,17 @@
     }
   }
 
-  <h3>Tags</h3>
+  <h3 class="vertical-center">
+    Tags
+    <ogm-tag-group-select [formControl]="tagGroupSelection" class="tag-group-selection" />
+  </h3>
 
   <form [formGroup]="imageForm">
     @if (!loadingAllTags && !loadingGallery) {
       <mat-chip-listbox multiple aria-label="Tags selection" formControlName="tagIds">
         @for (tag of allTags; track tag.id) {
           @if (!galleryHasTag(tag.id)) {
-            <mat-chip-option [value]="tag.id">
+            <mat-chip-option [value]="tag.id" [ngClass]="{ hide: !shouldShowTag(tag) }">
               <div class="vertical-center">
                 @if (tag.showTag) {
                   <mat-icon class="tag-icon">visibility</mat-icon>
