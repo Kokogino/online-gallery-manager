@@ -86,9 +86,7 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
     }
   }
 
-  displayValue = (option: T): string => {
-    return option ? this.optionValue(option) : '';
-  };
+  displayValue = (option: T): string => (option ? this.optionValue(option) : '');
 
   private filterOptions(value: string | T): T[] {
     const filterValue = typeof value === 'string' ? value : this.optionValue(value);

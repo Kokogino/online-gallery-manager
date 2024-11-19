@@ -9,9 +9,9 @@
     }
   </mat-chip-grid>
   <input
-    #input
+    #input="matChipInput"
     #autoTrigger="matAutocompleteTrigger"
-    (matChipInputTokenEnd)="addChip($event)"
+    (matChipInputTokenEnd)="addChip()"
     [matChipInputFor]="chipGrid"
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     [matAutocomplete]="auto"
@@ -19,16 +19,16 @@
     matInput
     type="text"
     autocomplete="off" />
-  <mat-autocomplete #auto="matAutocomplete">
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayValue" (optionSelected)="optionSelected($event)">
     @if (options) {
       @for (option of filteredOptions$ | async; track option.id) {
-        <mat-option (click)="optionSelected(option)" [value]="optionValue(option)">
-          {{ optionDisplayValue(option) }}
+        <mat-option [value]="option">
+          {{ optionValue(option) }}
         </mat-option>
       }
     }
   </mat-autocomplete>
-  @if (input.value?.length > 0) {
+  @if (selectedOption) {
     <mat-hint>Press enter to add</mat-hint>
   }
 </mat-form-field>

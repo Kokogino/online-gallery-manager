@@ -1,12 +1,12 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
-import { MatChipGrid, MatChipInput, MatChipInputEvent, MatChipRemove, MatChipRow } from '@angular/material/chips';
+import { MatChipGrid, MatChipInput, MatChipRemove, MatChipRow } from '@angular/material/chips';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteSelectedEvent, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
-import { combineLatest, map, Observable, startWith, tap } from 'rxjs';
+import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatIcon } from '@angular/material/icon';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
@@ -35,13 +35,13 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
 })
 export class AutocompleteChipListInputComponent<T extends { id?: number }> extends DefaultControlValueAccessor<T[]> implements OnInit {
   @Input()
-  optionDisplayValue: (option: T) => string;
-
-  @Input()
   options: T[];
 
   @Input()
   labelText: string;
+
+  @Input()
+  optionValue = (option: T): string => option as unknown as string;
 
   @ViewChild(MatChipGrid)
   formFieldControl: MatChipGrid;
@@ -50,7 +50,7 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
   autoTrigger: MatAutocompleteTrigger;
 
   @ViewChild('input')
-  input: ElementRef<HTMLInputElement>;
+  input: MatChipInput;
 
   selectedOption: T;
 
@@ -58,10 +58,7 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
 
   filteredOptions$: Observable<T[]>;
 
-  inputControl = new FormControl<string>(undefined);
-
-  @Input()
-  optionValue = (option: T): string => option as unknown as string;
+  inputControl = new FormControl<string | T>('');
 
   override ngOnInit(): void {
     super.ngOnInit();
@@ -69,23 +66,22 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
     this.filteredOptions$ = combineLatest([
       this.inputControl.valueChanges.pipe(startWith('')),
       this.control.valueChanges.pipe(startWith(this.control.value)),
-    ]).pipe(
-      map(([value, addedValues]): [string, T[]] => [value, this.filterOptions(value, addedValues)]),
-      tap(([value, options]: [string, T[]]) => {
-        if (options?.length === 1 && value?.length > 0) {
-          this.selectedOption = options[0];
-        } else {
-          this.selectedOption = undefined;
-        }
-      }),
-      map(([_, options]) => options),
-    );
+    ]).pipe(map(([value, addedValues]) => this.filterOptions(value, addedValues)));
 
-    this.optionDisplayValue = this.optionDisplayValue ?? this.optionValue;
+    this.filteredOptions$.subscribe((options) => {
+      const value = this.inputControl.value;
+      if (options?.length === 1 && Boolean(value)) {
+        this.selectedOption = options[0];
+      } else if (typeof value !== 'string') {
+        this.selectedOption = value;
+      } else {
+        this.selectedOption = undefined;
+      }
+    });
   }
 
-  optionSelected(option: T): void {
-    this.selectedOption = option;
+  optionSelected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedOption = event.option.value;
     this.addChip();
   }
 
@@ -98,7 +94,7 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
     }
   }
 
-  addChip(event?: MatChipInputEvent): void {
+  addChip(): void {
     if (this.selectedOption !== undefined) {
       const index = this.control.value?.findIndex((option) => option.id === this.selectedOption.id);
 
@@ -108,17 +104,19 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
         this.selectedOption = undefined;
       }
 
-      this.input.nativeElement.value = '';
-      this.inputControl.reset();
-      event?.chipInput?.clear();
+      this.input.clear();
+      this.inputControl.reset('');
+      this.autoTrigger.closePanel();
     }
-    this.autoTrigger.openPanel();
   }
 
-  private filterOptions(value: string, addedValues: T[]): T[] {
+  displayValue = (option: T): string => (option ? this.optionValue(option) : '');
+
+  private filterOptions(value: string | T, addedValues: T[]): T[] {
+    const filterValue = typeof value === 'string' ? value : this.optionValue(value);
     return this.options.filter(
       (option) =>
-        containsStringsIgnoringAccentsAndCase(this.optionDisplayValue(option), value) &&
+        containsStringsIgnoringAccentsAndCase(this.optionValue(option), filterValue) &&
         !addedValues?.find((selectedOption) => selectedOption.id === option.id),
     );
   }

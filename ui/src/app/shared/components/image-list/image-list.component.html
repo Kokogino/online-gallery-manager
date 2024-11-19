@@ -9,8 +9,7 @@
       formControlName="tags"
       labelText="Tags to add"
       [options]="allTags"
-      [optionValue]="getTagName"
-      [optionDisplayValue]="getTagName" />
+      [optionValue]="getTagName" />
     <div class="rest-form">
       <button mat-raised-button color="primary" type="submit" [disabled]="!addTagsForm.valid">Add Tags</button>
       <button mat-flat-button type="button" (click)="deselectAll()">Deselect all</button>
