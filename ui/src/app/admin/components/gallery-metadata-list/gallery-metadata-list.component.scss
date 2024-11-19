@@ -32,8 +32,28 @@
   }
 
   .metadata-list {
-    flex-grow: 1;
     overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+    .metadata {
+      padding: 8px 0;
+      flex-grow: 1;
+      min-width: 320px;
+
+      .metadata-detail {
+        flex-grow: 1;
+        width: 1px;
+
+        .metadata-type {
+          opacity: 0.5;
+        }
+      }
+
+      .metadata-icon {
+        margin-right: 8px;
+      }
+    }
   }
 
   .type-input {
@@ -42,22 +62,5 @@
 
   .cancel-button {
     color: $color-warn;
-  }
-
-  .metadata {
-    padding: 8px 0;
-
-    .metadata-detail {
-      flex-grow: 1;
-      width: 1px;
-
-      .metadata-type {
-        opacity: 0.5;
-      }
-    }
-
-    .metadata-icon {
-      margin-right: 8px;
-    }
   }
 }

@@ -8,11 +8,11 @@
 </div>
 
 @if (!loading && newTagForm) {
-  <form [formGroup]="newTagForm" (submit)="saveNewTag()" class="tag vertical-center">
+  <form [formGroup]="newTagForm" (submit)="saveNewTag()" class="vertical-center">
     <button mat-icon-button matTooltip="Cancel" type="button" class="cancel-button tag-icon" (click)="cancelNewTag()">
       <mat-icon>cancel</mat-icon>
     </button>
-    <div class="tag-detail">
+    <div>
       <div class="vertical-center">
         <mat-form-field>
           <mat-label>Tag Name</mat-label>
@@ -28,7 +28,6 @@
       <mat-checkbox formControlName="showTag">Show tag</mat-checkbox>
     </div>
   </form>
-  <mat-divider />
 }
 
 <ogm-search-input class="tag-search-field" [formControl]="searchTags" />

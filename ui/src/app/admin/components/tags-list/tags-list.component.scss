@@ -32,28 +32,31 @@
   }
 
   .tag-list {
-    flex-grow: 1;
     overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+    .tag {
+      padding: 8px 0;
+      flex-grow: 1;
+      min-width: 320px;
+
+      .tag-detail {
+        flex-grow: 1;
+        width: 1px;
+
+        .show-tag {
+          opacity: 0.5;
+        }
+      }
+
+      .tag-icon {
+        margin-right: 8px;
+      }
+    }
   }
 
   .cancel-button {
     color: $color-warn;
-  }
-
-  .tag {
-    padding: 8px 0;
-
-    .tag-detail {
-      flex-grow: 1;
-      width: 1px;
-
-      .show-tag {
-        opacity: 0.5;
-      }
-    }
-
-    .tag-icon {
-      margin-right: 8px;
-    }
   }
 }
