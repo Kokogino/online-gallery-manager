@@ -25,14 +25,4 @@ public class OGMCorsFilter implements Filter {
       filterChain.doFilter(req, res);
     }
   }
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    Filter.super.init(filterConfig);
-  }
-
-  @Override
-  public void destroy() {
-    Filter.super.destroy();
-  }
 }
