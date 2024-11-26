@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
 import { MatFormField } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -12,8 +12,7 @@ import { GalleryChoice } from '@app/gen/ogm-backend';
   styleUrl: './gallery-choice-input.component.scss',
 })
 export class GalleryChoiceInputComponent extends DefaultControlValueAccessor<GalleryChoice> {
-  @ViewChild(MatSelect)
-  formFieldControl: MatSelect;
+  readonly formFieldControl = viewChild(MatSelect);
 
   choices = Object.values(GalleryChoice);
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
 import { MatInput } from '@angular/material/input';
@@ -13,10 +13,9 @@ import { isNil } from 'lodash-es';
   styleUrl: './tag-group-select.component.scss',
 })
 export class TagGroupSelectComponent extends DefaultControlValueAccessor<TagGroupSelection> implements OnInit {
-  sliderControl: FormControl<number>;
+  readonly formFieldControl = viewChild<MatInput>('hiddenInput');
 
-  @ViewChild('hiddenInput')
-  formFieldControl: MatInput;
+  sliderControl: FormControl<number>;
 
   override ngOnInit(): void {
     super.ngOnInit();

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, input, output } from '@angular/core';
 import { GalleryResponse, GalleryService, ImageResponse, TagResponse, TagService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { finalize, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -32,14 +32,11 @@ import { NgClass } from '@angular/common';
   styleUrl: './image-tags.component.scss',
 })
 export class ImageTagsComponent implements OnInit, OnChanges {
-  @Input({ required: true })
-  image: ImageResponse;
+  readonly image = input.required<ImageResponse>();
 
-  @Output()
-  updateImage = new EventEmitter<UpdateImageDto>();
+  readonly updateImage = output<UpdateImageDto>();
 
-  @Output()
-  deleteImage = new EventEmitter<boolean>();
+  readonly deleteImage = output<boolean>();
 
   allTags: TagResponse[];
   gallery: GalleryResponse;
@@ -70,11 +67,12 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.image?.currentValue) {
-      if (!isNil(this.image.galleryId)) {
-        if (this.image.galleryId !== this.gallery?.id) {
+      const image = this.image();
+      if (!isNil(image.galleryId)) {
+        if (image.galleryId !== this.gallery?.id) {
           this.loadingGallery = true;
           this.galleryService
-            .getGalleryById(this.image.galleryId)
+            .getGalleryById(image.galleryId)
             .pipe(finalize(() => (this.loadingGallery = false)))
             .subscribe((gallery) => (this.gallery = gallery));
         }
@@ -100,8 +98,8 @@ export class ImageTagsComponent implements OnInit, OnChanges {
 
   private setupImageForm(): void {
     this.imageForm = this.formBuilder.group({
-      galleryId: [this.image.galleryId],
-      tagIds: [this.image.tags?.map((tag) => tag.tagId)],
+      galleryId: [this.image().galleryId],
+      tagIds: [this.image().tags?.map((tag) => tag.tagId)],
     });
 
     this.formSubscription?.unsubscribe();

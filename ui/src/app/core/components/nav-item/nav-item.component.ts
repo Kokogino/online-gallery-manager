@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, Input } from '@angular/core';
+import { booleanAttribute, Component, input } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
@@ -10,15 +10,11 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './nav-item.component.scss',
 })
 export class NavItemComponent {
-  @Input({ required: true })
-  path: string;
+  readonly path = input.required<string>();
 
-  @Input({ required: true })
-  text: string;
+  readonly text = input.required<string>();
 
-  @Input({ required: true })
-  icon: string;
+  readonly icon = input.required<string>();
 
-  @Input({ transform: booleanAttribute })
-  exactMatch: boolean;
+  readonly exactMatch = input<boolean, unknown>(false, { transform: booleanAttribute });
 }

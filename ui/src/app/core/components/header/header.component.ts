@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { NavItemComponent } from '@app/core/components/nav-item/nav-item.component';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
@@ -18,8 +18,7 @@ import { PAGES } from '@app/core/model/page';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent implements OnInit {
-  @Input()
-  sidenav: MatSidenav;
+  readonly sidenav = input<MatSidenav>();
 
   isLightTheme: Observable<boolean>;
 

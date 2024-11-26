@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, input } from '@angular/core';
 import { BehaviorSubject, catchError, distinctUntilChanged, filter, map, Observable, Subscription, switchMap, tap, throwError } from 'rxjs';
 import { ImageResponse, ImageService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,14 +34,11 @@ import { DeletingOverlayComponent } from '@app/shared/components/deleting-overla
   styleUrl: './image-details.component.scss',
 })
 export class ImageDetailsComponent implements OnInit, OnDestroy {
-  @Input({ required: true })
-  imageLoaderService: ImageLoaderService;
+  readonly imageLoaderService = input.required<ImageLoaderService>();
 
-  @Input({ required: true })
-  fallbackRoute: string;
+  readonly fallbackRoute = input.required<string>();
 
-  @Input({ required: true })
-  imageIdParam: string;
+  readonly imageIdParam = input.required<string>();
 
   loadingImage = true;
   selectedImageSubject = new BehaviorSubject<ImageResponse>(undefined);
@@ -61,7 +58,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchImageOnIdChange();
 
-    this.deletingImageId$ = this.imageLoaderService.deletingImageId$;
+    this.deletingImageId$ = this.imageLoaderService().deletingImageId$;
   }
 
   ngOnDestroy(): void {
@@ -71,7 +68,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
   updateImage(updateImageDto: UpdateImageDto, originalImage: ImageResponse): void {
     this.imageService.updateImage(originalImage.id, updateImageDto).subscribe((image) => {
       this.selectedImageSubject.next(image);
-      this.imageLoaderService.updateImage(image);
+      this.imageLoaderService().updateImage(image);
     });
   }
 
@@ -82,16 +79,16 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
         message: 'Are you sure you want to delete this image?',
       })
       .pipe(filter(Boolean))
-      .subscribe(() => this.imageLoaderService.deleteImage(this.selectedImageSubject.value.id));
+      .subscribe(() => this.imageLoaderService().deleteImage(this.selectedImageSubject.value.id));
   }
 
   private fetchImageOnIdChange(): void {
     this.routeSubscription = this.route.paramMap
       .pipe(
         map((params) => {
-          const imageId = parseInt(params.get(this.imageIdParam));
+          const imageId = parseInt(params.get(this.imageIdParam()));
           if (isNaN(imageId)) {
-            void this.router.navigateByUrl(this.fallbackRoute);
+            void this.router.navigateByUrl(this.fallbackRoute());
             return undefined;
           }
           return imageId;
@@ -103,7 +100,7 @@ export class ImageDetailsComponent implements OnInit, OnDestroy {
           this.imageService.getImageById(id).pipe(
             catchError((err) => {
               if (err.error?.errorCode === 6503) {
-                void this.router.navigateByUrl(this.fallbackRoute);
+                void this.router.navigateByUrl(this.fallbackRoute());
               }
               return throwError(() => err);
             }),

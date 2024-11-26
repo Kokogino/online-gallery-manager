@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ImageResponse } from '@app/gen/ogm-backend';
 import { NgClass } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -10,8 +10,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   styleUrl: './image.component.scss',
 })
 export class ImageComponent {
-  @Input({ required: true })
-  image: ImageResponse;
+  readonly image = input.required<ImageResponse>();
 
   fullImageLoaded = false;
 }

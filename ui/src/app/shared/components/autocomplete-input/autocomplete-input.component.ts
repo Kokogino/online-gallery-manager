@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { booleanAttribute, Component, OnInit, input, viewChild } from '@angular/core';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
@@ -29,23 +29,17 @@ import { AutocompleteErrorStateMatcher } from '@app/shared/model/autocomplete-er
   styleUrl: './autocomplete-input.component.scss',
 })
 export class AutocompleteInputComponent<T extends { id?: number }> extends DefaultControlValueAccessor<T> implements OnInit {
-  @Input()
-  options: T[];
+  readonly options = input<T[]>();
 
-  @Input()
-  panelWidth: string;
+  readonly panelWidth = input<string>();
 
-  @Input()
-  labelText: string;
+  readonly labelText = input<string>();
 
-  @Input()
-  optionValue = (option: T) => option as unknown as string;
+  readonly optionValue = input((option: T) => option as unknown as string);
 
-  @Input({ transform: booleanAttribute })
-  required: boolean;
+  readonly required = input<boolean, unknown>(false, { transform: booleanAttribute });
 
-  @ViewChild('hiddenInput')
-  formFieldControl: MatInput;
+  readonly formFieldControl = viewChild<MatInput>('hiddenInput');
 
   filteredOptions$: Observable<T[]>;
 
@@ -56,7 +50,7 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
   override ngOnInit(): void {
     super.ngOnInit();
 
-    this.inputControl = new FormControl(this.control.value, this.required ? Validators.required : []);
+    this.inputControl = new FormControl(this.control.value, this.required() ? Validators.required : []);
 
     this.filteredOptions$ = this.inputControl.valueChanges.pipe(
       startWith(''),
@@ -91,10 +85,10 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
     }
   }
 
-  displayValue = (option: T): string => (option ? this.optionValue(option) : '');
+  displayValue = (option: T): string => (option ? this.optionValue()(option) : '');
 
   private filterOptions(value: string | T): T[] {
-    const filterValue = typeof value === 'string' ? value : this.optionValue(value);
-    return this.options?.filter((option) => containsStringsIgnoringAccentsAndCase(this.optionValue(option), filterValue));
+    const filterValue = typeof value === 'string' ? value : this.optionValue()(value);
+    return this.options()?.filter((option) => containsStringsIgnoringAccentsAndCase(this.optionValue()(option), filterValue));
   }
 }

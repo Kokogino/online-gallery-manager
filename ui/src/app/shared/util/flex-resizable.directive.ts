@@ -1,44 +1,33 @@
-import { AfterContentInit, ContentChildren, Directive, ElementRef, EventEmitter, OnDestroy, Output, QueryList } from '@angular/core';
+import { contentChildren, Directive, effect, ElementRef, OnDestroy, output } from '@angular/core';
 import { FlexResizerDirective } from '@app/shared/util/flex-resizer.directive';
-import { startWith, Subscription } from 'rxjs';
 
 @Directive({
   selector: '[ogmFlexResizable]',
 })
-export class FlexResizableDirective implements AfterContentInit, OnDestroy {
-  @Output()
-  resizeHorizontal = new EventEmitter<number>();
+export class FlexResizableDirective implements OnDestroy {
+  readonly resizeHorizontal = output<number>();
 
-  @Output()
-  resizeVertical = new EventEmitter<number>();
+  readonly resizeVertical = output<number>();
 
-  @ContentChildren(FlexResizerDirective)
-  flexResizers: QueryList<FlexResizerDirective>;
+  readonly flexResizers = contentChildren(FlexResizerDirective);
 
   private previousX: number;
   private previousY: number;
-
-  private resizerSubscription: Subscription;
 
   private resizeEventListener = (e: MouseEvent | TouchEvent) => this.resize(e);
   private startResizingEventListener = (e: MouseEvent | TouchEvent) => this.startResizing(e);
   private stopResizingEventListener = () => this.stopResizing();
 
-  constructor(private element: ElementRef) {}
-
-  ngAfterContentInit(): void {
-    this.resizerSubscription = this.flexResizers.changes
-      .pipe(startWith(this.flexResizers))
-      .subscribe((resizers: QueryList<FlexResizerDirective>) =>
-        resizers.forEach((resizer: FlexResizerDirective) => {
-          resizer.element.nativeElement.addEventListener('touchstart', this.startResizingEventListener);
-          resizer.element.nativeElement.addEventListener('mousedown', this.startResizingEventListener);
-        }),
-      );
+  constructor(private element: ElementRef) {
+    effect(() =>
+      this.flexResizers().forEach((resizer: FlexResizerDirective) => {
+        resizer.element.nativeElement.addEventListener('touchstart', this.startResizingEventListener);
+        resizer.element.nativeElement.addEventListener('mousedown', this.startResizingEventListener);
+      }),
+    );
   }
 
   ngOnDestroy(): void {
-    this.resizerSubscription?.unsubscribe();
     this.stopResizing();
   }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { GalleryTagsAndMetadataComponent } from '@app/galleries/components/gallery-tags-and-metadata/gallery-tags-and-metadata.component';
 import { MatDivider } from '@angular/material/divider';
 import { FilterQueryInputComponent } from '@app/shared/components/filter-query-input/filter-query-input.component';
@@ -36,8 +36,7 @@ import { DeletingOverlayComponent } from '@app/shared/components/deleting-overla
   styleUrl: './gallery-details.component.scss',
 })
 export class GalleryDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('detailsSidebar')
-  detailsSidebar: MatSidenav;
+  readonly detailsSidebar = viewChild<MatSidenav>('detailsSidebar');
 
   imagesFilterForm: FormGroup<GalleryFilterForm>;
 
@@ -59,7 +58,7 @@ export class GalleryDetailsComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.galleryDetailsSidebarService.detailsSidebar = this.detailsSidebar;
+    this.galleryDetailsSidebarService.detailsSidebar = this.detailsSidebar();
   }
 
   ngOnDestroy(): void {

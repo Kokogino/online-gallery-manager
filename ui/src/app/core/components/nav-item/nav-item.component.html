@@ -2,19 +2,19 @@
   class="nav-button active"
   color="primary"
   mat-flat-button
-  [routerLink]="path"
+  [routerLink]="path()"
   routerLinkActive="show"
-  [routerLinkActiveOptions]="{ exact: exactMatch }">
-  <mat-icon>{{ icon }}</mat-icon>
-  {{ text }}
+  [routerLinkActiveOptions]="{ exact: exactMatch() }">
+  <mat-icon>{{ icon() }}</mat-icon>
+  {{ text() }}
 </a>
 <a
   class="nav-button inactive"
   color="primary"
   mat-stroked-button
-  [routerLink]="path"
+  [routerLink]="path()"
   routerLinkActive="hide"
-  [routerLinkActiveOptions]="{ exact: exactMatch }">
-  <mat-icon>{{ icon }}</mat-icon>
-  {{ text }}
+  [routerLinkActiveOptions]="{ exact: exactMatch() }">
+  <mat-icon>{{ icon() }}</mat-icon>
+  {{ text() }}
 </a>

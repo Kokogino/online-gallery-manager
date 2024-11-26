@@ -1,8 +1,8 @@
 <div class="image-container">
-  <a target="_blank" [href]="image.imageUrl" class="image-link">
-    @if (image.pureImageUrl?.length > 0) {
+  <a target="_blank" [href]="image().imageUrl" class="image-link">
+    @if (image().pureImageUrl?.length > 0) {
       <img
-        [src]="image.pureImageUrl"
+        [src]="image().pureImageUrl"
         alt="Image"
         class="image"
         (load)="fullImageLoaded = true"
@@ -10,12 +10,12 @@
         [ngClass]="{ hide: !fullImageLoaded }" />
     }
     @if (!fullImageLoaded) {
-      <img [src]="image.thumbnailUrl" alt="Image" class="image" />
+      <img [src]="image().thumbnailUrl" alt="Image" class="image" />
     }
   </a>
 </div>
 
-@if (!fullImageLoaded && image.pureImageUrl?.length > 0) {
+@if (!fullImageLoaded && image().pureImageUrl?.length > 0) {
   <div class="loading-indicator vertical-center">
     Loading full image
     <mat-progress-spinner diameter="16" mode="indeterminate" class="spinner" />

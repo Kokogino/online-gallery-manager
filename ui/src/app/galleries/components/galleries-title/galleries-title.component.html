@@ -6,10 +6,10 @@
     <mat-icon class="chevron">chevron_right</mat-icon>
     <div class="vertical-center">
       <a [routerLink]="'/galleries/' + gallery.id" routerLinkActive="hide">
-        {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
+        {{ gallery.name || 'Unnamed Gallery' }}
       </a>
       <span [routerLink]="'/galleries/' + gallery.id" class="hide" routerLinkActive="active">
-        {{ gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery' }}
+        {{ gallery.name || 'Unnamed Gallery' }}
       </span>
       @if ((mediaQueryService.isMaximumTabletLayout$ | async) && gallery.id !== (deletingGalleryId$ | async)) {
         <button

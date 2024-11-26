@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit, output } from '@angular/core';
 import { TagResponse, TagService } from '@app/gen/ogm-backend';
 import { finalize } from 'rxjs';
 import { MatChip, MatChipSet } from '@angular/material/chips';
@@ -13,8 +13,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   styleUrl: './tags.component.scss',
 })
 export class TagsComponent implements OnInit {
-  @Output()
-  tagClicked = new EventEmitter<TagResponse>();
+  readonly tagClicked = output<TagResponse>();
 
   allTags: TagResponse[];
 

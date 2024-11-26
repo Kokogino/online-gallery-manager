@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, viewChild } from '@angular/core';
 import { TagsComponent } from '@app/shared/components/tags/tags.component';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MatDivider } from '@angular/material/divider';
@@ -32,10 +32,9 @@ import { ImagesFilterForm } from '@app/images/model/images-filter-form';
   styleUrl: './images.component.scss',
 })
 export class ImagesComponent implements OnInit {
-  filterForm: FormGroup<ImagesFilterForm>;
+  readonly queryInput = viewChild<FilterQueryInputComponent>('queryInput');
 
-  @ViewChild('queryInput')
-  queryInput: FilterQueryInputComponent;
+  filterForm: FormGroup<ImagesFilterForm>;
 
   showOutlet = false;
 
@@ -54,8 +53,8 @@ export class ImagesComponent implements OnInit {
   }
 
   addTagToQuery(tag: TagResponse): void {
-    this.queryInput.addTag(tag);
-    this.queryInput.focus();
+    this.queryInput().addTag(tag);
+    this.queryInput().focus();
   }
 
   toggleOutletVisibility(showOutlet: boolean): void {

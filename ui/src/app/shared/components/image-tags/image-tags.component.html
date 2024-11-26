@@ -1,16 +1,16 @@
 @if (imageForm) {
-  @if (image.editUrl?.length > 0) {
+  @if (image().editUrl?.length > 0) {
     <div>
-      <a target="_blank" [href]="image.editUrl" class="edit-url">
+      <a target="_blank" [href]="image().editUrl" class="edit-url">
         Edit Image
         <mat-icon class="edit-url-icon">open_in_new</mat-icon>
       </a>
     </div>
   }
 
-  @if (!isNil(image.galleryId)) {
+  @if (!isNil(image().galleryId)) {
     <div>
-      <a [routerLink]="'/galleries/' + image.galleryId" class="gallery-url">Open Gallery</a>
+      <a [routerLink]="'/galleries/' + image().galleryId" class="gallery-url">Open Gallery</a>
     </div>
 
     <h3>Gallery Tags</h3>

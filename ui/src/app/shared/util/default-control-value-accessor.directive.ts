@@ -1,4 +1,4 @@
-import { Directive, OnInit, Self } from '@angular/core';
+import { Directive, OnInit, Self, Signal } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatFormFieldControl } from '@angular/material/form-field';
 
@@ -6,7 +6,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 export abstract class DefaultControlValueAccessor<T> implements OnInit, ControlValueAccessor {
   control: FormControl<T> | null;
 
-  abstract formFieldControl: MatFormFieldControl<unknown>;
+  abstract formFieldControl: Signal<MatFormFieldControl<unknown>>;
 
   constructor(@Self() protected readonly ngControl: NgControl) {
     ngControl.valueAccessor = this;
@@ -36,6 +36,6 @@ export abstract class DefaultControlValueAccessor<T> implements OnInit, ControlV
   }
 
   private getValueAccessor(): ControlValueAccessor | null {
-    return (this.formFieldControl?.ngControl as NgControl)?.valueAccessor;
+    return (this.formFieldControl()?.ngControl as NgControl)?.valueAccessor;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, Self, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Self, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
@@ -32,8 +32,11 @@ import { FilterQueryUtil } from '@app/shared/util/filter-query-util';
   styleUrl: './filter-query-input.component.scss',
 })
 export class FilterQueryInputComponent extends DefaultControlValueAccessor<FilterExpressionDto> implements OnInit, OnDestroy {
-  @ViewChild('hiddenInput')
-  formFieldControl: MatInput;
+  readonly formFieldControl = viewChild<MatInput>('hiddenInput');
+
+  readonly autoTrigger = viewChild<MatAutocompleteTrigger>('autoTrigger');
+
+  readonly queryInput = viewChild<ElementRef<HTMLInputElement>>('queryInput');
 
   queryControl: FormControl<string>;
 
@@ -42,12 +45,6 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
   loadingTags = true;
 
   filteredTokens$: Observable<string[]>;
-
-  @ViewChild('autoTrigger')
-  autoTrigger: MatAutocompleteTrigger;
-
-  @ViewChild('queryInput')
-  queryInput: ElementRef<HTMLInputElement>;
 
   querySubscription: Subscription;
   controlSubscription: Subscription;
@@ -105,7 +102,7 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
   }
 
   public focus(): void {
-    this.queryInput.nativeElement.focus();
+    this.queryInput().nativeElement.focus();
   }
 
   clearFilter(): void {
@@ -113,7 +110,7 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
   }
 
   selectToken(): void {
-    requestAnimationFrame(() => this.autoTrigger.openPanel());
+    requestAnimationFrame(() => this.autoTrigger().openPanel());
   }
 
   tokensExceptLast(): string {

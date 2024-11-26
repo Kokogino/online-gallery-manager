@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { TagsComponent } from '@app/shared/components/tags/tags.component';
 import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { MatDivider } from '@angular/material/divider';
@@ -37,12 +37,11 @@ import { GalleryListItemComponent } from '@app/galleries/components/gallery-list
   styleUrl: './galleries-view.component.scss',
 })
 export class GalleriesViewComponent implements OnInit {
+  readonly queryInput = viewChild<FilterQueryInputComponent>('queryInput');
+
   filterForm: FormGroup<GalleryFilterForm>;
 
   searchControl: FormControl<string>;
-
-  @ViewChild('queryInput')
-  queryInput: FilterQueryInputComponent;
 
   galleries: Observable<GalleryResponse[]>;
 
@@ -65,7 +64,7 @@ export class GalleriesViewComponent implements OnInit {
   }
 
   addTagToQuery(tag: TagResponse): void {
-    this.queryInput.addTag(tag);
-    this.queryInput.focus();
+    this.queryInput().addTag(tag);
+    this.queryInput().focus();
   }
 }

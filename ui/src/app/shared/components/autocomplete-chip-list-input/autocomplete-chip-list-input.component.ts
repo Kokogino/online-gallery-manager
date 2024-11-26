@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, input, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatChipGrid, MatChipInput, MatChipRemove, MatChipRow } from '@angular/material/chips';
@@ -33,23 +33,17 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
   styleUrl: './autocomplete-chip-list-input.component.scss',
 })
 export class AutocompleteChipListInputComponent<T extends { id?: number }> extends DefaultControlValueAccessor<T[]> implements OnInit {
-  @Input()
-  options: T[];
+  readonly options = input<T[]>();
 
-  @Input()
-  labelText: string;
+  readonly labelText = input<string>();
 
-  @Input()
-  optionValue = (option: T): string => option as unknown as string;
+  readonly optionValue = input((option: T): string => option as unknown as string);
 
-  @ViewChild(MatChipGrid)
-  formFieldControl: MatChipGrid;
+  readonly formFieldControl = viewChild(MatChipGrid);
 
-  @ViewChild('autoTrigger')
-  autoTrigger: MatAutocompleteTrigger;
+  readonly autoTrigger = viewChild<MatAutocompleteTrigger>('autoTrigger');
 
-  @ViewChild('input')
-  input: MatChipInput;
+  readonly input = viewChild<MatChipInput>('input');
 
   selectedOption: T;
 
@@ -103,19 +97,19 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
         this.selectedOption = undefined;
       }
 
-      this.input.clear();
+      this.input().clear();
       this.inputControl.reset('');
-      this.autoTrigger.closePanel();
+      this.autoTrigger().closePanel();
     }
   }
 
-  displayValue = (option: T): string => (option ? this.optionValue(option) : '');
+  displayValue = (option: T): string => (option ? this.optionValue()(option) : '');
 
   private filterOptions(value: string | T, addedValues: T[]): T[] {
-    const filterValue = typeof value === 'string' ? value : this.optionValue(value);
-    return this.options.filter(
+    const filterValue = typeof value === 'string' ? value : this.optionValue()(value);
+    return this.options().filter(
       (option) =>
-        containsStringsIgnoringAccentsAndCase(this.optionValue(option), filterValue) &&
+        containsStringsIgnoringAccentsAndCase(this.optionValue()(option), filterValue) &&
         !addedValues?.find((selectedOption) => selectedOption.id === option.id),
     );
   }

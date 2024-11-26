@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { ImageHost } from '@app/gen/ogm-backend';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -12,8 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './image-host-input.component.scss',
 })
 export class ImageHostInputComponent extends DefaultControlValueAccessor<ImageHost> {
-  @ViewChild(MatSelect)
-  formFieldControl: MatSelect;
+  readonly formFieldControl = viewChild(MatSelect);
 
   hosts = Object.values(ImageHost);
 

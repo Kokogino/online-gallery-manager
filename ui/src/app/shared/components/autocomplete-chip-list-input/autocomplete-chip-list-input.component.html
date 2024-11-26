@@ -1,9 +1,9 @@
 <mat-form-field>
-  <mat-label>{{ labelText }}</mat-label>
+  <mat-label>{{ labelText() }}</mat-label>
   <mat-chip-grid #chipGrid [formControl]="control">
     @for (option of control.value; track option.id) {
       <mat-chip-row (removed)="removeChip(option)" [removable]="true" [value]="option">
-        {{ optionValue(option) }}
+        {{ optionValue()(option) }}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip-row>
     }
@@ -20,12 +20,10 @@
     type="text"
     autocomplete="off" />
   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayValue" (optionSelected)="optionSelected($event)">
-    @if (options) {
-      @for (option of filteredOptions$ | async; track option.id) {
-        <mat-option [value]="option">
-          {{ optionValue(option) }}
-        </mat-option>
-      }
+    @for (option of filteredOptions$ | async; track option.id) {
+      <mat-option [value]="option">
+        {{ optionValue()(option) }}
+      </mat-option>
     }
   </mat-autocomplete>
   @if (selectedOption) {

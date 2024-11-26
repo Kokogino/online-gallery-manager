@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UploadForm } from '@app/upload/model/upload-form';
 import { GalleryChoice, GalleryResponse, GalleryService, ImageHost, ImageService } from '@app/gen/ogm-backend';
@@ -31,6 +31,8 @@ import { AsyncPipe } from '@angular/common';
   styleUrl: './upload.component.scss',
 })
 export class UploadComponent implements OnInit {
+  readonly form = viewChild<FormGroupDirective>('form');
+
   uploadForm: FormGroup<UploadForm>;
 
   galleries$: Observable<GalleryResponse[]>;
@@ -38,9 +40,6 @@ export class UploadComponent implements OnInit {
   GalleryChoice = GalleryChoice;
 
   uploading = false;
-
-  @ViewChild('form')
-  form: FormGroupDirective;
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -86,10 +85,10 @@ export class UploadComponent implements OnInit {
     return this.uploadForm.valid && !this.uploading;
   }
 
-  getGalleryName = (gallery: GalleryResponse): string => (gallery.name?.length > 0 ? gallery.name : 'Unnamed Gallery');
+  getGalleryName = (gallery: GalleryResponse): string => (gallery.name || 'Unnamed Gallery');
 
   private resetForm(): void {
-    this.form.resetForm({
+    this.form().resetForm({
       host: ImageHost.Imgbox,
       galleryChoice: this.uploadForm.controls.galleryChoice.value,
       newGalleryName: '',

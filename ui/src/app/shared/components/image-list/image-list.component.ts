@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, OnDestroy, OnInit, signal, input, viewChild } from '@angular/core';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
 import { ImageResponse, TagResponse, TagService } from '@app/gen/ogm-backend';
@@ -45,17 +45,13 @@ import { SettingsService } from '@app/shared/services/settings.service';
   styleUrl: './image-list.component.scss',
 })
 export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input({ required: true })
-  imageLoaderService: ImageLoaderService;
+  readonly imageLoaderService = input.required<ImageLoaderService>();
 
-  @Input({ required: true })
-  imageDetailsBaseRoute: string;
+  readonly imageDetailsBaseRoute = input.required<string>();
 
-  @ViewChild('imageList')
-  imageList: ElementRef<HTMLDivElement>;
+  readonly imageList = viewChild<ElementRef<HTMLDivElement>>('imageList');
 
-  @ViewChild('tagsForm')
-  tagsForm: FormGroupDirective;
+  readonly tagsForm = viewChild<FormGroupDirective>('tagsForm');
 
   loading$: Observable<boolean>;
 
@@ -97,8 +93,8 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.images$ = this.imageLoaderService.images$;
-    this.loading$ = this.imageLoaderService.loadingImages$;
+    this.images$ = this.imageLoaderService().images$;
+    this.loading$ = this.imageLoaderService().loadingImages$;
 
     this.tagService.getAllTags().subscribe((tags) => (this.allTags = tags));
 
@@ -119,7 +115,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.resizeSubscription = this.sharedResizeObserver
-      .observe(this.imageList.nativeElement)
+      .observe(this.imageList().nativeElement)
       .subscribe((entries) => this.imagesListWidth.set(entries[0].contentRect.width));
   }
 
@@ -132,7 +128,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loaded(index: number, imageCount: number): void {
     if (index >= Math.max(imageCount - this.numberOfColumns(), 0)) {
-      this.imageLoaderService.loadMoreImages();
+      this.imageLoaderService().loadMoreImages();
     }
   }
 
@@ -156,12 +152,12 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTags(): void {
     if (this.addTagsForm.valid && this.selectedImageIdsSubject.value.length > 0) {
-      this.imageLoaderService
+      this.imageLoaderService()
         .addTagsToImages(
           this.addTagsForm.getRawValue().tags.map((tag) => tag.id),
           this.selectedImageIdsSubject.value,
         )
-        .subscribe(() => this.tagsForm.resetForm());
+        .subscribe(() => this.tagsForm().resetForm());
     }
   }
 
@@ -207,7 +203,7 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private autoScroll(): void {
-    const imagesList = this.imageList.nativeElement;
+    const imagesList = this.imageList().nativeElement;
 
     if (imagesList.clientHeight > 0) {
       const timePassed = (Date.now() - this.lastScrollStepTime) / 1000;

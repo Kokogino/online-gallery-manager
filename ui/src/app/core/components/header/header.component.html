@@ -1,6 +1,6 @@
 <header class="vertical-center">
   @if (mediaQueryService.isMaximumDesktopLayout$ | async) {
-    <button mat-icon-button (click)="sidenav.toggle()" class="menu-button">
+    <button mat-icon-button (click)="sidenav().toggle()" class="menu-button">
       <mat-icon>menu</mat-icon>
     </button>
   }
