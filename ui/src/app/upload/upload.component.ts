@@ -94,7 +94,7 @@ export class UploadComponent implements OnInit {
       host: ImageHost.Imgbox,
       galleryChoice: this.uploadForm.controls.galleryChoice.value,
       newGalleryName: '',
-      gallery: undefined,
+      gallery: null,
       editUrl: '',
       bbCode: '',
     });

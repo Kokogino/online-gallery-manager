@@ -76,6 +76,12 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
       }
     });
 
+    this.control.valueChanges.subscribe((value) => {
+      if (value === null) {
+        this.inputControl.reset('');
+      }
+    });
+
     this.errorStateMatcher = new AutocompleteErrorStateMatcher(this.control);
   }
 
