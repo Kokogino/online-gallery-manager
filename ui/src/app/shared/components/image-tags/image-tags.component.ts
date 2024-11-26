@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges, input, output } from '@angular/core';
+import { Component, effect, input, OnInit, output } from '@angular/core';
 import { GalleryResponse, GalleryService, ImageResponse, TagResponse, TagService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { finalize, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -31,7 +31,7 @@ import { NgClass } from '@angular/common';
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',
 })
-export class ImageTagsComponent implements OnInit, OnChanges {
+export class ImageTagsComponent implements OnInit {
   readonly image = input.required<ImageResponse>();
 
   readonly updateImage = output<UpdateImageDto>();
@@ -56,17 +56,8 @@ export class ImageTagsComponent implements OnInit, OnChanges {
     private readonly tagService: TagService,
     private readonly galleryService: GalleryService,
     private readonly formBuilder: FormBuilder,
-  ) {}
-
-  ngOnInit(): void {
-    this.tagService
-      .getAllTags()
-      .pipe(finalize(() => (this.loadingAllTags = false)))
-      .subscribe((tags) => (this.allTags = tags));
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.image?.currentValue) {
+  ) {
+    effect(() => {
       const image = this.image();
       if (!isNil(image.galleryId)) {
         if (image.galleryId !== this.gallery?.id) {
@@ -80,7 +71,14 @@ export class ImageTagsComponent implements OnInit, OnChanges {
         this.gallery = undefined;
       }
       this.setupImageForm();
-    }
+    });
+  }
+
+  ngOnInit(): void {
+    this.tagService
+      .getAllTags()
+      .pipe(finalize(() => (this.loadingAllTags = false)))
+      .subscribe((tags) => (this.allTags = tags));
   }
 
   galleryHasTag(tagId: number): boolean {
