@@ -73,6 +73,7 @@
               "buildTarget": "ui:build:production"
             },
             "development": {
+              "hmr": false,
               "buildTarget": "ui:build:development"
             }
           },
