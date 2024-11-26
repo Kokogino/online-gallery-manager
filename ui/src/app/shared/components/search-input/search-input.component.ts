@@ -8,7 +8,6 @@ import { MatError, MatLabel } from '@angular/material/form-field';
 
 @Component({
   selector: 'ogm-search-input',
-  standalone: true,
   imports: [MatFormField, MatIcon, ReactiveFormsModule, MatInput, MatIconButton, MatLabel, MatError, MatPrefix, MatSuffix],
   templateUrl: './search-input.component.html',
   styleUrl: './search-input.component.scss',

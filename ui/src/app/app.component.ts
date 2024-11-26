@@ -8,7 +8,6 @@ import { AsyncPipe, NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-root',
-  standalone: true,
   imports: [RouterOutlet, CoreComponent, NgClass, AsyncPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

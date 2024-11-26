@@ -8,7 +8,6 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'ogm-tags',
-  standalone: true,
   imports: [MatChipSet, MatChip, MatIcon, NoDataMessageComponent, MatProgressBar],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss',

@@ -31,7 +31,6 @@ import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
-  standalone: true,
   imports: [
     MatIcon,
     NoDataMessageComponent,

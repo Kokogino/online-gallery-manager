@@ -15,7 +15,6 @@ import { ImagesFilterForm } from '@app/images/model/images-filter-form';
 
 @Component({
   selector: 'ogm-images',
-  standalone: true,
   imports: [
     TagsComponent,
     AsyncPipe,

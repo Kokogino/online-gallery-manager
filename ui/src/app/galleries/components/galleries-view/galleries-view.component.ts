@@ -19,7 +19,6 @@ import { GalleryListItemComponent } from '@app/galleries/components/gallery-list
 
 @Component({
   selector: 'ogm-galleries-view',
-  standalone: true,
   imports: [
     TagsComponent,
     MatDivider,

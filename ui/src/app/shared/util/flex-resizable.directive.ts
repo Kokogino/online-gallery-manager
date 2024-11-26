@@ -4,7 +4,6 @@ import { startWith, Subscription } from 'rxjs';
 
 @Directive({
   selector: '[ogmFlexResizable]',
-  standalone: true,
 })
 export class FlexResizableDirective implements AfterContentInit, OnDestroy {
   @Output()

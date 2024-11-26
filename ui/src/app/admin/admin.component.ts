@@ -4,7 +4,6 @@ import { GalleryMetadataListComponent } from '@app/admin/components/gallery-meta
 
 @Component({
   selector: 'ogm-admin',
-  standalone: true,
   imports: [TagsListComponent, GalleryMetadataListComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',

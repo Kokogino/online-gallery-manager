@@ -15,7 +15,6 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'ogm-upload',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     ImageHostInputComponent,

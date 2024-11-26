@@ -6,7 +6,6 @@ import { MatRipple } from '@angular/material/core';
 
 @Component({
   selector: 'ogm-gallery-list-item',
-  standalone: true,
   imports: [DatePipe, MatChip, MatRipple],
   templateUrl: './gallery-list-item.component.html',
   styleUrl: './gallery-list-item.component.scss',

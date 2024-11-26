@@ -13,7 +13,6 @@ import { GalleryDetailsSidebarService } from '@app/galleries/services/gallery-de
 
 @Component({
   selector: 'ogm-galleries-title',
-  standalone: true,
   imports: [AsyncPipe, MatProgressSpinner, RouterLink, RouterLinkActive, MatIcon, MatIconButton, MatTooltip],
   templateUrl: './galleries-title.component.html',
   styleUrl: './galleries-title.component.scss',

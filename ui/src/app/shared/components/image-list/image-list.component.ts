@@ -22,7 +22,6 @@ import { SettingsService } from '@app/shared/services/settings.service';
 
 @Component({
   selector: 'ogm-image-list',
-  standalone: true,
   imports: [
     AsyncPipe,
     MatProgressBar,

@@ -4,7 +4,6 @@ import { ImageDetailsComponent } from '@app/shared/components/image-details/imag
 
 @Component({
   selector: 'ogm-image-page',
-  standalone: true,
   imports: [ImageDetailsComponent],
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',

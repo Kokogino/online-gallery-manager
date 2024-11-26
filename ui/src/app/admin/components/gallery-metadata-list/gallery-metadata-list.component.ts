@@ -20,7 +20,6 @@ import { MatSelect } from '@angular/material/select';
 
 @Component({
   selector: 'ogm-gallery-metadata-list',
-  standalone: true,
   imports: [
     MatProgressBar,
     MatIcon,

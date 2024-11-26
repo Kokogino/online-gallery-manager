@@ -14,7 +14,6 @@ import { FilterQueryUtil } from '@app/shared/util/filter-query-util';
 
 @Component({
   selector: 'ogm-filter-query-input',
-  standalone: true,
   imports: [
     MatFormField,
     MatAutocomplete,

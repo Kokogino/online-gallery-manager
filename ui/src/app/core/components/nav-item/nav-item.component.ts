@@ -5,7 +5,6 @@ import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'ogm-nav-item',
-  standalone: true,
   imports: [RouterLink, RouterLinkActive, MatIcon, MatAnchor],
   templateUrl: './nav-item.component.html',
   styleUrl: './nav-item.component.scss',

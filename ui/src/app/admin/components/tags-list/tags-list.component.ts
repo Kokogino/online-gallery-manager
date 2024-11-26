@@ -19,7 +19,6 @@ import { SearchInputComponent } from '@app/shared/components/search-input/search
 
 @Component({
   selector: 'ogm-tags-list',
-  standalone: true,
   imports: [
     MatProgressBar,
     MatIcon,

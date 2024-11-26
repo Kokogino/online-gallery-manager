@@ -13,7 +13,6 @@ import { AutocompleteErrorStateMatcher } from '@app/shared/model/autocomplete-er
 
 @Component({
   selector: 'ogm-autocomplete-input',
-  standalone: true,
   imports: [
     MatFormField,
     MatAutocomplete,

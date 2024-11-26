@@ -13,7 +13,6 @@ import { PAGES } from '@app/core/model/page';
 
 @Component({
   selector: 'ogm-header',
-  standalone: true,
   imports: [NavItemComponent, MatDivider, MatIcon, MatTooltip, AsyncPipe, MatIconButton],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

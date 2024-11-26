@@ -5,7 +5,6 @@ import { DeleteConfirmationDialogData } from '@app/shared/model/delete-confirmat
 
 @Component({
   selector: 'ogm-delete-confirmation-dialog',
-  standalone: true,
   imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatButton],
   templateUrl: './delete-confirmation-dialog.component.html',
   styleUrl: './delete-confirmation-dialog.component.scss',

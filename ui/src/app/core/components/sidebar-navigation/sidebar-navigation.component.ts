@@ -7,7 +7,6 @@ import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'ogm-sidebar-navigation',
-  standalone: true,
   imports: [MatNavList, MatListItem, RouterLink, RouterLinkActive, MatIcon],
   templateUrl: './sidebar-navigation.component.html',
   styleUrl: './sidebar-navigation.component.scss',

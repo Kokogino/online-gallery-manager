@@ -5,7 +5,6 @@ import { SidebarNavigationComponent } from '@app/core/components/sidebar-navigat
 
 @Component({
   selector: 'ogm-core',
-  standalone: true,
   imports: [HeaderComponent, MatSidenavContainer, MatSidenavContent, MatSidenav, SidebarNavigationComponent],
   templateUrl: './core.component.html',
   styleUrl: './core.component.scss',

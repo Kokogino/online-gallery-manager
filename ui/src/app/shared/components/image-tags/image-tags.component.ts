@@ -16,7 +16,6 @@ import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-image-tags',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatIcon,

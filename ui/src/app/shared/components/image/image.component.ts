@@ -5,7 +5,6 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'ogm-image',
-  standalone: true,
   imports: [NgClass, MatProgressSpinner],
   templateUrl: './image.component.html',
   styleUrl: './image.component.scss',

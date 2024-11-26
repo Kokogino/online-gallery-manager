@@ -8,7 +8,6 @@ import { isNil } from 'lodash-es';
 
 @Component({
   selector: 'ogm-tag-group-select',
-  standalone: true,
   imports: [ReactiveFormsModule, MatInput, MatSlider, MatSliderThumb],
   templateUrl: './tag-group-select.component.html',
   styleUrl: './tag-group-select.component.scss',

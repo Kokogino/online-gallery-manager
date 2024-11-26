@@ -7,7 +7,6 @@ import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-gallery',
-  standalone: true,
   imports: [RouterOutlet, GalleryDetailsComponent, NgClass],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',

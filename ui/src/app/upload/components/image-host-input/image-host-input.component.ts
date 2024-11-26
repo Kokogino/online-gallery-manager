@@ -7,7 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'ogm-image-host-input',
-  standalone: true,
   imports: [MatFormField, MatSelect, MatOption, MatLabel, MatSelectTrigger, ReactiveFormsModule],
   templateUrl: './image-host-input.component.html',
   styleUrl: './image-host-input.component.scss',

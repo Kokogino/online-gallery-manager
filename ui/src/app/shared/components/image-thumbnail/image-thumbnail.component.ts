@@ -5,7 +5,6 @@ import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ogm-image-thumbnail',
-  standalone: true,
   imports: [NgClass],
   templateUrl: './image-thumbnail.component.html',
   styleUrl: './image-thumbnail.component.scss',

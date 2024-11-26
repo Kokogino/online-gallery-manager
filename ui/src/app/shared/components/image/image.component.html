@@ -5,8 +5,8 @@
         [src]="image.pureImageUrl"
         alt="Image"
         class="image"
-        (load)="this.fullImageLoaded = true"
-        (error)="this.fullImageLoaded = true"
+        (load)="fullImageLoaded = true"
+        (error)="fullImageLoaded = true"
         [ngClass]="{ hide: !fullImageLoaded }" />
     }
     @if (!fullImageLoaded) {

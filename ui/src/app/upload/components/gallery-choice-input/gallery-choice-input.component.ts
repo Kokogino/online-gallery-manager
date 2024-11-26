@@ -7,7 +7,6 @@ import { GalleryChoice } from '@app/gen/ogm-backend';
 
 @Component({
   selector: 'ogm-gallery-choice-input',
-  standalone: true,
   imports: [MatFormField, MatSelect, MatOption, ReactiveFormsModule],
   templateUrl: './gallery-choice-input.component.html',
   styleUrl: './gallery-choice-input.component.scss',

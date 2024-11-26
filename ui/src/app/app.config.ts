@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -21,15 +21,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([httpCacheInterceptor()])),
     provideAnimations(),
     provideMomentDateAdapter(),
+    provideAppInitializer(() => inject(ThemeService).loadTheme()),
     {
       provide: Configuration,
       useFactory: () => new Configuration({ basePath: environment.backendBaseUrl }),
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (themeService: ThemeService) => () => themeService.loadTheme(),
-      deps: [ThemeService],
-      multi: true,
     },
     { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
     { provide: MAT_ICON_DEFAULT_OPTIONS, useValue: { fontSet: 'material-symbols-outlined' } },

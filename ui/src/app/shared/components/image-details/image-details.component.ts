@@ -17,7 +17,6 @@ import { DeletingOverlayComponent } from '@app/shared/components/deleting-overla
 
 @Component({
   selector: 'ogm-image-details',
-  standalone: true,
   imports: [
     ImageTagsComponent,
     MatDivider,

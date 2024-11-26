@@ -4,7 +4,6 @@ import { GalleriesTitleComponent } from '@app/galleries/components/galleries-tit
 
 @Component({
   selector: 'ogm-galleries',
-  standalone: true,
   imports: [RouterOutlet, GalleriesTitleComponent],
   templateUrl: './galleries.component.html',
   styleUrl: './galleries.component.scss',

@@ -13,7 +13,6 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
 
 @Component({
   selector: 'ogm-autocomplete-chip-list-input',
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,
