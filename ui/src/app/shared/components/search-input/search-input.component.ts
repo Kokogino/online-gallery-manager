@@ -1,4 +1,4 @@
-import { Component, OnInit, viewChild } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatFormField, MatInput, MatPrefix, MatSuffix } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -12,7 +12,7 @@ import { MatError, MatLabel } from '@angular/material/form-field';
   templateUrl: './search-input.component.html',
   styleUrl: './search-input.component.scss',
 })
-export class SearchInputComponent extends DefaultControlValueAccessor<string> implements OnInit {
+export class SearchInputComponent extends DefaultControlValueAccessor<string> {
   readonly formFieldControl = viewChild(MatInput);
 
   clearSearch(): void {

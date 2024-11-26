@@ -1,8 +1,8 @@
-import { booleanAttribute, Component, OnInit, input, viewChild } from '@angular/core';
+import { booleanAttribute, Component, inject, Injector, input, OnInit, viewChild } from '@angular/core';
 import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
-import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, startWith } from 'rxjs';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { MatError, MatLabel } from '@angular/material/form-field';
@@ -10,6 +10,7 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
 import { isNil } from 'lodash-es';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AutocompleteErrorStateMatcher } from '@app/shared/model/autocomplete-error-state-matcher';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ogm-autocomplete-input',
@@ -47,22 +48,23 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
 
   errorStateMatcher: ErrorStateMatcher;
 
+  private injector = inject(Injector);
+
   override ngOnInit(): void {
     super.ngOnInit();
 
     this.inputControl = new FormControl(this.control.value, this.required() ? Validators.required : []);
 
-    this.filteredOptions$ = this.inputControl.valueChanges.pipe(
-      startWith(''),
-      distinctUntilChanged(),
-      map((value) => this.filterOptions(value)),
-    );
+    this.filteredOptions$ = combineLatest([
+      this.inputControl.valueChanges.pipe(startWith(this.inputControl.value), distinctUntilChanged()),
+      toObservable(this.options, { injector: this.injector }),
+    ]).pipe(map(([value, options]) => this.filterOptions(value, options)));
 
     this.filteredOptions$.subscribe((options) => {
       const value = this.inputControl.value;
       if (options?.length === 1 && Boolean(value)) {
         this.control.setValue(options[0]);
-      } else if (typeof value !== 'string') {
+      } else if (typeof value !== 'string' && !isNil(value)) {
         this.control.setValue(value);
       } else {
         this.control.setValue(undefined);
@@ -87,8 +89,8 @@ export class AutocompleteInputComponent<T extends { id?: number }> extends Defau
 
   displayValue = (option: T): string => (option ? this.optionValue()(option) : '');
 
-  private filterOptions(value: string | T): T[] {
-    const filterValue = typeof value === 'string' ? value : this.optionValue()(value);
-    return this.options()?.filter((option) => containsStringsIgnoringAccentsAndCase(this.optionValue()(option), filterValue));
+  private filterOptions(value: string | T, options: T[]): T[] {
+    const filterValue = typeof value === 'string' ? value : value ? this.optionValue()(value) : '';
+    return options?.filter((option) => containsStringsIgnoringAccentsAndCase(this.optionValue()(option), filterValue));
   }
 }

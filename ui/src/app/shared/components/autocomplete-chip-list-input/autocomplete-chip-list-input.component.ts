@@ -1,4 +1,4 @@
-import { Component, OnInit, input, viewChild } from '@angular/core';
+import { Component, inject, Injector, input, OnInit, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatChipGrid, MatChipInput, MatChipRemove, MatChipRow } from '@angular/material/chips';
@@ -10,6 +10,8 @@ import { combineLatest, map, Observable, startWith } from 'rxjs';
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatIcon } from '@angular/material/icon';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { isNil } from 'lodash-es';
 
 @Component({
   selector: 'ogm-autocomplete-chip-list-input',
@@ -53,19 +55,22 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
 
   inputControl = new FormControl<string | T>('');
 
+  private injector = inject(Injector);
+
   override ngOnInit(): void {
     super.ngOnInit();
 
     this.filteredOptions$ = combineLatest([
       this.inputControl.valueChanges.pipe(startWith('')),
       this.control.valueChanges.pipe(startWith(this.control.value)),
-    ]).pipe(map(([value, addedValues]) => this.filterOptions(value, addedValues)));
+      toObservable(this.options, { injector: this.injector }),
+    ]).pipe(map(([value, addedValues, options]) => this.filterOptions(value, addedValues, options)));
 
     this.filteredOptions$.subscribe((options) => {
       const value = this.inputControl.value;
       if (options?.length === 1 && Boolean(value)) {
         this.selectedOption = options[0];
-      } else if (typeof value !== 'string') {
+      } else if (typeof value !== 'string' && !isNil(value)) {
         this.selectedOption = value;
       } else {
         this.selectedOption = undefined;
@@ -105,9 +110,9 @@ export class AutocompleteChipListInputComponent<T extends { id?: number }> exten
 
   displayValue = (option: T): string => (option ? this.optionValue()(option) : '');
 
-  private filterOptions(value: string | T, addedValues: T[]): T[] {
-    const filterValue = typeof value === 'string' ? value : this.optionValue()(value);
-    return this.options().filter(
+  private filterOptions(value: string | T, addedValues: T[], options: T[]): T[] {
+    const filterValue = typeof value === 'string' ? value : value ? this.optionValue()(value) : '';
+    return options.filter(
       (option) =>
         containsStringsIgnoringAccentsAndCase(this.optionValue()(option), filterValue) &&
         !addedValues?.find((selectedOption) => selectedOption.id === option.id),
