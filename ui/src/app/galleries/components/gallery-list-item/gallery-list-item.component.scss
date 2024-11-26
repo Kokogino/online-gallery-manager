@@ -1,11 +1,11 @@
-@import 'variables';
+@use 'variables' as vars;
 
 .gallery {
   padding: 16px 8px;
   cursor: pointer;
 
   &:hover {
-    background-color: rgba($color-on-background-rgb, 0.1);
+    background-color: rgba(vars.$color-on-background-rgb, 0.1);
   }
 
   .tag-chip {

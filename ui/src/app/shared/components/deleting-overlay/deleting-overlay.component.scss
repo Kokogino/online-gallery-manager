@@ -1,20 +1,20 @@
-@import 'variables';
+@use 'variables' as vars;
 
 :host {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba($color-on-background-rgb, 0.5);
+  background-color: rgba(vars.$color-on-background-rgb, 0.5);
   z-index: 100;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: $side-space-width;
+  padding: vars.$side-space-width;
   box-sizing: border-box;
 
   .deletion-message {
-    color: $background-color;
+    color: vars.$background-color;
     font-weight: bold;
   }
 }

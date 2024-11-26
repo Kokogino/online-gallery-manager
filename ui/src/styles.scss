@@ -1,5 +1,5 @@
-@import 'ogm-app-theme';
-@import 'variables';
+@forward 'ogm-app-theme';
+@use 'variables' as vars;
 
 html,
 body {
@@ -21,7 +21,7 @@ h6 {
 }
 
 a {
-  color: $link-color;
+  color: vars.$link-color;
 }
 
 .vertical-center {

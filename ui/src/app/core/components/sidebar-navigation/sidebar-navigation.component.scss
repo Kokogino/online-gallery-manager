@@ -1,9 +1,9 @@
-@import 'variables';
+@use 'variables' as vars;
 
 .item mat-icon {
   margin-right: 16px;
 }
 
 .active {
-  background-color: rgba($color-primary-rgb, 0.3);
+  background-color: rgba(vars.$color-primary-rgb, 0.3);
 }

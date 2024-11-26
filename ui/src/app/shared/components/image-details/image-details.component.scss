@@ -1,4 +1,4 @@
-@import 'extends';
+@use 'extends';
 
 :host {
   @extend %flex-fill-overflow;

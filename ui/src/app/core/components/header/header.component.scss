@@ -1,7 +1,7 @@
-@import 'variables';
+@use 'variables' as vars;
 
 header {
-  margin: 0 $side-space-width;
+  margin: 0 vars.$side-space-width;
   height: 64px;
 
   .title {

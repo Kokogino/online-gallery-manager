@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables' as vars;
 
 :host {
   display: flex;
@@ -14,7 +14,7 @@
       border-radius: 5px 5px 5px 5px;
 
       &.tagged {
-        border: 4px solid $color-primary;
+        border: 4px solid vars.$color-primary;
         box-sizing: border-box;
         border-radius: 5px 5px 5px 0;
       }
@@ -22,7 +22,7 @@
 
     .caption {
       font-size: 12px;
-      background-color: $color-primary;
+      background-color: vars.$color-primary;
       color: white;
       padding: 4px 4px 2px 4px;
       display: block;

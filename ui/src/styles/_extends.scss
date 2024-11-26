@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables' as vars;
 
 %flex-fill-overflow {
   display: flex;
@@ -10,5 +10,5 @@
 
 %basic-container {
   @extend %flex-fill-overflow;
-  padding: 0 $side-space-width $side-space-width $side-space-width;
+  padding: 0 vars.$side-space-width vars.$side-space-width vars.$side-space-width;
 }

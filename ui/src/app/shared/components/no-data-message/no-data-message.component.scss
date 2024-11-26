@@ -1,6 +1,6 @@
-@import 'variables';
+@use 'variables' as vars;
 
 .no-data-container {
-  border-left: 8px solid $color-accent;
+  border-left: 8px solid vars.$color-accent;
   padding: 16px;
 }

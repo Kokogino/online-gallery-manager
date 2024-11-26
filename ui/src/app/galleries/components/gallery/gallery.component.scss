@@ -1,5 +1,5 @@
-@import 'variables';
-@import 'extends';
+@use 'variables' as vars;
+@use 'extends';
 
 :host {
   @extend %flex-fill-overflow;
@@ -10,7 +10,7 @@
     height: 100%;
     position: absolute;
     margin-top: -8px;
-    background-color: $background-color;
+    background-color: vars.$background-color;
     z-index: 10;
   }
 }
