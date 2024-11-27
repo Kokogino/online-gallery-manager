@@ -5,16 +5,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import com.kokogino.ogm.backend.genapi.business.dto.*;
-import com.kokogino.ogm.business.repository.GalleryRepository;
-import com.kokogino.ogm.business.repository.ImageRepository;
-import com.kokogino.ogm.business.repository.ImageTagRepository;
-import com.kokogino.ogm.business.repository.TagRepository;
+import com.kokogino.ogm.business.repository.*;
 import com.kokogino.ogm.business.util.BBCodeImage;
 import com.kokogino.ogm.business.util.BBCodeInterpreter;
-import com.kokogino.ogm.datamodel.entity.Gallery;
-import com.kokogino.ogm.datamodel.entity.Image;
-import com.kokogino.ogm.datamodel.entity.ImageTag;
-import com.kokogino.ogm.datamodel.entity.Tag;
+import com.kokogino.ogm.datamodel.entity.*;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
 import jakarta.annotation.PostConstruct;
@@ -28,14 +22,19 @@ public class ImageService {
   private final GalleryRepository galleryRepository;
   private final ImageTagRepository imageTagRepository;
   private final TagRepository tagRepository;
+  private final CollectionRepository collectionRepository;
 
   public List<ImageResponse> createImages(CreateImagesDto createImagesDto) {
+    OGMCollection collection = collectionRepository.findById(createImagesDto.getCollectionId())
+      .orElseThrow(() -> new BusinessException(String.format("Collection with id '%s' does not exist", createImagesDto.getCollectionId()), BusinessReason.ERROR_COLLECTION_NOT_EXISTENT));
+
     Gallery gallery = null;
     switch (createImagesDto.getGalleryChoice()) {
       case ADD_TO_GALLERY -> gallery = galleryRepository.findById(createImagesDto.getGalleryId())
         .orElseThrow(() -> new BusinessException(String.format("Gallery with id '%s' does not exist", createImagesDto.getGalleryId()), BusinessReason.ERROR_GALLERY_NOT_EXISTENT));
       case NEW_GALLERY -> {
         gallery = new Gallery();
+        gallery.setCollection(collection);
         gallery.setName(createImagesDto.getNewGalleryName());
         gallery.setEditUrl(createImagesDto.getEditUrl());
         gallery.setHost(createImagesDto.getHost());
@@ -48,6 +47,7 @@ public class ImageService {
     List<BBCodeImage> bbCodeImages = BBCodeInterpreter.extractImages(createImagesDto.getBbCode());
     for (BBCodeImage bbCodeImage : bbCodeImages) {
       Image image = new Image();
+      image.setCollection(collection);
       image.setThumbnailUrl(bbCodeImage.getThumbnailUrl());
       image.setImageUrl(bbCodeImage.getImageUrl());
       image.setEditUrl(createImagesDto.getEditUrl());
