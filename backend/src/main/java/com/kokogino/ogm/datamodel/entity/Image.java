@@ -33,4 +33,8 @@ public class Image extends BaseEntity {
   private Set<ImageTag> imageTags;
 
   private LocalDateTime deletedAt;
+
+  @ManyToOne
+  @JoinColumn(name = "collection_id", nullable = false)
+  private OGMCollection collection;
 }

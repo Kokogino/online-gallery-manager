@@ -5,16 +5,14 @@ import java.util.Set;
 
 import com.kokogino.ogm.backend.genapi.business.dto.GalleryMetadataType;
 import com.kokogino.ogm.datamodel.converter.GalleryMetadataTypeConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "collection_id"})})
 public class GalleryMetadata extends BaseEntity {
   @Column(nullable = false, unique = true, length = 50)
   private String name;
@@ -27,4 +25,8 @@ public class GalleryMetadata extends BaseEntity {
   private Set<GalleryMetadataEntry> galleryMetadataEntries;
 
   private LocalDateTime deletedAt;
+
+  @ManyToOne
+  @JoinColumn(name = "collection_id", nullable = false)
+  private OGMCollection collection;
 }

@@ -5,10 +5,7 @@ import java.util.Set;
 
 import com.kokogino.ogm.backend.genapi.business.dto.ImageHost;
 import com.kokogino.ogm.datamodel.converter.ImageHostConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,4 +31,8 @@ public class Gallery extends BaseEntity {
   private Set<Image> images;
 
   private LocalDateTime deletedAt;
+
+  @ManyToOne
+  @JoinColumn(name = "collection_id", nullable = false)
+  private OGMCollection collection;
 }
