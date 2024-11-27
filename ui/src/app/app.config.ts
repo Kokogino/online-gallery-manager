@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Configuration } from '@app/gen/ogm-backend';
 import { environment } from '@environments/environment';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MAT_ICON_DEFAULT_OPTIONS } from '@angular/material/icon';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { ThemeService } from '@app/shared/services/theme.service';
@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withViewTransitions()),
     provideHttpClient(withInterceptors([httpCacheInterceptor()])),
-    provideAnimations(),
+    provideAnimationsAsync(),
     provideMomentDateAdapter(),
     provideAppInitializer(() => inject(ThemeService).loadTheme()),
     provideAppInitializer(() => inject(CollectionsService).loadCollections()),
