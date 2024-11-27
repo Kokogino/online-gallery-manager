@@ -7,8 +7,10 @@ import java.util.Optional;
 import com.kokogino.ogm.backend.genapi.business.dto.CreateGalleryMetadataDto;
 import com.kokogino.ogm.backend.genapi.business.dto.GalleryMetadataResponse;
 import com.kokogino.ogm.backend.genapi.business.dto.UpdateGalleryMetadataDto;
+import com.kokogino.ogm.business.repository.CollectionRepository;
 import com.kokogino.ogm.business.repository.GalleryMetadataRepository;
 import com.kokogino.ogm.datamodel.entity.GalleryMetadata;
+import com.kokogino.ogm.datamodel.entity.OGMCollection;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
 import jakarta.annotation.PostConstruct;
@@ -20,12 +22,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GalleryMetadataService {
   private final GalleryMetadataRepository galleryMetadataRepository;
+  private final CollectionRepository collectionRepository;
 
   public GalleryMetadataResponse createGalleryMetadata(CreateGalleryMetadataDto createGalleryMetadataDto) {
     if (galleryMetadataRepository.existsByName(createGalleryMetadataDto.getName())) {
       throw new BusinessException(String.format("GalleryMetadata with name '%s' already exists", createGalleryMetadataDto.getName()), BusinessReason.ERROR_GALLERY_METADATA_NAME_NOT_UNIQUE);
     }
+    OGMCollection collection = collectionRepository.findById(createGalleryMetadataDto.getCollectionId())
+      .orElseThrow(() -> new BusinessException(String.format("Collection with id '%s' does not exist", createGalleryMetadataDto.getCollectionId()), BusinessReason.ERROR_COLLECTION_NOT_EXISTENT));
+
     GalleryMetadata galleryMetadata = new GalleryMetadata();
+    galleryMetadata.setCollection(collection);
     galleryMetadata.setName(createGalleryMetadataDto.getName());
     galleryMetadata.setType(createGalleryMetadataDto.getType());
     return entityToResponse(galleryMetadataRepository.save(galleryMetadata));
@@ -38,8 +45,8 @@ public class GalleryMetadataService {
     galleryMetadataRepository.save(galleryMetadata);
   }
 
-  public List<GalleryMetadataResponse> getAllGalleryMetadata() {
-    return galleryMetadataRepository.findAllByDeletedAtIsNull(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+  public List<GalleryMetadataResponse> getAllGalleryMetadata(Long collectionId) {
+    return galleryMetadataRepository.findAllByCollectionIdAndDeletedAtIsNull(collectionId, Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
       .stream()
       .map(GalleryMetadataService::entityToResponse)
       .toList();

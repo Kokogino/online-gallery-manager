@@ -93,7 +93,9 @@ public class CustomImageRepositoryImpl implements CustomImageRepository {
 
   private Predicate createWhereClause(FindImagesDto findImagesDto, Root<Image> image, CriteriaBuilder cb, CriteriaQuery<?> cq) {
     Join<Image, Gallery> gallery = image.join("gallery", JoinType.LEFT);
-    return createWhereClause(findImagesDto, image, gallery, cb, cq);
+    Join<Image, OGMCollection> collection = image.join("collection");
+    Predicate collectionPredicate = cb.equal(collection.get("id"), findImagesDto.getCollectionId());
+    return cb.and(collectionPredicate, createWhereClause(findImagesDto, image, gallery, cb, cq));
   }
 
   private Predicate createWhereClause(FindImagesDto findImagesDto, Root<Image> image, Join<Image, Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

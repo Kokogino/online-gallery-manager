@@ -37,9 +37,11 @@ public class CustomGalleryRepositoryImpl implements CustomGalleryRepository {
       cb.isNull(gallery.get("deletedAt")),
       cb.greaterThan(gallery.get("deletedAt"), findGalleriesDto.getStartingDate())
     );
+    Join<Gallery, OGMCollection> collection = gallery.join("collection");
+    Predicate collectionPredicate = cb.equal(collection.get("id"), findGalleriesDto.getCollectionId());
 
     Predicate filterPredicate = createPredicateWithFilter(findGalleriesDto.getFilter(), gallery, cb, cq);
-    return cb.and(deletedAtPredicate, createdAtPredicate, filterPredicate);
+    return cb.and(collectionPredicate, deletedAtPredicate, createdAtPredicate, filterPredicate);
   }
 
   private Predicate createPredicateWithFilter(FilterExpressionDto filter, Root<Gallery> gallery, CriteriaBuilder cb, CriteriaQuery<?> cq) {

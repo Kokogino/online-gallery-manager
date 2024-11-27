@@ -29,8 +29,8 @@ public class GalleryMetadataController implements GalleryMetadataApi {
   }
 
   @Override
-  public ResponseEntity<List<GalleryMetadataResponse>> getAllGalleryMetadata() {
-    return ResponseEntity.ok(galleryMetadataService.getAllGalleryMetadata());
+  public ResponseEntity<List<GalleryMetadataResponse>> getAllGalleryMetadata(Long collectionId) {
+    return ResponseEntity.ok(galleryMetadataService.getAllGalleryMetadata(collectionId));
   }
 
   @Override

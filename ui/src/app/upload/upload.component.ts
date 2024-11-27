@@ -1,17 +1,18 @@
-import { Component, OnInit, viewChild } from '@angular/core';
+import { Component, effect, OnInit, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UploadForm } from '@app/upload/model/upload-form';
 import { GalleryChoice, GalleryResponse, GalleryService, ImageHost, ImageService } from '@app/gen/ogm-backend';
 import { CustomFormValidators } from '@app/shared/util/custom-form-validators';
 import { uploadFormValidator } from '@app/upload/util/upload-form-validator';
 import { ImageHostInputComponent } from '@app/upload/components/image-host-input/image-host-input.component';
-import { finalize, Observable } from 'rxjs';
+import { BehaviorSubject, finalize } from 'rxjs';
 import { GalleryChoiceInputComponent } from '@app/upload/components/gallery-choice-input/gallery-choice-input.component';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
 import { AutocompleteInputComponent } from '@app/shared/components/autocomplete-input/autocomplete-input.component';
 import { AsyncPipe } from '@angular/common';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-upload',
@@ -35,7 +36,7 @@ export class UploadComponent implements OnInit {
 
   uploadForm: FormGroup<UploadForm>;
 
-  galleries$: Observable<GalleryResponse[]>;
+  galleries = new BehaviorSubject<GalleryResponse[]>(undefined);
 
   GalleryChoice = GalleryChoice;
 
@@ -45,7 +46,19 @@ export class UploadComponent implements OnInit {
     private readonly formBuilder: FormBuilder,
     private readonly galleryService: GalleryService,
     private readonly imageService: ImageService,
-  ) {}
+    private readonly collectionsService: CollectionsService,
+  ) {
+    effect(() => {
+      this.uploadForm.controls.gallery.reset(null);
+      this.galleryService
+        .findGalleries({
+          collectionId: this.collectionsService.selectedCollectionId(),
+          randomizeOrder: false,
+          startingDate: new Date().toISOString(),
+        })
+        .subscribe((galleries) => this.galleries.next(galleries));
+    });
+  }
 
   ngOnInit(): void {
     this.uploadForm = this.formBuilder.group(
@@ -53,14 +66,12 @@ export class UploadComponent implements OnInit {
         host: [ImageHost.Imgbox, Validators.required],
         galleryChoice: [GalleryChoice.NewGallery, Validators.required],
         newGalleryName: [''],
-        gallery: [undefined],
+        gallery: [null],
         editUrl: [''],
         bbCode: ['', CustomFormValidators.trimmedRequired],
       },
       { validators: uploadFormValidator },
     );
-
-    this.galleries$ = this.galleryService.findGalleries({ randomizeOrder: false, startingDate: new Date().toISOString() });
   }
 
   upload(): void {
@@ -69,6 +80,7 @@ export class UploadComponent implements OnInit {
       const formValues = this.uploadForm.getRawValue();
       this.imageService
         .createImages({
+          collectionId: this.collectionsService.selectedCollectionId(),
           host: formValues.host,
           galleryChoice: formValues.galleryChoice,
           bbCode: formValues.bbCode,
@@ -85,7 +97,7 @@ export class UploadComponent implements OnInit {
     return this.uploadForm.valid && !this.uploading;
   }
 
-  getGalleryName = (gallery: GalleryResponse): string => (gallery.name || 'Unnamed Gallery');
+  getGalleryName = (gallery: GalleryResponse): string => gallery.name || 'Unnamed Gallery';
 
   private resetForm(): void {
     this.form().resetForm({

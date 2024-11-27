@@ -18,6 +18,8 @@ tags:
     description: Operations on gallery metadata.
   - name: Tag
     description: Operations on tags.
+  - name: Collection
+    description: Operations on collections.
 
 paths:
   #######################################
@@ -350,6 +352,8 @@ paths:
       summary: Get all gallery metadata
       description: Returns all gallery metadata
       operationId: getAllGalleryMetadata
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
       responses:
         "400":
           $ref: '#/components/responses/400'
@@ -461,6 +465,8 @@ paths:
       summary: Get all tags
       description: Returns all tags
       operationId: getAllTags
+      parameters:
+        - $ref: '#/components/parameters/collectionId'
       responses:
         "400":
           $ref: '#/components/responses/400'
@@ -562,6 +568,117 @@ paths:
           $ref: '#/components/responses/501'
         "204":
           description: Successful Operation
+  #######################################
+  # Collection Resource                 #
+  #######################################
+  /collections:
+    get:
+      tags:
+        - Collection
+      summary: Get all collections
+      description: Returns all collections
+      operationId: getAllCollections
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CollectionResponse'
+    post:
+      tags:
+        - Collection
+      summary: Create collection
+      description: Returns the created collection
+      operationId: createCollection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCollectionDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "201":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+  /collections/{id}:
+    put:
+      tags:
+        - Collection
+      summary: Update a collection
+      description: Returns the updated collection
+      operationId: updateCollection
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCollectionDto'
+        required: true
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+    delete:
+      tags:
+        - Collection
+      summary: Delete a collection
+      description: Deletes a collection by the given Id
+      operationId: deleteCollectionById
+      parameters:
+        - $ref: '#/components/parameters/pathId'
+      responses:
+        "400":
+          $ref: '#/components/responses/400'
+        "403":
+          $ref: '#/components/responses/403'
+        "404":
+          $ref: '#/components/responses/404'
+        "500":
+          $ref: '#/components/responses/500'
+        "501":
+          $ref: '#/components/responses/501'
+        "204":
+          description: Successful Operation
 
 components:
   parameters:
@@ -570,6 +687,13 @@ components:
       in: path
       required: true
       description: The ID of the corresponding object.
+      schema:
+        $ref: '#/components/schemas/Id'
+    collectionId:
+      name: collectionId
+      in: query
+      required: true
+      description: The ID of a collection.
       schema:
         $ref: '#/components/schemas/Id'
   responses:
@@ -623,11 +747,14 @@ components:
       format: int64
     CreateImagesDto:
       required:
+        - collectionId
         - galleryChoice
         - host
         - bbCode
       type: object
       properties:
+        collectionId:
+          $ref: '#/components/schemas/Id'
         galleryChoice:
           $ref: '#/components/schemas/GalleryChoice'
         newGalleryName:
@@ -754,6 +881,8 @@ components:
         - startingDate
       type: object
       properties:
+        collectionId:
+          $ref: '#/components/schemas/Id'
         filter:
           $ref: "#/components/schemas/FilterExpressionDto"
         startingDate:
@@ -771,9 +900,12 @@ components:
           type: integer
     FindGalleriesDto:
       required:
+        - collectionId
         - startingDate
       type: object
       properties:
+        collectionId:
+          $ref: '#/components/schemas/Id'
         filter:
           $ref: "#/components/schemas/FilterExpressionDto"
         startingDate:
@@ -857,10 +989,13 @@ components:
           $ref: '#/components/schemas/GalleryMetadataType'
     CreateGalleryMetadataDto:
       required:
+        - collectionId
         - name
         - type
       type: object
       properties:
+        collectionId:
+          $ref: '#/components/schemas/Id'
         name:
           type: string
         type:
@@ -883,10 +1018,13 @@ components:
           type: boolean
     CreateTagDto:
       required:
+        - collectionId
         - name
         - showTag
       type: object
       properties:
+        collectionId:
+          $ref: '#/components/schemas/Id'
         name:
           type: string
         showTag:
@@ -912,6 +1050,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Id'
+    CollectionResponse:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        name:
+          type: string
+    CreateCollectionDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+    UpdateCollectionDto:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
 
 
     GalleryChoice:

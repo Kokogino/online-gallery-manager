@@ -29,8 +29,8 @@ public class TagController implements TagApi {
   }
 
   @Override
-  public ResponseEntity<List<TagResponse>> getAllTags() {
-    return ResponseEntity.ok(tagService.getAllTags());
+  public ResponseEntity<List<TagResponse>> getAllTags(Long collectionId) {
+    return ResponseEntity.ok(tagService.getAllTags(collectionId));
   }
 
   @Override

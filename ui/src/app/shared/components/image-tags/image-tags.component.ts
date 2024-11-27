@@ -1,4 +1,4 @@
-import { Component, effect, input, OnInit, output } from '@angular/core';
+import { Component, effect, input, output } from '@angular/core';
 import { GalleryResponse, GalleryService, ImageResponse, TagResponse, TagService, UpdateImageDto } from '@app/gen/ogm-backend';
 import { finalize, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +13,7 @@ import { MatButton } from '@angular/material/button';
 import { TagGroupSelectComponent } from '@app/shared/components/tag-group-select/tag-group-select.component';
 import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
 import { NgClass } from '@angular/common';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-image-tags',
@@ -31,7 +32,7 @@ import { NgClass } from '@angular/common';
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',
 })
-export class ImageTagsComponent implements OnInit {
+export class ImageTagsComponent {
   readonly image = input.required<ImageResponse>();
 
   readonly updateImage = output<UpdateImageDto>();
@@ -56,6 +57,7 @@ export class ImageTagsComponent implements OnInit {
     private readonly tagService: TagService,
     private readonly galleryService: GalleryService,
     private readonly formBuilder: FormBuilder,
+    private readonly collectionsService: CollectionsService,
   ) {
     effect(() => {
       const image = this.image();
@@ -72,13 +74,13 @@ export class ImageTagsComponent implements OnInit {
       }
       this.setupImageForm();
     });
-  }
 
-  ngOnInit(): void {
-    this.tagService
-      .getAllTags()
-      .pipe(finalize(() => (this.loadingAllTags = false)))
-      .subscribe((tags) => (this.allTags = tags));
+    effect(() =>
+      this.tagService
+        .getAllTags(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loadingAllTags = false)))
+        .subscribe((tags) => (this.allTags = tags)),
+    );
   }
 
   galleryHasTag(tagId: number): boolean {

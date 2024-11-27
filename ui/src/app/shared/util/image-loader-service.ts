@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ImagesFilterForm } from '@app/images/model/images-filter-form';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 export abstract class ImageLoaderService {
   public static readonly BATCH_SIZE = 20;
@@ -20,6 +21,7 @@ export abstract class ImageLoaderService {
   private startingDate: Date;
   private randomnessSeed: number;
   private totalImagesCount: number;
+  private collectionId: number;
 
   abstract fetchImages(findImagesDto: FindImagesDto): Observable<FindImagesResponse>;
 
@@ -30,6 +32,7 @@ export abstract class ImageLoaderService {
     protected readonly formBuilder: FormBuilder,
     protected readonly snackBar: MatSnackBar,
     protected readonly router: Router,
+    protected readonly collectionsService: CollectionsService,
   ) {
     this.initForm();
     this.setupImageLoad();
@@ -57,6 +60,7 @@ export abstract class ImageLoaderService {
     this.imageFilter = formValues.filter;
     this.startingDate = new Date();
     this.imagesSubject.next([]);
+    this.collectionId = this.collectionsService.selectedCollectionId();
     this.loadImagesSkip.next(0);
   }
 
@@ -134,6 +138,7 @@ export abstract class ImageLoaderService {
         switchMap((skip) => {
           this.loadingImagesSubject.next(true);
           const findImagesDto: FindImagesDto = {
+            collectionId: this.collectionId,
             filter: this.imageFilter,
             randomnessSeed: this.randomnessSeed,
             startingDate: this.startingDate.toISOString(),

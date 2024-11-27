@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, Self, viewChild } from '@angular/core';
+import { Component, effect, ElementRef, OnDestroy, OnInit, Self, viewChild } from '@angular/core';
 import { DefaultControlValueAccessor } from '@app/shared/util/default-control-value-accessor.directive';
 import { MatInput, MatSuffix } from '@angular/material/input';
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
@@ -11,6 +11,7 @@ import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, finalize,
 import { AsyncPipe } from '@angular/common';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 import { FilterQueryUtil } from '@app/shared/util/filter-query-util';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-filter-query-input',
@@ -52,8 +53,16 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
   constructor(
     @Self() ngControl: NgControl,
     private readonly tagService: TagService,
+    private readonly collectionsService: CollectionsService,
   ) {
     super(ngControl);
+
+    effect(() =>
+      this.tagService
+        .getAllTags(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loadingTags = false)))
+        .subscribe((tags) => this.allTags.next(tags)),
+    );
   }
 
   override ngOnInit() {
@@ -63,11 +72,6 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
     this.filteredTokens$ = combineLatest([this.queryControl.valueChanges.pipe(startWith(this.queryControl.value)), this.allTags]).pipe(
       map(([query, tags]) => this.calculateNextTokens(query, tags)),
     );
-
-    this.tagService
-      .getAllTags()
-      .pipe(finalize(() => (this.loadingTags = false)))
-      .subscribe((tags) => this.allTags.next(tags));
 
     this.querySubscription = this.queryControl.valueChanges
       .pipe(distinctUntilChanged())

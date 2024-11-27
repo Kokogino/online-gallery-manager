@@ -13,7 +13,7 @@ public interface GalleryMetadataRepository extends BaseEntityRepository<GalleryM
 
   Optional<GalleryMetadata> findByName(String name);
 
-  Collection<GalleryMetadata> findAllByDeletedAtIsNull(Sort sort);
+  Collection<GalleryMetadata> findAllByCollectionIdAndDeletedAtIsNull(Long collectionId, Sort sort);
 
   void deleteByDeletedAtIsNotNull();
 }

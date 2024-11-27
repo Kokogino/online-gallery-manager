@@ -19,7 +19,7 @@
       @case (GalleryChoice.AddToGallery) {
         <ogm-autocomplete-input
           formControlName="gallery"
-          [options]="galleries$ | async"
+          [options]="galleries | async"
           labelText="Gallery"
           [optionValue]="getGalleryName"
           required>

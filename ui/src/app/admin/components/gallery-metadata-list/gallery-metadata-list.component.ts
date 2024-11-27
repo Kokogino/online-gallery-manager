@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { SearchInputComponent } from '@app/shared/components/search-input/search-input.component';
 import { MatDivider } from '@angular/material/divider';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
@@ -17,6 +17,7 @@ import { CustomFormValidators } from '@app/shared/util/custom-form-validators';
 import { GalleryMetadataForm } from '@app/admin/model/gallery-metadata-form';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-gallery-metadata-list',
@@ -40,7 +41,7 @@ import { MatSelect } from '@angular/material/select';
   templateUrl: './gallery-metadata-list.component.html',
   styleUrl: './gallery-metadata-list.component.scss',
 })
-export class GalleryMetadataListComponent implements OnInit {
+export class GalleryMetadataListComponent {
   galleryMetadata: GalleryMetadataResponse[];
 
   searchGalleryMetadata = new FormControl('');
@@ -58,13 +59,14 @@ export class GalleryMetadataListComponent implements OnInit {
   constructor(
     private readonly galleryMetadataService: GalleryMetadataService,
     private readonly formBuilder: FormBuilder,
-  ) {}
-
-  ngOnInit(): void {
-    this.galleryMetadataService
-      .getAllGalleryMetadata()
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe((metadata) => (this.galleryMetadata = metadata));
+    private readonly collectionsService: CollectionsService,
+  ) {
+    effect(() =>
+      this.galleryMetadataService
+        .getAllGalleryMetadata(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe((metadata) => (this.galleryMetadata = metadata)),
+    );
   }
 
   isMetadataFiltered(metadata: GalleryMetadataResponse): boolean {
@@ -121,6 +123,7 @@ export class GalleryMetadataListComponent implements OnInit {
     if (this.newMetadataForm.valid) {
       this.galleryMetadataService
         .createGalleryMetadata({
+          collectionId: this.collectionsService.selectedCollectionId(),
           name: this.newMetadataForm.value.metadataName,
           type: this.newMetadataForm.value.metadataType,
         })

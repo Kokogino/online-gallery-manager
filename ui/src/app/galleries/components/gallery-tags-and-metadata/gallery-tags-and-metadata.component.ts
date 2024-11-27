@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import {
   GalleryMetadataResponse,
   GalleryMetadataService,
@@ -28,6 +28,7 @@ import { MetadataValue } from '@app/galleries/model/metadata-value';
 import { GalleryMetadataEntryForm } from '@app/galleries/model/gallery-metadata-entry-form';
 import { TagGroupSelectComponent } from '@app/shared/components/tag-group-select/tag-group-select.component';
 import { TagGroupSelection } from '@app/shared/model/tag-group-selection';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-gallery-tags-and-metadata',
@@ -78,19 +79,24 @@ export class GalleryTagsAndMetadataComponent implements OnInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly galleryMetadataService: GalleryMetadataService,
     private readonly sharedDialogService: SharedDialogService,
-  ) {}
+    private readonly collectionsService: CollectionsService,
+  ) {
+    effect(() => {
+      this.tagService
+        .getAllTags(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loadingAllTags = false)))
+        .subscribe((tags) => (this.allTags = tags));
+
+      this.galleryMetadataService
+        .getAllGalleryMetadata(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loadingAllGalleryMetadata = false)))
+        .subscribe((metadata) => this.allGalleryMetadata.next(metadata));
+    });
+  }
 
   ngOnInit(): void {
     this.gallery$ = this.galleriesService.selectedGallery$;
     this.loadingGallery$ = this.galleriesService.loadingGallery$;
-    this.tagService
-      .getAllTags()
-      .pipe(finalize(() => (this.loadingAllTags = false)))
-      .subscribe((tags) => (this.allTags = tags));
-    this.galleryMetadataService
-      .getAllGalleryMetadata()
-      .pipe(finalize(() => (this.loadingAllGalleryMetadata = false)))
-      .subscribe((metadata) => this.allGalleryMetadata.next(metadata));
 
     this.gallerySubscription = combineLatest([this.gallery$, this.allGalleryMetadata])
       .pipe(filter(([gallery, galleryMetadata]) => Boolean(gallery) && Boolean(galleryMetadata)))

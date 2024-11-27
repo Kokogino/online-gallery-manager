@@ -7,7 +7,9 @@ import java.util.Optional;
 import com.kokogino.ogm.backend.genapi.business.dto.CreateTagDto;
 import com.kokogino.ogm.backend.genapi.business.dto.TagResponse;
 import com.kokogino.ogm.backend.genapi.business.dto.UpdateTagDto;
+import com.kokogino.ogm.business.repository.CollectionRepository;
 import com.kokogino.ogm.business.repository.TagRepository;
+import com.kokogino.ogm.datamodel.entity.OGMCollection;
 import com.kokogino.ogm.datamodel.entity.Tag;
 import com.kokogino.ogm.exception.BusinessException;
 import com.kokogino.ogm.exception.BusinessReason;
@@ -20,12 +22,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TagService {
   private final TagRepository tagRepository;
+  private final CollectionRepository collectionRepository;
 
   public TagResponse createTag(CreateTagDto createTagDto) {
     if (tagRepository.existsByName(createTagDto.getName())) {
       throw new BusinessException(String.format("Tag with name '%s' already exists", createTagDto.getName()), BusinessReason.ERROR_TAG_NAME_NOT_UNIQUE);
     }
+    OGMCollection collection = collectionRepository.findById(createTagDto.getCollectionId())
+      .orElseThrow(() -> new BusinessException(String.format("Collection with id '%s' does not exist", createTagDto.getCollectionId()), BusinessReason.ERROR_COLLECTION_NOT_EXISTENT));
+
     Tag tag = new Tag();
+    tag.setCollection(collection);
     tag.setName(createTagDto.getName());
     tag.setShowTag(createTagDto.getShowTag());
     return entityToResponse(tagRepository.save(tag));
@@ -38,8 +45,8 @@ public class TagService {
     tagRepository.save(tag);
   }
 
-  public List<TagResponse> getAllTags() {
-    return tagRepository.findAllByDeletedAtIsNull(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+  public List<TagResponse> getAllTags(Long collectionId) {
+    return tagRepository.findAllByCollectionIdAndDeletedAtIsNull(collectionId, Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
       .stream()
       .map(TagService::entityToResponse)
       .toList();

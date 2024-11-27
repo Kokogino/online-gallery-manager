@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, OnDestroy, OnInit, signal, input, viewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, input, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import { ImageLoaderService } from '@app/shared/util/image-loader-service';
 import { BehaviorSubject, combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
 import { ImageResponse, TagResponse, TagService } from '@app/gen/ogm-backend';
@@ -19,6 +19,7 @@ import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { FlexResizerDirective } from '@app/shared/util/flex-resizer.directive';
 import { FlexResizableDirective } from '@app/shared/util/flex-resizable.directive';
 import { SettingsService } from '@app/shared/services/settings.service';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-image-list',
@@ -90,13 +91,14 @@ export class ImageListComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly tagService: TagService,
     private readonly sharedResizeObserver: SharedResizeObserver,
     private readonly settingsService: SettingsService,
-  ) {}
+    private readonly collectionsService: CollectionsService,
+  ) {
+    effect(() => this.tagService.getAllTags(this.collectionsService.selectedCollectionId()).subscribe((tags) => (this.allTags = tags)));
+  }
 
   ngOnInit(): void {
     this.images$ = this.imageLoaderService().images$;
     this.loading$ = this.imageLoaderService().loadingImages$;
-
-    this.tagService.getAllTags().subscribe((tags) => (this.allTags = tags));
 
     this.imagesSubscription = this.images$.subscribe((images) =>
       this.selectedImageIdsSubject.next(

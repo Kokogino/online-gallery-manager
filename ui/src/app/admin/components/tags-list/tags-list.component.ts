@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { TagResponse, TagService } from '@app/gen/ogm-backend';
 import { finalize } from 'rxjs';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -16,6 +16,7 @@ import { MatDivider } from '@angular/material/divider';
 import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-compare';
 import { NgClass } from '@angular/common';
 import { SearchInputComponent } from '@app/shared/components/search-input/search-input.component';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Component({
   selector: 'ogm-tags-list',
@@ -38,7 +39,7 @@ import { SearchInputComponent } from '@app/shared/components/search-input/search
   templateUrl: './tags-list.component.html',
   styleUrl: './tags-list.component.scss',
 })
-export class TagsListComponent implements OnInit {
+export class TagsListComponent {
   tags: TagResponse[];
 
   searchTags = new FormControl('');
@@ -54,13 +55,14 @@ export class TagsListComponent implements OnInit {
   constructor(
     private readonly tagService: TagService,
     private readonly formBuilder: FormBuilder,
-  ) {}
-
-  ngOnInit(): void {
-    this.tagService
-      .getAllTags()
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe((tags) => (this.tags = tags));
+    private readonly collectionsService: CollectionsService,
+  ) {
+    effect(() =>
+      this.tagService
+        .getAllTags(this.collectionsService.selectedCollectionId())
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe((tags) => (this.tags = tags)),
+    );
   }
 
   isTagFiltered(tag: TagResponse): boolean {
@@ -119,6 +121,7 @@ export class TagsListComponent implements OnInit {
     if (this.newTagForm.valid) {
       this.tagService
         .createTag({
+          collectionId: this.collectionsService.selectedCollectionId(),
           name: this.newTagForm.value.tagName,
           showTag: this.newTagForm.value.showTag,
         })

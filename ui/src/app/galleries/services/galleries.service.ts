@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
@@ -31,6 +31,7 @@ import { containsStringsIgnoringAccentsAndCase } from '@app/shared/util/string-c
 import { some } from 'lodash-es';
 import moment from 'moment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 @Injectable({
   providedIn: 'root',
@@ -58,12 +59,21 @@ export class GalleriesService extends ImageLoaderService {
     protected override readonly imageService: ImageService,
     protected override readonly snackBar: MatSnackBar,
     protected override readonly router: Router,
+    protected override readonly collectionsService: CollectionsService,
   ) {
-    super(imageService, formBuilder, snackBar, router);
+    super(imageService, formBuilder, snackBar, router, collectionsService);
     this.fetchGalleryOnIdChange();
     this.initForms();
     this.loadImagesOnGalleryChange();
-    this.findGalleries();
+    effect(() => {
+      this.galleriesFilterForm.reset({
+        filter: undefined,
+        randomizeOrder: false,
+      });
+
+      this.gallerySearchControl.reset('');
+      this.findGalleries();
+    });
   }
 
   get loadingGalleries$(): Observable<boolean> {
@@ -121,7 +131,11 @@ export class GalleriesService extends ImageLoaderService {
   findGalleries(): void {
     this.loadingGalleriesSubject.next(true);
     this.galleryService
-      .findGalleries({ ...this.galleriesFilterForm.getRawValue(), startingDate: new Date().toISOString() })
+      .findGalleries({
+        ...this.galleriesFilterForm.getRawValue(),
+        startingDate: new Date().toISOString(),
+        collectionId: this.collectionsService.selectedCollectionId(),
+      })
       .pipe(finalize(() => this.loadingGalleriesSubject.next(false)))
       .subscribe((galleries) => this.galleriesSubject.next(galleries));
   }
