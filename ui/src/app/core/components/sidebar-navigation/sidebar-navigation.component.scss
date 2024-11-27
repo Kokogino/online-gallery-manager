@@ -1,9 +1,19 @@
 @use 'variables' as vars;
 
-.item mat-icon {
-  margin-right: 16px;
-}
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
-.active {
-  background-color: rgba(vars.$color-primary-rgb, 0.3);
+  .item mat-icon {
+    margin-right: 16px;
+  }
+
+  .active {
+    background-color: rgba(vars.$color-primary-rgb, 0.3);
+  }
+
+  .collection-select {
+    margin: 16px;
+  }
 }

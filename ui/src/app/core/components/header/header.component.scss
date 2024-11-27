@@ -17,8 +17,12 @@ header {
     margin-right: 8px;
   }
 
-  .theme-button {
+  .collection-select, .theme-button {
     margin-left: 8px;
+  }
+
+  .collection-select {
+    width: 160px;
   }
 
   .menu-button {

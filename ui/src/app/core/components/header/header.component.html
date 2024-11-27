@@ -19,6 +19,10 @@
 
   <div class="flex-spacer"></div>
 
+  @if (mediaQueryService.isMinimumDesktopLayout$ | async) {
+    <ogm-collection-select class="collection-select" />
+  }
+
   <button mat-icon-button class="theme-button" (click)="toggleTheme()" matTooltip="Change theme">
     @if (isLightTheme | async) {
       <mat-icon>dark_mode</mat-icon>

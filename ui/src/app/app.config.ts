@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, inject, provideAppInitializer } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -13,6 +13,7 @@ import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import 'moment/locale/de-ch';
 import { httpCacheInterceptor } from '@app/shared/util/http-cache-interceptor';
+import { CollectionsService } from '@app/shared/services/collections.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideMomentDateAdapter(),
     provideAppInitializer(() => inject(ThemeService).loadTheme()),
+    provideAppInitializer(() => inject(CollectionsService).loadCollections()),
     {
       provide: Configuration,
       useFactory: () => new Configuration({ basePath: environment.backendBaseUrl }),

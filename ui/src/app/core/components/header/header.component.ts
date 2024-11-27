@@ -10,10 +10,11 @@ import { MatIconButton } from '@angular/material/button';
 import { MediaQueryService } from '@app/shared/services/media-query.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import { PAGES } from '@app/core/model/page';
+import { CollectionSelectComponent } from '@app/core/components/collection-select/collection-select.component';
 
 @Component({
   selector: 'ogm-header',
-  imports: [NavItemComponent, MatDivider, MatIcon, MatTooltip, AsyncPipe, MatIconButton],
+  imports: [NavItemComponent, MatDivider, MatIcon, MatTooltip, AsyncPipe, MatIconButton, CollectionSelectComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

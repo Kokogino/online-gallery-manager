@@ -23,8 +23,8 @@ export class ImageThumbnailComponent {
   }
 
   getTags(): string {
-    return this.image().tags
-      .filter((tag) => tag.showTag)
+    return this.image()
+      .tags.filter((tag) => tag.showTag)
       .map((tag) => tag.name)
       .join(', ');
   }
