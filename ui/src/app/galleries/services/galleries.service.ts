@@ -67,7 +67,7 @@ export class GalleriesService extends ImageLoaderService {
     this.loadImagesOnGalleryChange();
     effect(() => {
       this.galleriesFilterForm.reset({
-        filter: undefined,
+        filter: null,
         randomizeOrder: false,
       });
 

@@ -23,7 +23,7 @@ export class ImagesService extends ImageLoaderService {
     super(imageService, formBuilder, snackBar, router, collectionsService);
     effect(() => {
       this.imagesFilterForm.reset({
-        filter: undefined,
+        filter: null,
         randomizeOrder: false,
       });
       this.findImages();

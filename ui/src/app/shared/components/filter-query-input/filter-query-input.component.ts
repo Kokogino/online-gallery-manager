@@ -80,9 +80,11 @@ export class FilterQueryInputComponent extends DefaultControlValueAccessor<Filte
       this.control.valueChanges.pipe(startWith(this.control.value), distinctUntilChanged()),
       this.allTags,
     ])
-      .pipe(filter(([filter, tags]) => Boolean(filter) && Boolean(tags)))
+      .pipe(filter(([filter, tags]) => filter !== undefined && Boolean(tags)))
       .subscribe(([filter, tags]) => {
-        if (!this.queryControl.value) {
+        if (filter === null) {
+          this.queryControl.reset('');
+        } else if (!this.queryControl.value) {
           this.queryControl.setValue(FilterQueryUtil.filterExpressionToQuery(filter, tags) + ' ');
         }
       });
